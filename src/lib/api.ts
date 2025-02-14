@@ -16,6 +16,13 @@ interface ChatResponse {
 }
 
 export const sendMessage = async (request: ChatRequest): Promise<ChatResponse> => {
-  const response = await api.post<ChatResponse>("/chat", request);
-  return response.data;
+  try {
+    console.log('Sending message:', request);
+    const response = await api.post<ChatResponse>("/chat", request);
+    console.log('Received response:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('API Error:', error);
+    throw error;
+  }
 };
