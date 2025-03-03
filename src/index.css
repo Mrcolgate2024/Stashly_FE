@@ -184,3 +184,87 @@
     transform: scale(1);
   }
 }
+
+/* Financial tables styling */
+.financial-table, .correlation-table, .returns-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  font-family: 'Arial', sans-serif;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.financial-table th, .correlation-table th, .returns-table th {
+  background-color: #2c3e50;
+  color: white;
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+}
+
+.financial-table td, .correlation-table td, .returns-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.financial-table tr:nth-child(even), 
+.correlation-table tr:nth-child(even), 
+.returns-table tr:nth-child(even) {
+  background-color: #f8f9fa;
+}
+
+.financial-table tr:hover, 
+.correlation-table tr:hover, 
+.returns-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Value styling */
+.positive {
+  color: #27ae60;
+  font-weight: 500;
+}
+
+.negative {
+  color: #e74c3c;
+  font-weight: 500;
+}
+
+.neutral {
+  color: #7f8c8d;
+}
+
+/* Correlation specific styling */
+.correlation-table .self {
+  background-color: #f0f0f0;
+}
+
+.correlation-table .strong-positive {
+  background-color: rgba(39, 174, 96, 0.3);
+}
+
+.correlation-table .positive {
+  background-color: rgba(39, 174, 96, 0.1);
+}
+
+.correlation-table .neutral {
+  background-color: transparent;
+}
+
+.correlation-table .negative {
+  background-color: rgba(231, 76, 60, 0.1);
+}
+
+.correlation-table .strong-negative {
+  background-color: rgba(231, 76, 60, 0.3);
+}
+
+/* Returns tables container */
+.returns-tables h3 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  color: #2c3e50;
+  font-weight: 600;
+}

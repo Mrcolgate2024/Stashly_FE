@@ -42,12 +42,7 @@ export const ChatMessage = ({ message, onQuestionClick }: ChatMessageProps) => {
           <div 
             className="table-container"
             dangerouslySetInnerHTML={{ 
-              __html: `<style>
-                table { border-collapse: collapse; width: 100%; font-size: 0.875rem; }
-                th, td { border: 1px solid #ddd; padding: 0.5rem; text-align: left; }
-                th { background-color: #f2f2f2; }
-                tr:nth-child(even) { background-color: #f9f9f9; }
-              </style>${message.tableHtml}` 
+              __html: message.tableHtml
             }}
           />
         )}
