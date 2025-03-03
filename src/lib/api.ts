@@ -1,5 +1,6 @@
 
 import axios from "axios";
+import { ChatApiRequest, ChatApiResponse } from "@/types/chat";
 
 const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
@@ -7,20 +8,10 @@ const api = axios.create({
   baseURL: BASE_URL,
 });
 
-interface ChatRequest {
-  message: string;
-  thread_id?: string;
-}
-
-interface ChatResponse {
-  response: string;
-  thread_id: string;
-}
-
-export const sendMessage = async (request: ChatRequest): Promise<ChatResponse> => {
+export const sendMessage = async (request: ChatApiRequest): Promise<ChatApiResponse> => {
   try {
     console.log('Sending message:', request);
-    const response = await api.post<ChatResponse>("/chat", request);
+    const response = await api.post<ChatApiResponse>("/chat", request);
     console.log('Received response:', response.data);
     return response.data;
   } catch (error) {

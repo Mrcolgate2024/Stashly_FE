@@ -50,6 +50,10 @@ export const Chat = () => {
         content: response.response,
         sender: "bot",
         timestamp: new Date(),
+        imageData: response.has_image ? response.image_data : undefined,
+        metrics: response.metrics,
+        suggestedQuestions: response.suggested_questions,
+        tableHtml: response.has_table ? response.table_html : undefined,
       };
 
       setMessages((prev) => [...prev, botMessage]);
@@ -63,6 +67,10 @@ export const Chat = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSuggestedQuestionClick = (question: string) => {
+    handleSendMessage(question);
   };
 
   const handleAvatarMessage = (response: string) => {
@@ -98,7 +106,11 @@ export const Chat = () => {
         {chatMode === "text" ? (
           <>
             {messages.map((message) => (
-              <ChatMessage key={message.id} message={message} />
+              <ChatMessage 
+                key={message.id} 
+                message={message} 
+                onQuestionClick={handleSuggestedQuestionClick}
+              />
             ))}
             <div ref={messagesEndRef} />
           </>

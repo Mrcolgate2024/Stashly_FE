@@ -8,6 +8,7 @@ import StreamingAvatar, {
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { useToast } from "./ui/use-toast";
+import { ChatApiResponse } from "@/types/chat";
 
 interface VideoAvatarProps {
   onMessageReceived: (message: string) => void;
@@ -103,9 +104,9 @@ export const VideoAvatar = ({ onMessageReceived }: VideoAvatarProps) => {
 
     try {
       const response = await getChatResponse(userInput);
-      onMessageReceived(response);
+      onMessageReceived(response.response);
       await avatar.speak({
-        text: response,
+        text: response.response,
       });
       setUserInput("");
     } catch (error) {
@@ -118,7 +119,7 @@ export const VideoAvatar = ({ onMessageReceived }: VideoAvatarProps) => {
     }
   };
 
-  const getChatResponse = async (message: string): Promise<string> => {
+  const getChatResponse = async (message: string): Promise<ChatApiResponse> => {
     try {
       const response = await fetch("http://localhost:8000/chat", {
         method: "POST",
@@ -136,7 +137,7 @@ export const VideoAvatar = ({ onMessageReceived }: VideoAvatarProps) => {
       }
 
       const data = await response.json();
-      return data.response;
+      return data;
     } catch (error) {
       console.error("Error in getChatResponse:", error);
       throw error;
