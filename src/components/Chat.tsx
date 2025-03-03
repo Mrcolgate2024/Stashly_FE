@@ -8,7 +8,7 @@ import { VideoAvatar } from "./VideoAvatar";
 import { Message } from "@/types/chat";
 import { sendMessage } from "@/lib/api";
 import { nanoid } from "nanoid";
-import { MessageSquare, User, Video } from "lucide-react";
+import { MessageSquare, User, Video, RefreshCcw } from "lucide-react";
 import { Input } from "./ui/input";
 
 type ChatMode = "text" | "avatar";
@@ -48,6 +48,20 @@ export const Chat = () => {
         thread_id: threadId,
         user_name: userName || undefined,
       });
+
+      // Check if response contains an error message
+      const isErrorResponse = 
+        response.response.includes("I'm sorry, I encountered an error") ||
+        response.response.includes("Error:") ||
+        response.response.includes("could you please try again");
+
+      if (isErrorResponse) {
+        toast({
+          title: "Backend Error",
+          description: "The AI assistant encountered an error. Please try a different question or try again later.",
+          variant: "destructive",
+        });
+      }
 
       const botMessage: Message = {
         id: nanoid(),
@@ -92,6 +106,21 @@ export const Chat = () => {
     setShowUserNameInput(!showUserNameInput);
   };
 
+  const handleRetryLastMessage = () => {
+    const lastUserMessage = [...messages]
+      .reverse()
+      .find(message => message.sender === "user");
+    
+    if (lastUserMessage) {
+      handleSendMessage(lastUserMessage.content);
+    } else {
+      toast({
+        title: "No previous message",
+        description: "There is no previous message to retry.",
+      });
+    }
+  };
+
   return (
     <div className="flex h-[calc(100vh-4rem)] flex-col gap-4 p-4">
       <div className="flex flex-wrap items-center gap-2">
@@ -110,6 +139,18 @@ export const Chat = () => {
           Avatar Chat
         </Button>
         <div className="ml-auto flex items-center gap-2">
+          {isLoading ? null : (
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={handleRetryLastMessage}
+              disabled={messages.length === 0}
+              title="Retry last question"
+            >
+              <RefreshCcw className="h-4 w-4 mr-2" />
+              Retry
+            </Button>
+          )}
           <Button
             variant="outline"
             size="sm"
@@ -140,6 +181,20 @@ export const Chat = () => {
       <div className="flex-1 space-y-4 overflow-y-auto rounded-lg bg-background p-4 shadow-sm">
         {chatMode === "text" ? (
           <>
+            {messages.length === 0 && (
+              <div className="flex h-full items-center justify-center">
+                <div className="text-center opacity-70">
+                  <p className="mb-4 text-xl font-semibold">Welcome to the Financial Assistant</p>
+                  <p className="mb-2">Ask me anything about:</p>
+                  <ul className="list-disc text-left max-w-md mx-auto space-y-2">
+                    <li>Investment strategies</li>
+                    <li>Market analysis</li>
+                    <li>Portfolio performance</li>
+                    <li>Financial planning</li>
+                  </ul>
+                </div>
+              </div>
+            )}
             {messages.map((message) => (
               <ChatMessage 
                 key={message.id} 
