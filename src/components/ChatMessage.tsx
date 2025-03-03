@@ -29,18 +29,18 @@ export const ChatMessage = ({ message, onQuestionClick }: ChatMessageProps) => {
         <p className="whitespace-pre-wrap">{message.content}</p>
         
         {message.imageData && (
-          <div className="mt-2">
+          <div className="message-image">
             <img 
               src={`data:image/png;base64,${message.imageData}`} 
               alt="Generated content"
-              className="max-w-full rounded-md"
+              className="financial-chart"
             />
           </div>
         )}
 
         {message.tableHtml && (
           <div 
-            className="mt-2 overflow-x-auto rounded-md bg-background p-2"
+            className="table-container"
             dangerouslySetInnerHTML={{ 
               __html: `<style>
                 table { border-collapse: collapse; width: 100%; font-size: 0.875rem; }
@@ -53,15 +53,21 @@ export const ChatMessage = ({ message, onQuestionClick }: ChatMessageProps) => {
         )}
 
         {message.metrics && (
-          <div className="mt-2 space-y-1 rounded-md bg-background p-2 text-xs text-foreground">
-            <p className="font-semibold">Performance Metrics:</p>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+          <div className="metrics-container">
+            <p className="font-semibold mb-2">Performance Metrics:</p>
+            <div className="metrics-grid">
               {Object.entries(message.metrics).map(([key, value]) => (
-                <div key={key} className="flex justify-between">
-                  <span>{key}:</span>
-                  <span className="font-medium">
-                    {typeof value === 'number' ? `${value}%` : value}
-                  </span>
+                <div key={key} className="metric-item">
+                  <div className="metric-label">{key}</div>
+                  <div className={cn(
+                    "metric-value",
+                    typeof value === 'number' && value > 0 && "positive",
+                    typeof value === 'number' && value < 0 && "negative"
+                  )}>
+                    {typeof value === 'number' 
+                      ? `${value.toFixed(2)}${key.toLowerCase().includes('return') || key.toLowerCase().includes('cagr') ? '%' : ''}`
+                      : value}
+                  </div>
                 </div>
               ))}
             </div>
@@ -69,14 +75,14 @@ export const ChatMessage = ({ message, onQuestionClick }: ChatMessageProps) => {
         )}
 
         {isBot && message.suggestedQuestions && message.suggestedQuestions.length > 0 && (
-          <div className="mt-2 space-y-1">
-            <p className="text-xs font-semibold">Suggested questions:</p>
-            <div className="flex flex-col gap-1">
+          <div className="suggested-questions">
+            <p className="text-xs font-semibold text-muted-foreground mb-2">Suggested questions:</p>
+            <div className="questions-container">
               {message.suggestedQuestions.map((question, index) => (
                 <button
                   key={index}
                   onClick={() => onQuestionClick?.(question)}
-                  className="rounded bg-background px-2 py-1 text-left text-xs text-foreground hover:bg-accent"
+                  className="bg-muted hover:bg-accent text-foreground text-xs rounded-full px-3 py-1.5 transition-colors"
                 >
                   {question}
                 </button>
