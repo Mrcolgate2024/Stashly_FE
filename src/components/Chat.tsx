@@ -8,7 +8,8 @@ import { VideoAvatar } from "./VideoAvatar";
 import { Message } from "@/types/chat";
 import { sendMessage } from "@/lib/api";
 import { nanoid } from "nanoid";
-import { MessageSquare, Video } from "lucide-react";
+import { MessageSquare, User, Video } from "lucide-react";
+import { Input } from "./ui/input";
 
 type ChatMode = "text" | "avatar";
 
@@ -17,6 +18,8 @@ export const Chat = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [threadId, setThreadId] = useState("default");
   const [chatMode, setChatMode] = useState<ChatMode>("text");
+  const [userName, setUserName] = useState("");
+  const [showUserNameInput, setShowUserNameInput] = useState(false);
   const { toast } = useToast();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -43,6 +46,7 @@ export const Chat = () => {
       const response = await sendMessage({
         message: content,
         thread_id: threadId,
+        user_name: userName || undefined,
       });
 
       const botMessage: Message = {
@@ -84,9 +88,13 @@ export const Chat = () => {
     setMessages((prev) => [...prev, botMessage]);
   };
 
+  const toggleUserNameInput = () => {
+    setShowUserNameInput(!showUserNameInput);
+  };
+
   return (
     <div className="flex h-[calc(100vh-4rem)] flex-col gap-4 p-4">
-      <div className="flex gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <Button
           variant={chatMode === "text" ? "default" : "outline"}
           onClick={() => setChatMode("text")}
@@ -101,6 +109,33 @@ export const Chat = () => {
           <Video className="mr-2" />
           Avatar Chat
         </Button>
+        <div className="ml-auto flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={toggleUserNameInput}
+          >
+            <User className="mr-2 h-4 w-4" />
+            {userName ? userName : "Set Name"}
+          </Button>
+          {showUserNameInput && (
+            <div className="flex items-center gap-2">
+              <Input
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
+                placeholder="Enter your name"
+                className="h-9 w-40"
+              />
+              <Button 
+                size="sm" 
+                variant="secondary"
+                onClick={() => setShowUserNameInput(false)}
+              >
+                Save
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
       <div className="flex-1 space-y-4 overflow-y-auto rounded-lg bg-background p-4 shadow-sm">
         {chatMode === "text" ? (

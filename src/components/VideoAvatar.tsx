@@ -9,6 +9,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { useToast } from "./ui/use-toast";
 import { ChatApiResponse } from "@/types/chat";
+import { sendMessage } from "@/lib/api";
 
 interface VideoAvatarProps {
   onMessageReceived: (message: string) => void;
@@ -121,23 +122,11 @@ export const VideoAvatar = ({ onMessageReceived }: VideoAvatarProps) => {
 
   const getChatResponse = async (message: string): Promise<ChatApiResponse> => {
     try {
-      const response = await fetch("http://localhost:8000/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          message: message,
-          thread_id: "default",
-        }),
+      const response = await sendMessage({
+        message: message,
+        thread_id: "default",
       });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      return data;
+      return response;
     } catch (error) {
       console.error("Error in getChatResponse:", error);
       throw error;

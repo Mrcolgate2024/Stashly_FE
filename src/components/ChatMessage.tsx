@@ -40,13 +40,20 @@ export const ChatMessage = ({ message, onQuestionClick }: ChatMessageProps) => {
 
         {message.tableHtml && (
           <div 
-            className="mt-2 overflow-x-auto"
-            dangerouslySetInnerHTML={{ __html: message.tableHtml }}
+            className="mt-2 overflow-x-auto rounded-md bg-background p-2"
+            dangerouslySetInnerHTML={{ 
+              __html: `<style>
+                table { border-collapse: collapse; width: 100%; font-size: 0.875rem; }
+                th, td { border: 1px solid #ddd; padding: 0.5rem; text-align: left; }
+                th { background-color: #f2f2f2; }
+                tr:nth-child(even) { background-color: #f9f9f9; }
+              </style>${message.tableHtml}` 
+            }}
           />
         )}
 
         {message.metrics && (
-          <div className="mt-2 space-y-1 text-xs">
+          <div className="mt-2 space-y-1 rounded-md bg-background p-2 text-xs text-foreground">
             <p className="font-semibold">Performance Metrics:</p>
             <div className="grid grid-cols-2 gap-x-4 gap-y-1">
               {Object.entries(message.metrics).map(([key, value]) => (
@@ -69,7 +76,7 @@ export const ChatMessage = ({ message, onQuestionClick }: ChatMessageProps) => {
                 <button
                   key={index}
                   onClick={() => onQuestionClick?.(question)}
-                  className="rounded bg-background px-2 py-1 text-left text-xs hover:bg-accent"
+                  className="rounded bg-background px-2 py-1 text-left text-xs text-foreground hover:bg-accent"
                 >
                   {question}
                 </button>

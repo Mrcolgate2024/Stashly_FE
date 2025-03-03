@@ -5,7 +5,7 @@ export interface Message {
   sender: "user" | "bot";
   timestamp: Date;
   imageData?: string;
-  metrics?: Record<string, any>;
+  metrics?: Record<string, number | string>;
   suggestedQuestions?: string[];
   tableHtml?: string;
 }
@@ -21,7 +21,7 @@ export interface ChatApiResponse {
   thread_id: string;
   has_image: boolean;
   image_data?: string;
-  metrics?: Record<string, any>;
+  metrics?: Record<string, number | string>;
   suggested_questions?: string[];
   has_table: boolean;
   table_html?: string;
