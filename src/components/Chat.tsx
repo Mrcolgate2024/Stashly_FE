@@ -1,216 +1,69 @@
 
-import { useEffect, useRef, useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { useChat } from "@/hooks/useChat";
 import { ChatInput } from "./ChatInput";
-import { ChatMessage } from "./ChatMessage";
-import { VideoAvatar } from "./VideoAvatar";
-import { Message } from "@/types/chat";
-import { sendMessage } from "@/lib/api";
-import { nanoid } from "nanoid";
-import { MessageSquare, User, Video, RefreshCcw } from "lucide-react";
-import { Input } from "./ui/input";
+import { ChatControls } from "./ChatControls";
+import { ChatMessagesArea } from "./ChatMessagesArea";
+import { AvatarChatHandler } from "./AvatarChatHandler";
 
 type ChatMode = "text" | "avatar";
 
 export const Chat = () => {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [threadId, setThreadId] = useState("default");
   const [chatMode, setChatMode] = useState<ChatMode>("text");
   const [userName, setUserName] = useState("");
-  const [showUserNameInput, setShowUserNameInput] = useState(false);
-  const { toast } = useToast();
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  const handleSendMessage = async (content: string) => {
-    const userMessage: Message = {
-      id: nanoid(),
-      content,
-      sender: "user",
-      timestamp: new Date(),
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
-    setIsLoading(true);
-
-    try {
-      const response = await sendMessage({
-        message: content,
-        thread_id: threadId,
-        user_name: userName || undefined,
-      });
-
-      // Check if response contains an error message
-      const isErrorResponse = 
-        response.response.includes("I'm sorry, I encountered an error") ||
-        response.response.includes("Error:") ||
-        response.response.includes("could you please try again");
-
-      if (isErrorResponse) {
-        toast({
-          title: "Backend Error",
-          description: "The AI assistant encountered an error. Please try a different question or try again later.",
-          variant: "destructive",
-        });
-      }
-
-      const botMessage: Message = {
-        id: nanoid(),
-        content: response.response,
-        sender: "bot",
-        timestamp: new Date(),
-        imageData: response.has_image ? response.image_data : undefined,
-        metrics: response.metrics,
-        suggestedQuestions: response.suggested_questions,
-        tableHtml: response.has_table ? response.table_html : undefined,
-      };
-
-      setMessages((prev) => [...prev, botMessage]);
-      setThreadId(response.thread_id);
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to send message. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleSuggestedQuestionClick = (question: string) => {
-    handleSendMessage(question);
-  };
+  
+  const {
+    messages,
+    isLoading,
+    handleSendMessage,
+    handleSuggestedQuestionClick,
+    handleRetryLastMessage
+  } = useChat();
 
   const handleAvatarMessage = (response: string) => {
-    const botMessage: Message = {
-      id: nanoid(),
-      content: response,
-      sender: "bot",
-      timestamp: new Date(),
-    };
-
-    setMessages((prev) => [...prev, botMessage]);
+    // This function handles responses from the avatar interface
+    const { handleSendMessage: originalHandleSendMessage } = useChat();
+    originalHandleSendMessage(response);
   };
 
-  const toggleUserNameInput = () => {
-    setShowUserNameInput(!showUserNameInput);
+  const handleMessageSend = (content: string) => {
+    handleSendMessage(content, userName);
   };
 
-  const handleRetryLastMessage = () => {
-    const lastUserMessage = [...messages]
-      .reverse()
-      .find(message => message.sender === "user");
-    
-    if (lastUserMessage) {
-      handleSendMessage(lastUserMessage.content);
-    } else {
-      toast({
-        title: "No previous message",
-        description: "There is no previous message to retry.",
-      });
-    }
+  const handleQuestionClick = (question: string) => {
+    handleSuggestedQuestionClick(question, userName);
+  };
+
+  const handleRetry = () => {
+    handleRetryLastMessage(userName);
   };
 
   return (
     <div className="flex h-[calc(100vh-4rem)] flex-col gap-4 p-4">
-      <div className="flex flex-wrap items-center gap-2">
-        <Button
-          variant={chatMode === "text" ? "default" : "outline"}
-          onClick={() => setChatMode("text")}
-        >
-          <MessageSquare className="mr-2" />
-          Text Chat
-        </Button>
-        <Button
-          variant={chatMode === "avatar" ? "default" : "outline"}
-          onClick={() => setChatMode("avatar")}
-        >
-          <Video className="mr-2" />
-          Avatar Chat
-        </Button>
-        <div className="ml-auto flex items-center gap-2">
-          {isLoading ? null : (
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={handleRetryLastMessage}
-              disabled={messages.length === 0}
-              title="Retry last question"
-            >
-              <RefreshCcw className="h-4 w-4 mr-2" />
-              Retry
-            </Button>
-          )}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={toggleUserNameInput}
-          >
-            <User className="mr-2 h-4 w-4" />
-            {userName ? userName : "Set Name"}
-          </Button>
-          {showUserNameInput && (
-            <div className="flex items-center gap-2">
-              <Input
-                value={userName}
-                onChange={(e) => setUserName(e.target.value)}
-                placeholder="Enter your name"
-                className="h-9 w-40"
-              />
-              <Button 
-                size="sm" 
-                variant="secondary"
-                onClick={() => setShowUserNameInput(false)}
-              >
-                Save
-              </Button>
-            </div>
-          )}
-        </div>
-      </div>
+      <ChatControls
+        chatMode={chatMode}
+        setChatMode={setChatMode}
+        userName={userName}
+        setUserName={setUserName}
+        isLoading={isLoading}
+        messagesExist={messages.length > 0}
+        onRetry={handleRetry}
+      />
+      
       <div className="flex-1 space-y-4 overflow-y-auto rounded-lg bg-background p-4 shadow-sm">
         {chatMode === "text" ? (
-          <>
-            {messages.length === 0 && (
-              <div className="flex h-full items-center justify-center">
-                <div className="text-center opacity-70">
-                  <p className="mb-4 text-xl font-semibold">Welcome to the Financial Assistant</p>
-                  <p className="mb-2">Ask me anything about:</p>
-                  <ul className="list-disc text-left max-w-md mx-auto space-y-2">
-                    <li>Investment strategies</li>
-                    <li>Market analysis</li>
-                    <li>Portfolio performance</li>
-                    <li>Financial planning</li>
-                  </ul>
-                </div>
-              </div>
-            )}
-            {messages.map((message) => (
-              <ChatMessage 
-                key={message.id} 
-                message={message} 
-                onQuestionClick={handleSuggestedQuestionClick}
-              />
-            ))}
-            <div ref={messagesEndRef} />
-          </>
+          <ChatMessagesArea
+            messages={messages}
+            onQuestionClick={handleQuestionClick}
+          />
         ) : (
-          <VideoAvatar onMessageReceived={handleAvatarMessage} />
+          <AvatarChatHandler onMessageReceived={handleAvatarMessage} />
         )}
       </div>
+      
       {chatMode === "text" && (
         <div className="w-full">
-          <ChatInput onSend={handleSendMessage} disabled={isLoading} />
+          <ChatInput onSend={handleMessageSend} disabled={isLoading} />
         </div>
       )}
     </div>
