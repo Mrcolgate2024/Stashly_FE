@@ -2,13 +2,9 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MessageSquare, RefreshCcw, User, Video } from "lucide-react";
-
-type ChatMode = "text" | "avatar";
+import { RefreshCcw, User } from "lucide-react";
 
 interface ChatControlsProps {
-  chatMode: ChatMode;
-  setChatMode: (mode: ChatMode) => void;
   userName: string;
   setUserName: (name: string) => void;
   isLoading: boolean;
@@ -17,8 +13,6 @@ interface ChatControlsProps {
 }
 
 export const ChatControls = ({
-  chatMode,
-  setChatMode,
   userName,
   setUserName,
   isLoading,
@@ -33,20 +27,6 @@ export const ChatControls = ({
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <Button
-        variant={chatMode === "text" ? "default" : "outline"}
-        onClick={() => setChatMode("text")}
-      >
-        <MessageSquare className="mr-2" />
-        Text Chat
-      </Button>
-      <Button
-        variant={chatMode === "avatar" ? "default" : "outline"}
-        onClick={() => setChatMode("avatar")}
-      >
-        <Video className="mr-2" />
-        Avatar Chat
-      </Button>
       <div className="ml-auto flex items-center gap-2">
         {isLoading ? null : (
           <Button 

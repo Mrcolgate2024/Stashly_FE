@@ -4,12 +4,9 @@ import { useChat } from "@/hooks/useChat";
 import { ChatInput } from "./ChatInput";
 import { ChatControls } from "./ChatControls";
 import { ChatMessagesArea } from "./ChatMessagesArea";
-import { AvatarChatHandler } from "./AvatarChatHandler";
-
-type ChatMode = "text" | "avatar";
+import { SimliAvatar } from "./SimliAvatar";
 
 export const Chat = () => {
-  const [chatMode, setChatMode] = useState<ChatMode>("text");
   const [userName, setUserName] = useState("");
   
   const {
@@ -40,8 +37,6 @@ export const Chat = () => {
   return (
     <div className="flex h-[calc(100vh-4rem)] flex-col gap-4 p-4">
       <ChatControls
-        chatMode={chatMode}
-        setChatMode={setChatMode}
         userName={userName}
         setUserName={setUserName}
         isLoading={isLoading}
@@ -56,13 +51,16 @@ export const Chat = () => {
         />
       </div>
       
-      {chatMode === "text" ? (
-        <div className="w-full">
-          <ChatInput onSend={handleMessageSend} disabled={isLoading} />
-        </div>
-      ) : (
-        <AvatarChatHandler onMessageReceived={handleAvatarMessage} />
-      )}
+      <div className="w-full">
+        <ChatInput onSend={handleMessageSend} disabled={isLoading} />
+      </div>
+
+      {/* Simli avatar always visible */}
+      <SimliAvatar 
+        onMessageReceived={handleAvatarMessage}
+        token="gAAAAABnzdaSAK9eo1dXkjVPB4_sVJG_nvq_ThvMivYcfoVrYJOusk52PhgOtaEvqhmFbXbkJp9W06_DP4NWnN7v_TWO7dGKmi92oeC1aMmIHky98JNaYF4fBMn-6JqaEy_act99q0g46P7C571b2Sa9oA9NuqS6qi0OhQx1zKG67JsKtGj0ECL5Xj_KksIeXjvnUMcDeiDQEE1mBQAA6yO_yRV1l--P4WJSrLMQffvMdwGS6i36EH184LHY-ZWo-spsrVhZaY-e2jQukFkS__Ydv2XPz5DnIdp6K92KC3qFVsIDUltHEeTVKwGklz67_AkQwkHClFDYHseeM301guXCvGxk0F7icSHFyAaryiKyfBsIirJ5UR8-rbBf-XSrgspGqwMG6ue6ZiLJYoCQ2qPNIzLKgMFyOQ=="
+        agentId="1a996620-2dff-4464-8aae-866a6121876b"
+      />
     </div>
   );
 };
