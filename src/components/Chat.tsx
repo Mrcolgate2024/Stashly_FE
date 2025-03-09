@@ -50,20 +50,18 @@ export const Chat = () => {
       />
       
       <div className="flex-1 space-y-4 overflow-y-auto rounded-lg bg-background p-4 shadow-sm">
-        {chatMode === "text" ? (
-          <ChatMessagesArea
-            messages={messages}
-            onQuestionClick={handleQuestionClick}
-          />
-        ) : (
-          <AvatarChatHandler onMessageReceived={handleAvatarMessage} />
-        )}
+        <ChatMessagesArea
+          messages={messages}
+          onQuestionClick={handleQuestionClick}
+        />
       </div>
       
-      {chatMode === "text" && (
+      {chatMode === "text" ? (
         <div className="w-full">
           <ChatInput onSend={handleMessageSend} disabled={isLoading} />
         </div>
+      ) : (
+        <AvatarChatHandler onMessageReceived={handleAvatarMessage} />
       )}
     </div>
   );

@@ -30,7 +30,7 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
       const simliWidget = document.createElement('simli-widget');
       simliWidget.setAttribute('token', token);
       simliWidget.setAttribute('agentid', agentId);
-      simliWidget.setAttribute('position', 'center');
+      simliWidget.setAttribute('position', 'right'); // Change position to right
       
       // Clear any existing content and append the widget
       containerRef.current.innerHTML = '';
@@ -44,7 +44,7 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
   }, [token, agentId, onMessageReceived]);
 
   return (
-    <div className="w-full h-full flex items-center justify-center" ref={containerRef}>
+    <div className="fixed bottom-4 right-4" ref={containerRef}>
       {/* Simli widget will be inserted here */}
     </div>
   );
