@@ -20,10 +20,9 @@ export const Chat = () => {
     handleRetryLastMessage
   } = useChat();
 
-  const handleAvatarMessage = (response: string) => {
-    // This function handles responses from the avatar interface
-    const { handleSendMessage: originalHandleSendMessage } = useChat();
-    originalHandleSendMessage(response);
+  const handleAvatarMessage = (message: string) => {
+    // When we receive a message from the avatar, send it to the chat
+    handleSendMessage(message, userName);
   };
 
   const handleMessageSend = (content: string) => {
