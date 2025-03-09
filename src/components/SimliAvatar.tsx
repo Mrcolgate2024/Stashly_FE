@@ -5,14 +5,17 @@ interface SimliAvatarProps {
   onMessageReceived: (message: string) => void;
   token: string;
   agentId: string;
+  customText?: string;
 }
 
 export const SimliAvatar: React.FC<SimliAvatarProps> = ({
   onMessageReceived,
   token,
   agentId,
+  customText = "Chat with me",
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const customImageUrl = "/lovable-uploads/750febca-8890-4420-820f-3d8c0d4d610e.png";
 
   useEffect(() => {
     // Create a custom event listener for Simli messages
@@ -31,6 +34,8 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
       simliWidget.setAttribute('token', token);
       simliWidget.setAttribute('agentid', agentId);
       simliWidget.setAttribute('position', 'right'); // Position to right
+      simliWidget.setAttribute('customimage', customImageUrl); // Set custom image
+      simliWidget.setAttribute('customtext', customText); // Set custom text
       
       // Clear any existing content and append the widget
       containerRef.current.innerHTML = '';
@@ -41,7 +46,7 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
     return () => {
       window.removeEventListener('simli:message' as any, handleSimliMessage as EventListener);
     };
-  }, [token, agentId, onMessageReceived]);
+  }, [token, agentId, onMessageReceived, customText]);
 
   return (
     <div className="fixed bottom-4 right-4" ref={containerRef}>
