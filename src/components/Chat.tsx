@@ -44,7 +44,7 @@ export const Chat = () => {
         onRetry={handleRetry}
       />
       
-      <div className="flex-1 space-y-4 overflow-y-auto rounded-lg bg-background p-4 shadow-sm">
+      <div className="flex-1 space-y-4 overflow-y-auto rounded-lg bg-white/80 backdrop-blur-sm p-4 shadow-md">
         <ChatMessagesArea
           messages={messages}
           onQuestionClick={handleQuestionClick}
