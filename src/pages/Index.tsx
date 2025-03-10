@@ -6,7 +6,7 @@ const Index = () => {
     <div 
       className="min-h-screen w-full bg-cover bg-center"
       style={{ 
-        backgroundImage: "url('/lovable-uploads/750febca-8890-4420-820f-3d8c0d4d610e.png')",
+        backgroundImage: "url('/lovable-uploads/764376fe-62be-4bfa-88e6-158932a49662.png')",
         backgroundSize: "cover", 
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat"
