@@ -49,7 +49,7 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
   }, [token, agentId, onMessageReceived, customText]);
 
   return (
-    <div className="fixed bottom-40 right-4" ref={containerRef}>
+    <div className="fixed bottom-60 right-4" ref={containerRef}>
       {/* Simli widget will be inserted here */}
     </div>
   );
