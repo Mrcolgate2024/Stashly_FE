@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 interface SimliAvatarProps {
   onMessageReceived?: (message: string) => void;
@@ -21,6 +21,7 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const simliInitializedRef = useRef<boolean>(false);
+  const [isActive, setIsActive] = useState<boolean>(false);
 
   useEffect(() => {
     // Only initialize once we have the container ref
@@ -44,11 +45,15 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
       script.type = "text/javascript";
       document.body.appendChild(script);
       
-      // Give the script a moment to load before initializing the widget
-      script.onload = initializeWidget;
+      // Wait a bit longer for the script to fully initialize
+      setTimeout(() => {
+        initializeWidget();
+      }, 500);
     } else {
-      // Script is already loaded, initialize widget immediately
-      initializeWidget();
+      // Script is already loaded, initialize widget with a slight delay
+      setTimeout(() => {
+        initializeWidget();
+      }, 100);
     }
 
     function initializeWidget() {
@@ -57,22 +62,12 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
       // Clear any existing content
       containerRef.current.innerHTML = '';
       
-      // Create the widget element
-      const simliWidget = document.createElement('simli-widget');
-      simliWidget.setAttribute('token', token);
-      simliWidget.setAttribute('agentid', agentId);
-      simliWidget.setAttribute('position', position);
-      
-      if (customImage) {
-        simliWidget.setAttribute('customimage', customImage);
-      }
-      
-      if (customText) {
-        simliWidget.setAttribute('customtext', customText);
-      }
+      // Create the widget element manually to ensure proper attributes
+      const simliWidget = document.createElement('div');
+      simliWidget.innerHTML = `<simli-widget token="${token}" agentid="${agentId}" position="${position}" ${customImage ? `customimage="${customImage}"` : ''} ${customText ? `customtext="${customText}"` : ''}></simli-widget>`;
       
       // Append the widget to the container
-      containerRef.current.appendChild(simliWidget);
+      containerRef.current.appendChild(simliWidget.firstChild as Node);
       simliInitializedRef.current = true;
       
       console.log(`Simli widget initialized for agent: ${agentId}`);
@@ -82,14 +77,20 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
     return () => {
       if (containerRef.current) {
         // Clean up any event listeners or widgets
-        containerRef.current.innerHTML = '';
-        simliInitializedRef.current = false;
+        try {
+          containerRef.current.innerHTML = '';
+          simliInitializedRef.current = false;
+        } catch (error) {
+          console.error("Error during cleanup:", error);
+        }
       }
     };
   }, [token, agentId, customText, customImage, position]);
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+    setIsActive(true);
+    
     console.log(`Avatar clicked: ${customText}`);
     
     // Delegate click to parent if provided
@@ -97,26 +98,50 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
       onClick();
     }
     
-    // Find the widget's play button and click it programmatically
-    // This is a fallback method if the widget doesn't automatically start
+    // Find and click the play button after a delay to ensure the widget is ready
     setTimeout(() => {
       if (containerRef.current) {
-        const playButton = containerRef.current.querySelector('.simli-play-button') as HTMLElement;
+        // Try multiple selectors that might be used by the Simli widget
+        let playButton = containerRef.current.querySelector('.simli-play-button') as HTMLElement;
+        
+        if (!playButton) {
+          // Try other possible selectors
+          playButton = containerRef.current.querySelector('button[aria-label="Start"]') as HTMLElement;
+        }
+        
+        if (!playButton) {
+          // Try finding any button within the widget
+          const allButtons = containerRef.current.querySelectorAll('button');
+          if (allButtons.length > 0) {
+            playButton = allButtons[0] as HTMLElement;
+          }
+        }
+        
         if (playButton) {
           console.log('Found play button, clicking it');
           playButton.click();
         } else {
-          console.log('No play button found');
+          // Try clicking directly on the simli-widget element
+          const widget = containerRef.current.querySelector('simli-widget') as HTMLElement;
+          if (widget) {
+            console.log('Clicking directly on the simli-widget element');
+            widget.click();
+          } else {
+            console.log('No play button or widget found');
+          }
         }
       }
-    }, 300);
+    }, 500);
   };
 
   return (
-    <div className="flex flex-col items-center" onClick={handleClick}>
+    <div 
+      className={`flex flex-col items-center transition-transform ${isActive ? 'scale-105' : ''}`} 
+      onClick={handleClick}
+    >
       {/* The avatar container */}
       <div 
-        className="z-10 cursor-pointer flex flex-col items-center" 
+        className="z-10 cursor-pointer flex flex-col items-center hover:brightness-110 transition-all" 
         ref={containerRef}
         style={{ minHeight: '60px', minWidth: '60px' }}
       >
@@ -125,7 +150,7 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
       
       {/* The title below the avatar */}
       {customText && (
-        <div className="text-xs font-medium mt-2 text-center text-[10px] cursor-pointer">
+        <div className="text-xs font-medium mt-2 text-center text-[10px] cursor-pointer hover:text-white transition-colors">
           {customText}
         </div>
       )}

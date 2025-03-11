@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useChat } from "@/hooks/useChat";
 import { ChatInput } from "./ChatInput";
 import { ChatControls } from "./ChatControls";
@@ -10,6 +10,7 @@ import { Logo } from "./Logo";
 export const Chat = () => {
   const [userName, setUserName] = useState("");
   const [activeAnalyst, setActiveAnalyst] = useState("financial");
+  const previousAnalystRef = useRef<string | null>(null);
   
   const {
     messages,
@@ -35,19 +36,32 @@ export const Chat = () => {
   const handleAnalystSelect = (analyst: string) => {
     console.log("Analyst selected:", analyst);
     
-    // Only change the active analyst if different from current
-    if (activeAnalyst !== analyst) {
-      setActiveAnalyst(analyst);
-      
-      // We don't send automatic messages here
-      // Let the Simli widget handle the interaction
+    // Reset previous analyst if it's different
+    if (previousAnalystRef.current && previousAnalystRef.current !== analyst) {
+      console.log(`Resetting previous analyst: ${previousAnalystRef.current}`);
     }
+    
+    // Update our active analyst
+    setActiveAnalyst(analyst);
+    previousAnalystRef.current = analyst;
   };
 
   // Reset any Simli widget state when component unmounts
   useEffect(() => {
+    // Listen for script loaded events
+    const handleScriptLoaded = () => {
+      console.log("Detected script loaded event, refreshing analysts");
+      // Force refresh
+      setActiveAnalyst(prev => {
+        if (prev === "financial") return "financial"; 
+        return "financial";
+      });
+    };
+    
+    document.addEventListener('simli-script-loaded', handleScriptLoaded);
+    
     return () => {
-      // Cleanup function for when component unmounts
+      document.removeEventListener('simli-script-loaded', handleScriptLoaded);
       console.log("Chat component unmounting, cleaning up");
     };
   }, []);
@@ -94,24 +108,28 @@ export const Chat = () => {
 
       <div className="fixed bottom-[80px] right-4 sm:bottom-10 sm:right-10 flex gap-8">
         <div 
-          className={`transition-opacity ${activeAnalyst === 'financial' ? 'opacity-100' : 'opacity-70 hover:opacity-90'}`}
+          className={`transition-all ${activeAnalyst === 'financial' ? 'opacity-100 scale-110' : 'opacity-70 hover:opacity-90'}`}
         >
           <SimliAvatar 
+            key={`financial-${Date.now()}`}
             token={analysts.financial.token}
             agentId={analysts.financial.agentId}
             customText={analysts.financial.customText}
             customImage={analysts.financial.customImage}
+            position="right"
             onClick={() => handleAnalystSelect('financial')}
           />
         </div>
         <div 
-          className={`transition-opacity ${activeAnalyst === 'market' ? 'opacity-100' : 'opacity-70 hover:opacity-90'}`}
+          className={`transition-all ${activeAnalyst === 'market' ? 'opacity-100 scale-110' : 'opacity-70 hover:opacity-90'}`}
         >
           <SimliAvatar 
+            key={`market-${Date.now()}`}
             token={analysts.market.token}
             agentId={analysts.market.agentId}
             customText={analysts.market.customText}
             customImage={analysts.market.customImage}
+            position="right"
             onClick={() => handleAnalystSelect('market')}
           />
         </div>
