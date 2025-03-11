@@ -1,159 +1,68 @@
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 
 interface SimliAvatarProps {
-  onMessageReceived?: (message: string) => void;
+  onMessageReceived: (message: string) => void;
   token: string;
   agentId: string;
   customText?: string;
-  customImage?: string;
-  position?: "left" | "right" | "relative";
-  onClick?: () => void;
 }
 
 export const SimliAvatar: React.FC<SimliAvatarProps> = ({
+  onMessageReceived,
   token,
   agentId,
-  customText,
-  customImage,
-  position = "relative",
-  onClick
+  customText = "Financial Analyst",
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const simliInitializedRef = useRef<boolean>(false);
-  const [isActive, setIsActive] = useState<boolean>(false);
+  const customImageUrl = "/lovable-uploads/c54ad77b-c6fd-43b7-8063-5803ecec8c64.png";
 
   useEffect(() => {
-    // Only initialize once we have the container ref
-    if (!containerRef.current) return;
-
-    // We need to re-initialize when token or agentId changes
-    if (simliInitializedRef.current) {
-      // Clear out existing widget for re-initialization
-      if (containerRef.current) {
-        containerRef.current.innerHTML = '';
-        simliInitializedRef.current = false;
+    // Create a custom event listener for Simli messages
+    const handleSimliMessage = (event: CustomEvent) => {
+      if (event.detail && event.detail.message) {
+        onMessageReceived(event.detail.message);
       }
-    }
+    };
+
+    // Add custom event listener for Simli messages
+    window.addEventListener('simli:message' as any, handleSimliMessage as EventListener);
 
     // Add the Simli script if it's not already present
-    const scriptSrc = "https://app.simli.com/simli-widget/index.js";
-    if (!document.querySelector(`script[src="${scriptSrc}"]`)) {
+    if (!document.querySelector('script[src="https://app.simli.com/simli-widget/index.js"]')) {
       const script = document.createElement('script');
-      script.src = scriptSrc;
+      script.src = "https://app.simli.com/simli-widget/index.js";
       script.async = true;
       script.type = "text/javascript";
       document.body.appendChild(script);
-      
-      // Wait a bit longer for the script to fully initialize
-      setTimeout(() => {
-        initializeWidget();
-      }, 500);
-    } else {
-      // Script is already loaded, initialize widget with a slight delay
-      setTimeout(() => {
-        initializeWidget();
-      }, 100);
     }
 
-    function initializeWidget() {
-      if (!containerRef.current || simliInitializedRef.current) return;
-      
+    // Create and append the Simli widget to our container
+    if (containerRef.current) {
       // Clear any existing content
       containerRef.current.innerHTML = '';
       
-      // Create the widget element manually to ensure proper attributes
-      const simliWidget = document.createElement('div');
-      simliWidget.innerHTML = `<simli-widget token="${token}" agentid="${agentId}" position="${position}" ${customImage ? `customimage="${customImage}"` : ''} ${customText ? `customtext="${customText}"` : ''}></simli-widget>`;
+      // Create the widget element
+      const simliWidget = document.createElement('simli-widget');
+      simliWidget.setAttribute('token', token);
+      simliWidget.setAttribute('agentid', agentId);
+      simliWidget.setAttribute('position', 'relative');
+      simliWidget.setAttribute('customimage', customImageUrl);
+      simliWidget.setAttribute('customtext', customText);
       
       // Append the widget to the container
-      containerRef.current.appendChild(simliWidget.firstChild as Node);
-      simliInitializedRef.current = true;
-      
-      console.log(`Simli widget initialized for agent: ${agentId}`);
+      containerRef.current.appendChild(simliWidget);
     }
 
-    // Cleanup on unmount
+    // Cleanup function
     return () => {
-      if (containerRef.current) {
-        // Clean up any event listeners or widgets
-        try {
-          containerRef.current.innerHTML = '';
-          simliInitializedRef.current = false;
-        } catch (error) {
-          console.error("Error during cleanup:", error);
-        }
-      }
+      window.removeEventListener('simli:message' as any, handleSimliMessage as EventListener);
     };
-  }, [token, agentId, customText, customImage, position]);
-
-  const handleClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsActive(true);
-    
-    console.log(`Avatar clicked: ${customText}`);
-    
-    // Delegate click to parent if provided
-    if (onClick) {
-      onClick();
-    }
-    
-    // Find and click the play button after a delay to ensure the widget is ready
-    setTimeout(() => {
-      if (containerRef.current) {
-        // Try multiple selectors that might be used by the Simli widget
-        let playButton = containerRef.current.querySelector('.simli-play-button') as HTMLElement;
-        
-        if (!playButton) {
-          // Try other possible selectors
-          playButton = containerRef.current.querySelector('button[aria-label="Start"]') as HTMLElement;
-        }
-        
-        if (!playButton) {
-          // Try finding any button within the widget
-          const allButtons = containerRef.current.querySelectorAll('button');
-          if (allButtons.length > 0) {
-            playButton = allButtons[0] as HTMLElement;
-          }
-        }
-        
-        if (playButton) {
-          console.log('Found play button, clicking it');
-          playButton.click();
-        } else {
-          // Try clicking directly on the simli-widget element
-          const widget = containerRef.current.querySelector('simli-widget') as HTMLElement;
-          if (widget) {
-            console.log('Clicking directly on the simli-widget element');
-            widget.click();
-          } else {
-            console.log('No play button or widget found');
-          }
-        }
-      }
-    }, 500);
-  };
+  }, [token, agentId, onMessageReceived, customText]);
 
   return (
-    <div 
-      className={`flex flex-col items-center transition-transform ${isActive ? 'scale-105' : ''}`} 
-      onClick={handleClick}
-    >
-      {/* The avatar container */}
-      <div 
-        className="z-10 cursor-pointer flex flex-col items-center hover:brightness-110 transition-all" 
-        ref={containerRef}
-        style={{ minHeight: '60px', minWidth: '60px' }}
-      >
-        {/* Simli widget will be inserted here programmatically */}
-      </div>
-      
-      {/* The title below the avatar */}
-      {customText && (
-        <div className="text-xs font-medium mt-2 text-center text-[10px] cursor-pointer hover:text-white transition-colors">
-          {customText}
-        </div>
-      )}
+    <div className="fixed bottom-[80px] right-4 sm:bottom-10 sm:right-10 z-10" ref={containerRef}>
+      {/* Simli widget will be inserted here programmatically */}
     </div>
   );
 };

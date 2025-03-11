@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { useChat } from "@/hooks/useChat";
 import { ChatInput } from "./ChatInput";
 import { ChatControls } from "./ChatControls";
@@ -9,8 +9,6 @@ import { Logo } from "./Logo";
 
 export const Chat = () => {
   const [userName, setUserName] = useState("");
-  const [activeAnalyst, setActiveAnalyst] = useState("financial");
-  const previousAnalystRef = useRef<string | null>(null);
   
   const {
     messages,
@@ -20,6 +18,11 @@ export const Chat = () => {
     handleRetryLastMessage,
     clearMessages
   } = useChat();
+
+  const handleAvatarMessage = (message: string) => {
+    // When we receive a message from the avatar, send it to the chat
+    handleSendMessage(message, userName);
+  };
 
   const handleMessageSend = (content: string) => {
     handleSendMessage(content, userName);
@@ -31,54 +34,6 @@ export const Chat = () => {
 
   const handleRetry = () => {
     handleRetryLastMessage(userName);
-  };
-
-  const handleAnalystSelect = (analyst: string) => {
-    console.log("Analyst selected:", analyst);
-    
-    // Reset previous analyst if it's different
-    if (previousAnalystRef.current && previousAnalystRef.current !== analyst) {
-      console.log(`Resetting previous analyst: ${previousAnalystRef.current}`);
-    }
-    
-    // Update our active analyst
-    setActiveAnalyst(analyst);
-    previousAnalystRef.current = analyst;
-  };
-
-  // Reset any Simli widget state when component unmounts
-  useEffect(() => {
-    // Listen for script loaded events
-    const handleScriptLoaded = () => {
-      console.log("Detected script loaded event, refreshing analysts");
-      // Force refresh
-      setActiveAnalyst(prev => {
-        if (prev === "financial") return "financial"; 
-        return "financial";
-      });
-    };
-    
-    document.addEventListener('simli-script-loaded', handleScriptLoaded);
-    
-    return () => {
-      document.removeEventListener('simli-script-loaded', handleScriptLoaded);
-      console.log("Chat component unmounting, cleaning up");
-    };
-  }, []);
-
-  const analysts = {
-    financial: {
-      token: "gAAAAABnzdaSAK9eo1dXkjVPB4_sVJG_nvq_ThvMivYcfoVrYJOusk52PhgOtaEvqhmFbXbkJp9W06_DP4NWnN7v_TWO7dGKmi92oeC1aMmIHky98JNaYF4fBMn-6JqaEy_act99q0g46P7C571b2Sa9oA9NuqS6qi0OhQx1zKG67JsKtGj0ECL5Xj_KksIeXjvnUMcDeiDQEE1mBQAA6yO_yRV1l--P4WJSrLMQffvMdwGS6i36EH184LHY-ZWo-spsrVhZaY-e2jQukFkS__Ydv2XPz5DnIdp6K92KC3qFVsIDUltHEeTVKwGklz67_AkQwkHClFDYHseeM301guXCvGxk0F7icSHFyAaryiKyfBsIirJ5UR8-rbBf-XSrgspGqwMG6ue6ZiLJYoCQ2qPNIzLKgMFyOQ==",
-      agentId: "b36e9ae6-5a88-4235-9e7a-eab88fd52d7b",
-      customText: "Financial Analyst",
-      customImage: "/lovable-uploads/c54ad77b-c6fd-43b7-8063-5803ecec8c64.png",
-    },
-    market: {
-      token: "gAAAAABnzdaSAK9eo1dXkjVPB4_sVJG_nvq_ThvMivYcfoVrYJOusk52PhgOtaEvqhmFbXbkJp9W06_DP4NWnN7v_TWO7dGKmi92oeC1aMmIHky98JNaYF4fBMn-6JqaEy_act99q0g46P7C571b2Sa9oA9NuqS6qi0OhQx1zKG67JsKtGj0ECL5Xj_KksIeXjvnUMcDeiDQEE1mBQAA6yO_yRV1l--P4WJSrLMQffvMdwGS6i36EH184LHY-ZWo-spsrVhZaY-e2jQukFkS__Ydv2XPz5DnIdp6K92KC3qFVsIDUltHEeTVKwGklz67_AkQwkHClFDYHseeM301guXCvGxk0F7icSHFyAaryiKyfBsIirJ5UR8-rbBf-XSrgspGqwMG6ue6ZiLJYoCQ2qPNIzLKgMFyOQ==",
-      agentId: "a730e183-fc16-48d2-9d25-42d64b1a238a",
-      customText: "Market Analyst",
-      customImage: "/lovable-uploads/23035374-c781-4ada-b7fa-a716c19a244f.png",
-    }
   };
 
   return (
@@ -106,34 +61,13 @@ export const Chat = () => {
         <ChatInput onSend={handleMessageSend} disabled={isLoading} />
       </div>
 
-      <div className="fixed bottom-[80px] right-4 sm:bottom-10 sm:right-10 flex gap-8">
-        <div 
-          className={`transition-all ${activeAnalyst === 'financial' ? 'opacity-100 scale-110' : 'opacity-70 hover:opacity-90'}`}
-        >
-          <SimliAvatar 
-            key={`financial-${Date.now()}`}
-            token={analysts.financial.token}
-            agentId={analysts.financial.agentId}
-            customText={analysts.financial.customText}
-            customImage={analysts.financial.customImage}
-            position="right"
-            onClick={() => handleAnalystSelect('financial')}
-          />
-        </div>
-        <div 
-          className={`transition-all ${activeAnalyst === 'market' ? 'opacity-100 scale-110' : 'opacity-70 hover:opacity-90'}`}
-        >
-          <SimliAvatar 
-            key={`market-${Date.now()}`}
-            token={analysts.market.token}
-            agentId={analysts.market.agentId}
-            customText={analysts.market.customText}
-            customImage={analysts.market.customImage}
-            position="right"
-            onClick={() => handleAnalystSelect('market')}
-          />
-        </div>
-      </div>
+      {/* Simli avatar with adjusted positioning for mobile */}
+      <SimliAvatar 
+        onMessageReceived={handleAvatarMessage}
+        token="gAAAAABnzdaSAK9eo1dXkjVPB4_sVJG_nvq_ThvMivYcfoVrYJOusk52PhgOtaEvqhmFbXbkJp9W06_DP4NWnN7v_TWO7dGKmi92oeC1aMmIHky98JNaYF4fBMn-6JqaEy_act99q0g46P7C571b2Sa9oA9NuqS6qi0OhQx1zKG67JsKtGj0ECL5Xj_KksIeXjvnUMcDeiDQEE1mBQAA6yO_yRV1l--P4WJSrLMQffvMdwGS6i36EH184LHY-ZWo-spsrVhZaY-e2jQukFkS__Ydv2XPz5DnIdp6K92KC3qFVsIDUltHEeTVKwGklz67_AkQwkHClFDYHseeM301guXCvGxk0F7icSHFyAaryiKyfBsIirJ5UR8-rbBf-XSrgspGqwMG6ue6ZiLJYoCQ2qPNIzLKgMFyOQ=="
+        agentId="b36e9ae6-5a88-4235-9e7a-eab88fd52d7b"
+        customText="Financial Analyst"
+      />
     </div>
   );
 };
