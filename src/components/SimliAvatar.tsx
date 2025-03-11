@@ -4,6 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 
 interface SimliAvatarProps {
   onMessageReceived: (message: string) => void;
+  onAvatarReady?: () => void;
   token: string;
   agentId: string;
   customText?: string;
@@ -14,6 +15,7 @@ interface SimliAvatarProps {
 
 export const SimliAvatar: React.FC<SimliAvatarProps> = ({
   onMessageReceived,
+  onAvatarReady,
   token,
   agentId,
   customText = "Financial Analyst",
@@ -28,10 +30,16 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
   const initAttempts = useRef(0);
   const { toast } = useToast();
   const [isReady, setIsReady] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Add a click handler for the entire container
   const handleContainerClick = () => {
     console.log(`SimliAvatar container clicked for ${customText}`);
+    
+    if (isLoading) {
+      console.log(`${customText} avatar is still loading, please wait`);
+      return;
+    }
     
     // Force reinitialize on click if we're having issues
     if (!isReady && initAttempts.current > 2) {
@@ -43,8 +51,14 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
     // Try to find and click the avatar image
     const avatarElement = containerRef.current?.querySelector('.avatar__img');
     if (avatarElement && avatarElement instanceof HTMLElement) {
-      avatarElement.click();
-      console.log(`Clicked avatar element for ${customText} from container click`);
+      try {
+        avatarElement.click();
+        console.log(`Clicked avatar element for ${customText} from container click`);
+      } catch (error) {
+        console.error(`Error clicking avatar for ${customText}:`, error);
+        // If clicking fails, try to reinitialize
+        initializeSimliWidget(true);
+      }
     } else {
       // If we can't find the avatar element, try to reinitialize
       console.log(`Avatar element not found for ${customText}, attempting to reinitialize`);
@@ -53,39 +67,61 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
   };
 
   useEffect(() => {
+    let isMounted = true;
+    
     // Create a custom event listener for Simli messages
     const handleSimliMessage = (event: CustomEvent) => {
-      console.log("Simli message received:", event.detail);
+      if (!isMounted) return;
+      
+      console.log(`Simli message received for ${customText}:`, event.detail);
       if (event.detail && event.detail.message) {
         onMessageReceived(event.detail.message);
       }
     };
 
-    // Add custom event listener for Simli messages
+    // Add custom event listener for Simli messages with a unique name
+    const eventName = `simli:message:${agentId}` as any;
+    window.addEventListener(eventName, handleSimliMessage as EventListener);
     window.addEventListener('simli:message' as any, handleSimliMessage as EventListener);
     
     // Attempt to initialize Simli with a delay to ensure script is loaded
-    setTimeout(() => {
-      ensureSimliScriptLoaded();
+    const initTimeout = setTimeout(() => {
+      if (isMounted) {
+        ensureSimliScriptLoaded();
+      }
     }, 1000);
 
     // Further attempts with increasing delays
     const initTimers = [
-      setTimeout(() => { if (!isReady) ensureSimliScriptLoaded(); }, 3000),
-      setTimeout(() => { if (!isReady) ensureSimliScriptLoaded(); }, 6000),
-      setTimeout(() => { if (!isReady) ensureSimliScriptLoaded(); }, 10000)
+      setTimeout(() => { if (isMounted && !isReady) ensureSimliScriptLoaded(); }, 3000),
+      setTimeout(() => { if (isMounted && !isReady) ensureSimliScriptLoaded(); }, 6000)
     ];
 
-    // Cleanup function
+    // Cleanup function - IMPORTANT to prevent errors when component unmounts
     return () => {
+      isMounted = false;
+      window.removeEventListener(eventName, handleSimliMessage as EventListener);
       window.removeEventListener('simli:message' as any, handleSimliMessage as EventListener);
+      clearTimeout(initTimeout);
       initTimers.forEach(timer => clearTimeout(timer));
-      console.info(`SimliAvatar component for ${customText} unmounting, cleaning up`);
+      
+      // Safely clean up any Simli widgets to prevent DOM errors
+      try {
+        if (containerRef.current) {
+          // Do not directly manipulate DOM when unmounting, just clear our refs
+          containerRef.current.innerHTML = '';
+        }
+      } catch (error) {
+        console.error(`Error cleaning up SimliAvatar for ${customText}:`, error);
+      }
+      
+      console.info(`SimliAvatar component for ${customText} unmounting, cleaned up`);
     };
-  }, [token, agentId, onMessageReceived, customText, position, imageUrl, isReady]);
+  }, [token, agentId, onMessageReceived, customText, position, imageUrl, isReady, onAvatarReady]);
 
   const ensureSimliScriptLoaded = () => {
     initAttempts.current += 1;
+    setIsLoading(true);
     
     // Check if the custom element is defined
     if (window.customElements && window.customElements.get('simli-widget')) {
@@ -112,6 +148,7 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
       
       script.onerror = (error) => {
         console.error(`Error loading Simli script for ${customText}:`, error);
+        setIsLoading(false);
         toast({
           title: "Error",
           description: `Could not load avatar for ${customText}. Please refresh the page.`,
@@ -127,6 +164,7 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
           initializeSimliWidget();
         } else {
           console.log(`Simli widget still not defined for ${customText} after waiting`);
+          setIsLoading(false);
         }
       }, 1000);
     }
@@ -135,17 +173,19 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
   const initializeSimliWidget = (forceReinit = false) => {
     if (!containerRef.current) {
       console.log(`Container ref not available for ${customText}`);
+      setIsLoading(false);
       return;
     }
     
     // If we're already initialized and not forcing reinit, don't do it again
     if (simliInitialized.current && !forceReinit) {
       console.log(`Simli widget already initialized for ${customText}, skipping`);
+      setIsLoading(false);
       return;
     }
     
     try {
-      // Clear any existing content
+      // Safely clear any existing content
       containerRef.current.innerHTML = '';
       
       // Create the widget element
@@ -166,6 +206,12 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
       console.info(`Simli widget initialized for ${customText} (agent: ${agentId})`);
       simliInitialized.current = true;
       setIsReady(true);
+      setIsLoading(false);
+      
+      // Notify parent component that avatar is ready
+      if (onAvatarReady) {
+        onAvatarReady();
+      }
       
       // Show a toast when the widget is ready
       toast({
@@ -174,6 +220,7 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
       });
     } catch (error) {
       console.error(`Error initializing Simli widget for ${customText}:`, error);
+      setIsLoading(false);
       toast({
         title: "Error",
         description: `Could not initialize avatar for ${customText}. Please try again.`,
@@ -191,8 +238,12 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
     >
       {/* Simli widget will be inserted here programmatically */}
       {!isReady && (
-        <div className="w-16 h-16 rounded-full bg-gray-200 animate-pulse flex items-center justify-center text-xs text-gray-500">
-          Loading...
+        <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center text-xs text-gray-500">
+          {isLoading ? (
+            <div className="animate-pulse">Loading...</div>
+          ) : (
+            <div>Click to init</div>
+          )}
         </div>
       )}
     </div>
