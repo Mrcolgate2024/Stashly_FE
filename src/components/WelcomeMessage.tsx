@@ -6,10 +6,10 @@ export const WelcomeMessage = () => {
     <div className="flex h-full items-center justify-center">
       <div className="text-center opacity-70">
         <p className="mb-4 text-xl font-semibold">
-          Welcome to <span className="font-space-grotesk text-white font-bold"><span className="text-white">$</span>tashly</span>, your Financial Assistant
+          Welcome to <span className="font-space-grotesk font-bold">$tashly</span>, your Financial Assistant
         </p>
         <p className="mb-2">Ask me anything about:</p>
-        <ul className="list-none text-center mx-auto space-y-2">
+        <ul className="list-disc pl-6 mx-auto space-y-2 inline-block text-left">
           <li>Investment strategies</li>
           <li>Market analysis</li>
           <li>Portfolio performance</li>
