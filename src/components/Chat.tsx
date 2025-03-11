@@ -21,6 +21,7 @@ export const Chat = () => {
   } = useChat();
 
   const handleAvatarMessage = (message: string) => {
+    console.log("Avatar message received:", message);
     // When an avatar is clicked, clear existing messages and start a new conversation
     clearMessages();
     handleSendMessage(message, userName);
@@ -39,10 +40,18 @@ export const Chat = () => {
   };
 
   const handleAnalystSelect = (analyst: string) => {
-    if (analyst !== activeAnalyst) {
-      setActiveAnalyst(analyst);
-      clearMessages(); // Clear messages when switching analysts
-    }
+    console.log("Analyst selected:", analyst);
+    // Always set active analyst and clear messages
+    setActiveAnalyst(analyst);
+    clearMessages();
+    
+    // Generate an appropriate greeting based on which analyst was selected
+    const greeting = analyst === 'financial' 
+      ? `Hello, I'm the Financial Analyst. How can I help you today?` 
+      : `Hello, I'm the Market Analyst. How can I help you today?`;
+    
+    // Send the greeting to start the conversation
+    handleSendMessage(greeting, userName);
   };
 
   const analysts = {
@@ -87,7 +96,7 @@ export const Chat = () => {
 
       <div className="fixed bottom-[80px] right-4 sm:bottom-10 sm:right-10 flex gap-8">
         <div 
-          className={`cursor-pointer transition-opacity ${activeAnalyst === 'financial' ? 'opacity-100' : 'opacity-70 hover:opacity-90'}`} 
+          className={`transition-opacity ${activeAnalyst === 'financial' ? 'opacity-100' : 'opacity-70 hover:opacity-90'}`} 
           onClick={() => handleAnalystSelect('financial')}
         >
           <SimliAvatar 
@@ -99,7 +108,7 @@ export const Chat = () => {
           />
         </div>
         <div 
-          className={`cursor-pointer transition-opacity ${activeAnalyst === 'market' ? 'opacity-100' : 'opacity-70 hover:opacity-90'}`} 
+          className={`transition-opacity ${activeAnalyst === 'market' ? 'opacity-100' : 'opacity-70 hover:opacity-90'}`} 
           onClick={() => handleAnalystSelect('market')}
         >
           <SimliAvatar 

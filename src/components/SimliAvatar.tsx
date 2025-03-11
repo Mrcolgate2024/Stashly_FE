@@ -19,6 +19,7 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
   position = "relative"
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const simliInitializedRef = useRef<boolean>(false);
 
   useEffect(() => {
     // Create a custom event listener for Simli messages
@@ -32,20 +33,21 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
     window.addEventListener('simli:message' as any, handleSimliMessage as EventListener);
 
     // Add the Simli script if it's not already present
-    if (!document.querySelector('script[src="https://app.simli.com/simli-widget/index.js"]')) {
+    const scriptSrc = "https://app.simli.com/simli-widget/index.js";
+    if (!document.querySelector(`script[src="${scriptSrc}"]`)) {
       const script = document.createElement('script');
-      script.src = "https://app.simli.com/simli-widget/index.js";
+      script.src = scriptSrc;
       script.async = true;
       script.type = "text/javascript";
       document.body.appendChild(script);
     }
 
     // Create and append the Simli widget to our container
-    if (containerRef.current) {
+    if (containerRef.current && !simliInitializedRef.current) {
       // Clear any existing content
       containerRef.current.innerHTML = '';
       
-      // Create the widget element
+      // Create the widget element as per the format in the docs
       const simliWidget = document.createElement('simli-widget');
       simliWidget.setAttribute('token', token);
       simliWidget.setAttribute('agentid', agentId);
@@ -61,6 +63,7 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
       
       // Append the widget to the container
       containerRef.current.appendChild(simliWidget);
+      simliInitializedRef.current = true;
     }
 
     // Cleanup function
@@ -70,21 +73,36 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
   }, [token, agentId, onMessageReceived, customText, customImage, position]);
 
   // Handle click on the avatar to initiate a chat
-  const handleAvatarClick = () => {
+  const handleAvatarClick = (e: React.MouseEvent) => {
+    // Stop event propagation to prevent issues
+    e.stopPropagation();
+    
     // Generate a simple greeting message to start the conversation
     const greetingMessage = `Hello, I'm ${customText}. How can I help you today?`;
+    console.log("Avatar clicked, sending greeting:", greetingMessage);
     onMessageReceived(greetingMessage);
   };
 
   return (
-    <div 
-      className="z-10 flex flex-col items-center cursor-pointer" 
-      ref={containerRef}
-      onClick={handleAvatarClick}
-    >
-      {/* Simli widget will be inserted here programmatically */}
+    <div className="flex flex-col items-center">
+      {/* The avatar container that will be clicked */}
+      <div 
+        className="z-10 cursor-pointer flex flex-col items-center" 
+        ref={containerRef}
+        onClick={handleAvatarClick}
+        style={{ minHeight: '60px', minWidth: '60px' }}
+      >
+        {/* Simli widget will be inserted here programmatically */}
+      </div>
+      
+      {/* The title below the avatar */}
       {customText && (
-        <div className="text-xs font-medium mt-2 text-center text-[10px]">{customText}</div>
+        <div 
+          className="text-xs font-medium mt-2 text-center text-[10px] cursor-pointer" 
+          onClick={handleAvatarClick}
+        >
+          {customText}
+        </div>
       )}
     </div>
   );
