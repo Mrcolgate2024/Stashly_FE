@@ -70,10 +70,10 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
   }, [token, agentId, onMessageReceived, customText, customImage, position]);
 
   return (
-    <div className="z-10" ref={containerRef}>
+    <div className="z-10 flex flex-col items-center" ref={containerRef}>
       {/* Simli widget will be inserted here programmatically */}
       {customText && (
-        <div className="text-xs font-medium mt-1 text-center">{customText}</div>
+        <div className="text-xs font-medium mt-2 text-center text-[10px]">{customText}</div>
       )}
     </div>
   );

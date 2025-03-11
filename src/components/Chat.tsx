@@ -76,7 +76,7 @@ export const Chat = () => {
         <ChatInput onSend={handleMessageSend} disabled={isLoading} />
       </div>
 
-      <div className="fixed bottom-[80px] right-4 sm:bottom-10 sm:right-10 flex gap-4">
+      <div className="fixed bottom-[80px] right-4 sm:bottom-10 sm:right-10 flex gap-8">
         <div className="cursor-pointer" onClick={() => setActiveAnalyst('financial')}>
           <SimliAvatar 
             onMessageReceived={handleAvatarMessage}
