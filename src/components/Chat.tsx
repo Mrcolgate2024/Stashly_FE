@@ -36,8 +36,8 @@ export const Chat = () => {
   };
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] flex-col gap-4 p-4">
-      <div className="flex items-center justify-between">
+    <div className="flex h-[calc(100vh-4rem)] flex-col gap-4 p-4 relative">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <Logo />
         <ChatControls
           userName={userName}
@@ -48,18 +48,18 @@ export const Chat = () => {
         />
       </div>
       
-      <div className="flex-1 space-y-4 overflow-y-auto rounded-lg bg-white/80 backdrop-blur-sm p-4 shadow-md">
+      <div className="flex-1 space-y-4 overflow-y-auto rounded-lg bg-white/80 backdrop-blur-sm p-4 shadow-md mb-20 sm:mb-4">
         <ChatMessagesArea
           messages={messages}
           onQuestionClick={handleQuestionClick}
         />
       </div>
       
-      <div className="w-full mb-2">
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#1e2a38]/80 backdrop-blur-sm sm:static sm:bg-transparent sm:backdrop-blur-none">
         <ChatInput onSend={handleMessageSend} disabled={isLoading} />
       </div>
 
-      {/* Simli avatar with position relative */}
+      {/* Simli avatar with adjusted positioning for mobile */}
       <SimliAvatar 
         onMessageReceived={handleAvatarMessage}
         token="gAAAAABnzdaSAK9eo1dXkjVPB4_sVJG_nvq_ThvMivYcfoVrYJOusk52PhgOtaEvqhmFbXbkJp9W06_DP4NWnN7v_TWO7dGKmi92oeC1aMmIHky98JNaYF4fBMn-6JqaEy_act99q0g46P7C571b2Sa9oA9NuqS6qi0OhQx1zKG67JsKtGj0ECL5Xj_KksIeXjvnUMcDeiDQEE1mBQAA6yO_yRV1l--P4WJSrLMQffvMdwGS6i36EH184LHY-ZWo-spsrVhZaY-e2jQukFkS__Ydv2XPz5DnIdp6K92KC3qFVsIDUltHEeTVKwGklz67_AkQwkHClFDYHseeM301guXCvGxk0F7icSHFyAaryiKyfBsIirJ5UR8-rbBf-XSrgspGqwMG6ue6ZiLJYoCQ2qPNIzLKgMFyOQ=="
