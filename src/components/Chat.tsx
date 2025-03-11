@@ -6,11 +6,13 @@ import { ChatControls } from "./ChatControls";
 import { ChatMessagesArea } from "./ChatMessagesArea";
 import { SimliAvatar } from "./SimliAvatar";
 import { Logo } from "./Logo";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export const Chat = () => {
   const [userName, setUserName] = useState("");
   const [activeAnalyst, setActiveAnalyst] = useState("financial");
+  const [showSelector, setShowSelector] = useState(false);
   
   const {
     messages,
@@ -54,6 +56,11 @@ export const Chat = () => {
     }
   };
 
+  const toggleAnalyst = () => {
+    setActiveAnalyst(activeAnalyst === "financial" ? "market" : "financial");
+    setShowSelector(false);
+  };
+
   return (
     <div className="flex h-[calc(100vh-4rem)] flex-col gap-4 p-4 relative">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
@@ -68,18 +75,42 @@ export const Chat = () => {
         />
       </div>
       
-      <Tabs 
-        value={activeAnalyst} 
-        onValueChange={setActiveAnalyst}
-        className="w-full"
-      >
-        <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-4">
-          <TabsTrigger value="financial">Financial Analyst</TabsTrigger>
-          <TabsTrigger value="market">Market Analyst</TabsTrigger>
-        </TabsList>
-      </Tabs>
-      
       <div className="flex-1 space-y-4 overflow-y-auto rounded-lg bg-white/80 backdrop-blur-sm p-4 shadow-md mb-20 sm:mb-4">
+        <div className="mb-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="flex items-center justify-between w-full max-w-[240px] text-sm bg-white/90 shadow-sm"
+            onClick={() => setShowSelector(!showSelector)}
+          >
+            <span>Speaking with: {analysts[activeAnalyst as keyof typeof analysts].customText}</span>
+            {showSelector ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+          </Button>
+          
+          {showSelector && (
+            <div className="absolute mt-1 w-[240px] bg-white border rounded-md shadow-lg z-20 transition-all duration-200 ease-in-out">
+              <div 
+                className={`p-2 cursor-pointer hover:bg-gray-100 ${activeAnalyst === "financial" ? "bg-gray-50" : ""}`}
+                onClick={() => {
+                  setActiveAnalyst("financial");
+                  setShowSelector(false);
+                }}
+              >
+                Financial Analyst
+              </div>
+              <div 
+                className={`p-2 cursor-pointer hover:bg-gray-100 ${activeAnalyst === "market" ? "bg-gray-50" : ""}`}
+                onClick={() => {
+                  setActiveAnalyst("market");
+                  setShowSelector(false);
+                }}
+              >
+                Market Analyst
+              </div>
+            </div>
+          )}
+        </div>
+        
         <ChatMessagesArea
           messages={messages}
           onQuestionClick={handleQuestionClick}
