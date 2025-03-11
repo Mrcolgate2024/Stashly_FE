@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useChat } from "@/hooks/useChat";
 import { ChatInput } from "./ChatInput";
@@ -10,10 +9,7 @@ import { toast } from "@/hooks/use-toast";
 
 export const Chat = () => {
   const [userName, setUserName] = useState("");
-  const [selectedAnalyst, setSelectedAnalyst] = useState<string | null>(null);
-  const [simliScriptLoaded, setSimliScriptLoaded] = useState(false);
   const [avatarsReady, setAvatarsReady] = useState(0);
-  
   const {
     messages,
     isLoading,
@@ -23,71 +19,21 @@ export const Chat = () => {
     clearMessages
   } = useChat();
 
-  // Check if Simli script is loaded
-  useEffect(() => {
-    const checkScriptLoaded = () => {
-      if (window.customElements && window.customElements.get('simli-widget')) {
-        console.log("Simli custom element is defined, script is fully loaded");
-        setSimliScriptLoaded(true);
-        
-        // Notify user once the script is loaded
-        toast({
-          title: "Avatars Loading",
-          description: "Please wait while the analyst avatars are initializing. Click on either avatar when they appear.",
-        });
-      }
-    };
-
-    // Check immediately and then on an interval
-    checkScriptLoaded();
-    const checkInterval = setInterval(checkScriptLoaded, 2000);
-    
-    // If it doesn't load within 10 seconds, show a message
-    const timeoutId = setTimeout(() => {
-      if (!simliScriptLoaded) {
-        toast({
-          title: "Slow Loading",
-          description: "Avatar initialization is taking longer than expected. Please be patient or try refreshing the page.",
-        });
-      }
-    }, 10000);
-    
-    return () => {
-      clearInterval(checkInterval);
-      clearTimeout(timeoutId);
-    };
-  }, []);
-
-  // Track when an avatar notifies us it's ready
-  useEffect(() => {
-    if (avatarsReady === 2) {
-      toast({
-        title: "Both Analysts Ready",
-        description: "Click on either analyst avatar to start a conversation.",
-      });
-    }
-  }, [avatarsReady]);
-
   const handleAvatarMessage = (message: string) => {
-    console.log("Avatar message received:", message);
-    // When we receive a message from the avatar, send it to the chat
     handleSendMessage(message, userName);
   };
 
   const handleAvatarReady = () => {
-    setAvatarsReady(prev => prev + 1);
-  };
-
-  const handleMessageSend = (content: string) => {
-    handleSendMessage(content, userName);
-  };
-
-  const handleQuestionClick = (question: string) => {
-    handleSuggestedQuestionClick(question, userName);
-  };
-
-  const handleRetry = () => {
-    handleRetryLastMessage(userName);
+    setAvatarsReady(prev => {
+      const newCount = prev + 1;
+      if (newCount === 2) {
+        toast({
+          title: "Analysts Ready",
+          description: "Both analysts are now ready. Click on either to start a conversation.",
+        });
+      }
+      return newCount;
+    });
   };
 
   return (
@@ -99,7 +45,7 @@ export const Chat = () => {
           setUserName={setUserName}
           isLoading={isLoading}
           messagesExist={messages.length > 0}
-          onRetry={handleRetry}
+          onRetry={handleRetryLastMessage}
           onClear={clearMessages}
         />
       </div>
@@ -107,15 +53,17 @@ export const Chat = () => {
       <div className="flex-1 space-y-4 overflow-y-auto rounded-lg bg-white/80 backdrop-blur-sm p-4 shadow-md mb-20 sm:mb-4">
         <ChatMessagesArea
           messages={messages}
-          onQuestionClick={handleQuestionClick}
+          onQuestionClick={question => handleSuggestedQuestionClick(question, userName)}
         />
       </div>
       
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#1e2a38]/80 backdrop-blur-sm sm:static sm:bg-transparent sm:backdrop-blur-none">
-        <ChatInput onSend={handleMessageSend} disabled={isLoading} />
+        <ChatInput 
+          onSend={content => handleSendMessage(content, userName)} 
+          disabled={isLoading} 
+        />
       </div>
 
-      {/* Financial Analyst */}
       <SimliAvatar 
         onMessageReceived={handleAvatarMessage}
         onAvatarReady={handleAvatarReady}
@@ -126,7 +74,6 @@ export const Chat = () => {
         customClassName="fixed bottom-[80px] right-4 sm:bottom-10 sm:right-10 z-10 cursor-pointer hover:opacity-80 transition-opacity"
       />
 
-      {/* Market Analyst */}
       <SimliAvatar 
         onMessageReceived={handleAvatarMessage}
         onAvatarReady={handleAvatarReady}
