@@ -37,17 +37,16 @@ export const Chat = () => {
 
   return (
     <div className="flex h-[calc(100vh-4rem)] flex-col gap-4 p-4">
-      <div className="flex justify-start">
+      <div className="flex items-center justify-between">
         <Logo />
+        <ChatControls
+          userName={userName}
+          setUserName={setUserName}
+          isLoading={isLoading}
+          messagesExist={messages.length > 0}
+          onRetry={handleRetry}
+        />
       </div>
-      
-      <ChatControls
-        userName={userName}
-        setUserName={setUserName}
-        isLoading={isLoading}
-        messagesExist={messages.length > 0}
-        onRetry={handleRetry}
-      />
       
       <div className="flex-1 space-y-4 overflow-y-auto rounded-lg bg-white/80 backdrop-blur-sm p-4 shadow-md">
         <ChatMessagesArea
