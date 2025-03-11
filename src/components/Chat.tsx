@@ -5,6 +5,7 @@ import { ChatInput } from "./ChatInput";
 import { ChatControls } from "./ChatControls";
 import { ChatMessagesArea } from "./ChatMessagesArea";
 import { SimliAvatar } from "./SimliAvatar";
+import { Logo } from "./Logo";
 
 export const Chat = () => {
   const [userName, setUserName] = useState("");
@@ -36,6 +37,10 @@ export const Chat = () => {
 
   return (
     <div className="flex h-[calc(100vh-4rem)] flex-col gap-4 p-4">
+      <div className="flex justify-start">
+        <Logo />
+      </div>
+      
       <ChatControls
         userName={userName}
         setUserName={setUserName}

@@ -1,6 +1,5 @@
 
 import { Chat } from "@/components/Chat";
-import { Logo } from "@/components/Logo";
 
 const Index = () => {
   return (
@@ -13,7 +12,6 @@ const Index = () => {
         backgroundRepeat: "no-repeat"
       }}
     >
-      <Logo />
       <div className="mx-auto max-w-4xl backdrop-blur-sm bg-white/40 min-h-screen">
         <Chat />
       </div>
