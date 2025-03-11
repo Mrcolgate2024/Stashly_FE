@@ -72,6 +72,9 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
   return (
     <div className="z-10" ref={containerRef}>
       {/* Simli widget will be inserted here programmatically */}
+      {customText && (
+        <div className="text-xs font-medium mt-1 text-center">{customText}</div>
+      )}
     </div>
   );
 };
