@@ -15,6 +15,7 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
   customText = "Financial Analyst",
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const customImageUrl = "/lovable-uploads/c54ad77b-c6fd-43b7-8063-5803ecec8c64.png";
 
   useEffect(() => {
     // Create a custom event listener for Simli messages
@@ -36,21 +37,32 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
       document.body.appendChild(script);
     }
 
+    // Create and append the Simli widget to our container
+    if (containerRef.current) {
+      // Clear any existing content
+      containerRef.current.innerHTML = '';
+      
+      // Create the widget element
+      const simliWidget = document.createElement('simli-widget');
+      simliWidget.setAttribute('token', token);
+      simliWidget.setAttribute('agentid', agentId);
+      simliWidget.setAttribute('position', 'relative');
+      simliWidget.setAttribute('customimage', customImageUrl);
+      simliWidget.setAttribute('customtext', customText);
+      
+      // Append the widget to the container
+      containerRef.current.appendChild(simliWidget);
+    }
+
     // Cleanup function
     return () => {
       window.removeEventListener('simli:message' as any, handleSimliMessage as EventListener);
     };
-  }, [onMessageReceived]);
+  }, [token, agentId, onMessageReceived, customText]);
 
-  // Using inline HTML instead of programmatically creating the element
   return (
     <div className="fixed bottom-10 right-10 z-10" ref={containerRef}>
-      <simli-widget 
-        token={token} 
-        agentid={agentId} 
-        position="relative" 
-        customtext={customText}
-      ></simli-widget>
+      {/* Simli widget will be inserted here programmatically */}
     </div>
   );
 };
