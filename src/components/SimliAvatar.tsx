@@ -69,8 +69,19 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
     };
   }, [token, agentId, onMessageReceived, customText, customImage, position]);
 
+  // Handle click on the avatar to initiate a chat
+  const handleAvatarClick = () => {
+    // Generate a simple greeting message to start the conversation
+    const greetingMessage = `Hello, I'm ${customText}. How can I help you today?`;
+    onMessageReceived(greetingMessage);
+  };
+
   return (
-    <div className="z-10 flex flex-col items-center" ref={containerRef}>
+    <div 
+      className="z-10 flex flex-col items-center cursor-pointer" 
+      ref={containerRef}
+      onClick={handleAvatarClick}
+    >
       {/* Simli widget will be inserted here programmatically */}
       {customText && (
         <div className="text-xs font-medium mt-2 text-center text-[10px]">{customText}</div>

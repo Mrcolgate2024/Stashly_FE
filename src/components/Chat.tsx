@@ -21,6 +21,8 @@ export const Chat = () => {
   } = useChat();
 
   const handleAvatarMessage = (message: string) => {
+    // When an avatar is clicked, clear existing messages and start a new conversation
+    clearMessages();
     handleSendMessage(message, userName);
   };
 
@@ -34,6 +36,13 @@ export const Chat = () => {
 
   const handleRetry = () => {
     handleRetryLastMessage(userName);
+  };
+
+  const handleAnalystSelect = (analyst: string) => {
+    if (analyst !== activeAnalyst) {
+      setActiveAnalyst(analyst);
+      clearMessages(); // Clear messages when switching analysts
+    }
   };
 
   const analysts = {
@@ -77,7 +86,10 @@ export const Chat = () => {
       </div>
 
       <div className="fixed bottom-[80px] right-4 sm:bottom-10 sm:right-10 flex gap-8">
-        <div className="cursor-pointer" onClick={() => setActiveAnalyst('financial')}>
+        <div 
+          className={`cursor-pointer transition-opacity ${activeAnalyst === 'financial' ? 'opacity-100' : 'opacity-70 hover:opacity-90'}`} 
+          onClick={() => handleAnalystSelect('financial')}
+        >
           <SimliAvatar 
             onMessageReceived={handleAvatarMessage}
             token={analysts.financial.token}
@@ -86,7 +98,10 @@ export const Chat = () => {
             customImage={analysts.financial.customImage}
           />
         </div>
-        <div className="cursor-pointer" onClick={() => setActiveAnalyst('market')}>
+        <div 
+          className={`cursor-pointer transition-opacity ${activeAnalyst === 'market' ? 'opacity-100' : 'opacity-70 hover:opacity-90'}`} 
+          onClick={() => handleAnalystSelect('market')}
+        >
           <SimliAvatar 
             onMessageReceived={handleAvatarMessage}
             token={analysts.market.token}
