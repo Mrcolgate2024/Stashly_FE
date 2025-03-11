@@ -1,7 +1,20 @@
 
 import { Chat } from "@/components/Chat";
+import { useEffect } from "react";
 
 const Index = () => {
+  useEffect(() => {
+    // Ensure the Simli script is loaded
+    if (!document.querySelector('script[src="https://app.simli.com/simli-widget/index.js"]')) {
+      const script = document.createElement('script');
+      script.src = "https://app.simli.com/simli-widget/index.js";
+      script.async = true;
+      script.type = "text/javascript";
+      document.body.appendChild(script);
+      console.log("Simli script added to the page");
+    }
+  }, []);
+
   return (
     <>
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" />
