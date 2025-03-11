@@ -1,15 +1,17 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useChat } from "@/hooks/useChat";
 import { ChatInput } from "./ChatInput";
 import { ChatControls } from "./ChatControls";
 import { ChatMessagesArea } from "./ChatMessagesArea";
 import { SimliAvatar } from "./SimliAvatar";
 import { Logo } from "./Logo";
+import { toast } from "@/components/ui/use-toast";
 
 export const Chat = () => {
   const [userName, setUserName] = useState("");
   const [selectedAnalyst, setSelectedAnalyst] = useState<string | null>(null);
+  const [simliScriptLoaded, setSimliScriptLoaded] = useState(false);
   
   const {
     messages,
@@ -20,7 +22,27 @@ export const Chat = () => {
     clearMessages
   } = useChat();
 
+  // Check if Simli script is loaded
+  useEffect(() => {
+    const checkInterval = setInterval(() => {
+      if (window.customElements && window.customElements.get('simli-widget')) {
+        console.log("Simli custom element is defined, script is fully loaded");
+        setSimliScriptLoaded(true);
+        clearInterval(checkInterval);
+        
+        // Notify user once the script is loaded
+        toast({
+          title: "Avatars Ready",
+          description: "Click on either analyst avatar to start a conversation.",
+        });
+      }
+    }, 1000);
+    
+    return () => clearInterval(checkInterval);
+  }, []);
+
   const handleAvatarMessage = (message: string) => {
+    console.log("Avatar message received:", message);
     // When we receive a message from the avatar, send it to the chat
     handleSendMessage(message, userName);
   };
@@ -69,7 +91,7 @@ export const Chat = () => {
         agentId="b36e9ae6-5a88-4235-9e7a-eab88fd52d7b"
         customText="Financial Analyst"
         position="right"
-        customClassName="fixed bottom-[80px] right-4 sm:bottom-10 sm:right-10 z-10"
+        customClassName="fixed bottom-[80px] right-4 sm:bottom-10 sm:right-10 z-10 cursor-pointer"
       />
 
       {/* Market Analyst */}
@@ -79,7 +101,7 @@ export const Chat = () => {
         agentId="a730e183-fc16-48d2-9d25-42d64b1a238a"
         customText="Market Analyst"
         position="left"
-        customClassName="fixed bottom-[80px] left-4 sm:bottom-10 sm:left-10 z-10"
+        customClassName="fixed bottom-[80px] left-4 sm:bottom-10 sm:left-10 z-10 cursor-pointer"
       />
     </div>
   );

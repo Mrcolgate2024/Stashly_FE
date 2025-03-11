@@ -4,15 +4,43 @@ import { useEffect } from "react";
 
 const Index = () => {
   useEffect(() => {
-    // Ensure the Simli script is loaded
-    if (!document.querySelector('script[src="https://app.simli.com/simli-widget/index.js"]')) {
-      const script = document.createElement('script');
-      script.src = "https://app.simli.com/simli-widget/index.js";
-      script.async = true;
-      script.type = "text/javascript";
-      document.body.appendChild(script);
-      console.log("Simli script added to the page");
-    }
+    // Function to load Simli script
+    const loadSimliScript = () => {
+      if (!document.querySelector('script[src="https://app.simli.com/simli-widget/index.js"]')) {
+        console.log("Loading Simli script");
+        const script = document.createElement('script');
+        script.src = "https://app.simli.com/simli-widget/index.js";
+        script.async = true;
+        script.type = "text/javascript";
+        
+        script.onload = () => {
+          console.log("Simli script loaded successfully");
+        };
+        
+        script.onerror = (error) => {
+          console.error("Error loading Simli script:", error);
+        };
+        
+        document.body.appendChild(script);
+      } else {
+        console.log("Simli script already exists in the document");
+      }
+    };
+
+    // Load Simli script immediately
+    loadSimliScript();
+    
+    // Also check every 3 seconds if script is still there (some frameworks might remove it)
+    const intervalId = setInterval(() => {
+      if (!document.querySelector('script[src="https://app.simli.com/simli-widget/index.js"]')) {
+        console.log("Simli script was removed, reloading it");
+        loadSimliScript();
+      }
+    }, 3000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
   }, []);
 
   return (
