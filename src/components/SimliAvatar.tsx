@@ -15,7 +15,6 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
   customText = "Financial Analyst",
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const customImageUrl = "/lovable-uploads/2af87563-98f9-4538-9187-851b2bc1dc30.png";
 
   useEffect(() => {
     // Create a custom event listener for Simli messages
@@ -28,29 +27,30 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
     // Add custom event listener for Simli messages
     window.addEventListener('simli:message' as any, handleSimliMessage as EventListener);
 
-    // Create and append the Simli widget to our container
-    if (containerRef.current) {
-      const simliWidget = document.createElement('simli-widget');
-      simliWidget.setAttribute('token', token);
-      simliWidget.setAttribute('agentid', agentId);
-      simliWidget.setAttribute('position', 'right'); // Position to right
-      simliWidget.setAttribute('customimage', customImageUrl); // Set custom image
-      simliWidget.setAttribute('customtext', customText); // Set custom text
-      
-      // Clear any existing content and append the widget
-      containerRef.current.innerHTML = '';
-      containerRef.current.appendChild(simliWidget);
+    // Add the Simli script if it's not already present
+    if (!document.querySelector('script[src="https://app.simli.com/simli-widget/index.js"]')) {
+      const script = document.createElement('script');
+      script.src = "https://app.simli.com/simli-widget/index.js";
+      script.async = true;
+      script.type = "text/javascript";
+      document.body.appendChild(script);
     }
 
     // Cleanup function
     return () => {
       window.removeEventListener('simli:message' as any, handleSimliMessage as EventListener);
     };
-  }, [token, agentId, onMessageReceived, customText]);
+  }, [onMessageReceived]);
 
+  // Using inline HTML instead of programmatically creating the element
   return (
-    <div className="fixed bottom-4 right-4" ref={containerRef}>
-      {/* Simli widget will be inserted here */}
+    <div className="fixed bottom-10 right-10 z-10" ref={containerRef}>
+      <simli-widget 
+        token={token} 
+        agentid={agentId} 
+        position="relative" 
+        customtext={customText}
+      ></simli-widget>
     </div>
   );
 };
