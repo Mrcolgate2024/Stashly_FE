@@ -23,8 +23,11 @@ export function useChat() {
     setIsLoading(true);
 
     try {
+      // Check if this is a greeting message
+      const isGreeting = content.toLowerCase().match(/^(hi|hello|hey|greetings|sup|yo)(\s|$)/);
+
       const response = await sendMessage({
-        message: content,
+        message: isGreeting ? "initial_greeting" : content,
         thread_id: threadId,
         user_name: userName || undefined,
       });
