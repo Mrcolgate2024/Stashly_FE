@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef } from "react";
 
 interface SimliAvatarProps {
@@ -11,10 +12,10 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
   onMessageReceived,
   token,
   agentId,
-  customText = "Chat with me",
+  customText = "Financial Analyst",
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const customImageUrl = "/lovable-uploads/764376fe-62be-4bfa-88e6-158932a49662.png";
+  const customImageUrl = "/lovable-uploads/2af87563-98f9-4538-9187-851b2bc1dc30.png";
 
   useEffect(() => {
     // Create a custom event listener for Simli messages
