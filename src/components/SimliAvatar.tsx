@@ -1,164 +1,68 @@
 
-import React, { useEffect, useRef, useState } from "react";
-import { useToast } from "@/hooks/use-toast";
+import React, { useEffect, useRef } from "react";
 
 interface SimliAvatarProps {
   onMessageReceived: (message: string) => void;
-  onAvatarReady?: () => void;
   token: string;
   agentId: string;
   customText?: string;
-  position?: "left" | "right" | "relative";
-  customImage?: string;
-  customClassName?: string;
 }
 
 export const SimliAvatar: React.FC<SimliAvatarProps> = ({
   onMessageReceived,
-  onAvatarReady,
   token,
   agentId,
   customText = "Financial Analyst",
-  position = "right",
-  customImage = "",
-  customClassName = "",
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isInitialized, setIsInitialized] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
-  const initAttemptRef = useRef(0);
-
-  // Create a safe way to initialize the widget
-  const safelyInitializeWidget = () => {
-    if (!containerRef.current || isInitialized || isLoading) return;
-    
-    try {
-      setIsLoading(true);
-      
-      // Safety check - clear any previous content
-      if (containerRef.current.firstChild) {
-        containerRef.current.innerHTML = '';
-      }
-      
-      // Check if custom element is defined
-      if (!window.customElements?.get('simli-widget')) {
-        console.log(`Simli custom element not yet defined for ${customText}`);
-        
-        if (initAttemptRef.current < 3) {
-          initAttemptRef.current++;
-          setTimeout(safelyInitializeWidget, 1000);
-        } else {
-          setIsLoading(false);
-          toast({
-            title: "Widget Error",
-            description: `Could not initialize ${customText}. Script not loaded.`,
-            variant: "destructive",
-          });
-        }
-        return;
-      }
-      
-      // Create widget
-      const widget = document.createElement('simli-widget');
-      widget.setAttribute('token', token);
-      widget.setAttribute('agentid', agentId);
-      widget.setAttribute('position', position);
-      if (customImage) {
-        widget.setAttribute('customimage', customImage);
-      }
-      widget.setAttribute('customtext', customText);
-      
-      // Append widget
-      containerRef.current.appendChild(widget);
-      
-      console.log(`${customText} widget initialized successfully`);
-      setIsInitialized(true);
-      setIsLoading(false);
-      
-      if (onAvatarReady) {
-        onAvatarReady();
-      }
-      
-    } catch (error) {
-      console.error(`Error initializing ${customText}:`, error);
-      setIsLoading(false);
-      setIsInitialized(false);
-      
-      toast({
-        title: "Error",
-        description: `Could not initialize ${customText}. Please refresh the page.`,
-        variant: "destructive",
-      });
-    }
-  };
+  const customImageUrl = "/lovable-uploads/c54ad77b-c6fd-43b7-8063-5803ecec8c64.png";
 
   useEffect(() => {
-    let messageHandler: EventListener;
-    
-    // Setup message event listener
-    if (agentId) {
-      messageHandler = ((event: CustomEvent) => {
-        if (event.detail?.message) {
-          console.log(`Message received from ${customText}:`, event.detail.message);
-          onMessageReceived(event.detail.message);
-        }
-      }) as EventListener;
-      
-      window.addEventListener(`simli:message:${agentId}`, messageHandler);
+    // Create a custom event listener for Simli messages
+    const handleSimliMessage = (event: CustomEvent) => {
+      if (event.detail && event.detail.message) {
+        onMessageReceived(event.detail.message);
+      }
+    };
+
+    // Add custom event listener for Simli messages
+    window.addEventListener('simli:message' as any, handleSimliMessage as EventListener);
+
+    // Add the Simli script if it's not already present
+    if (!document.querySelector('script[src="https://app.simli.com/simli-widget/index.js"]')) {
+      const script = document.createElement('script');
+      script.src = "https://app.simli.com/simli-widget/index.js";
+      script.async = true;
+      script.type = "text/javascript";
+      document.body.appendChild(script);
     }
 
-    // Check if Simli is ready every 800ms for 10 seconds
-    const checkInterval = setInterval(() => {
-      if (window.customElements?.get('simli-widget') && !isInitialized && !isLoading) {
-        console.log(`Simli detected, initializing ${customText}...`);
-        safelyInitializeWidget();
-        clearInterval(checkInterval);
-      }
-    }, 800);
-    
-    // Timeout after 10 seconds
-    const timeout = setTimeout(() => {
-      clearInterval(checkInterval);
-      if (!isInitialized && !isLoading) {
-        console.log(`Simli initialization timed out for ${customText}`);
-      }
-    }, 10000);
+    // Create and append the Simli widget to our container
+    if (containerRef.current) {
+      // Clear any existing content
+      containerRef.current.innerHTML = '';
+      
+      // Create the widget element
+      const simliWidget = document.createElement('simli-widget');
+      simliWidget.setAttribute('token', token);
+      simliWidget.setAttribute('agentid', agentId);
+      simliWidget.setAttribute('position', 'relative');
+      simliWidget.setAttribute('customimage', customImageUrl);
+      simliWidget.setAttribute('customtext', customText);
+      
+      // Append the widget to the container
+      containerRef.current.appendChild(simliWidget);
+    }
 
+    // Cleanup function
     return () => {
-      // Clean up
-      clearInterval(checkInterval);
-      clearTimeout(timeout);
-      
-      if (messageHandler) {
-        window.removeEventListener(`simli:message:${agentId}`, messageHandler);
-      }
-      
-      // Safely remove any widget we created
-      if (containerRef.current) {
-        // Use safer approach to clear the container
-        containerRef.current.innerHTML = '';
-      }
-      
-      setIsInitialized(false);
+      window.removeEventListener('simli:message' as any, handleSimliMessage as EventListener);
     };
-  }, [agentId, onMessageReceived, isInitialized, isLoading, customText]);
+  }, [token, agentId, onMessageReceived, customText]);
 
   return (
-    <div 
-      ref={containerRef}
-      onClick={isInitialized ? undefined : safelyInitializeWidget}
-      className={`simli-avatar-container ${customClassName}`}
-    >
-      {!isInitialized && (
-        <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center">
-          {isLoading ? (
-            <div className="text-sm text-gray-600">Loading...</div>
-          ) : (
-            <div className="text-xs text-gray-600">Click to init</div>
-          )}
-        </div>
-      )}
+    <div className="fixed bottom-[80px] right-4 sm:bottom-10 sm:right-10 z-10" ref={containerRef}>
+      {/* Simli widget will be inserted here programmatically */}
     </div>
   );
 };
