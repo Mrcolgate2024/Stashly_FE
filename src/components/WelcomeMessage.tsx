@@ -9,7 +9,7 @@ export const WelcomeMessage = () => {
           Welcome to <span className="font-poppins text-[#0D3B66] font-bold"><span className="text-[#0D3B66]">$</span>tashly</span>, your Financial Assistant
         </p>
         <p className="mb-2">Ask me anything about:</p>
-        <ul className="list-disc text-left max-w-md mx-auto space-y-2">
+        <ul className="list-none text-center mx-auto space-y-2">
           <li>Investment strategies</li>
           <li>Market analysis</li>
           <li>Portfolio performance</li>
