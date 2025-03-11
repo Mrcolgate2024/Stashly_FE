@@ -28,7 +28,7 @@ export const ChatInput = ({ onSend, disabled }: ChatInputProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex gap-2 w-[50%] mx-auto">
+    <form onSubmit={handleSubmit} className="flex gap-2 w-full">
       <div className="w-full relative flex">
         <Textarea
           value={message}

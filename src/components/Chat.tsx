@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useChat } from "@/hooks/useChat";
 import { ChatInput } from "./ChatInput";
@@ -72,14 +73,11 @@ export const Chat = () => {
       </div>
       
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#1e2a38]/80 backdrop-blur-sm sm:static sm:bg-transparent sm:backdrop-blur-none">
-        <div className="flex justify-center">
-          <ChatInput onSend={handleMessageSend} disabled={isLoading} />
-        </div>
+        <ChatInput onSend={handleMessageSend} disabled={isLoading} />
       </div>
 
       <div className="fixed bottom-[80px] right-4 sm:bottom-10 sm:right-10 flex gap-4">
-        <div className={`transition-opacity duration-300 ${activeAnalyst === 'financial' ? 'opacity-100' : 'opacity-50 hover:opacity-100'}`}
-             onClick={() => setActiveAnalyst('financial')}>
+        <div className="cursor-pointer" onClick={() => setActiveAnalyst('financial')}>
           <SimliAvatar 
             onMessageReceived={handleAvatarMessage}
             token={analysts.financial.token}
@@ -88,8 +86,7 @@ export const Chat = () => {
             customImage={analysts.financial.customImage}
           />
         </div>
-        <div className={`transition-opacity duration-300 ${activeAnalyst === 'market' ? 'opacity-100' : 'opacity-50 hover:opacity-100'}`}
-             onClick={() => setActiveAnalyst('market')}>
+        <div className="cursor-pointer" onClick={() => setActiveAnalyst('market')}>
           <SimliAvatar 
             onMessageReceived={handleAvatarMessage}
             token={analysts.market.token}
