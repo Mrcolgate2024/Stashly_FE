@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { nanoid } from "nanoid";
@@ -23,7 +22,6 @@ export function useChat() {
     setIsLoading(true);
 
     try {
-      // Check if this is a greeting message
       const isGreeting = content.toLowerCase().match(/^(hi|hello|hey|greetings|sup|yo)(\s|$)/);
 
       const response = await sendMessage({
@@ -32,7 +30,6 @@ export function useChat() {
         user_name: userName || undefined,
       });
 
-      // Check if response contains an error message
       const isErrorResponse = 
         response.response.includes("I'm sorry, I encountered an error") ||
         response.response.includes("Error:") ||
@@ -89,12 +86,22 @@ export function useChat() {
     }
   };
 
+  const clearMessages = () => {
+    setMessages([]);
+    setThreadId("default");
+    toast({
+      title: "Chat cleared",
+      description: "All messages have been cleared.",
+    });
+  };
+
   return {
     messages,
     isLoading,
     threadId,
     handleSendMessage,
     handleSuggestedQuestionClick,
-    handleRetryLastMessage
+    handleRetryLastMessage,
+    clearMessages
   };
 }

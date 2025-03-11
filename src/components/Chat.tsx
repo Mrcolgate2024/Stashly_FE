@@ -15,7 +15,8 @@ export const Chat = () => {
     isLoading,
     handleSendMessage,
     handleSuggestedQuestionClick,
-    handleRetryLastMessage
+    handleRetryLastMessage,
+    clearMessages
   } = useChat();
 
   const handleAvatarMessage = (message: string) => {
@@ -45,6 +46,7 @@ export const Chat = () => {
           isLoading={isLoading}
           messagesExist={messages.length > 0}
           onRetry={handleRetry}
+          onClear={clearMessages}
         />
       </div>
       

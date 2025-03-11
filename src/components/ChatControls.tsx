@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { RefreshCcw, User } from "lucide-react";
+import { RefreshCcw, User, Trash2 } from "lucide-react";
 
 interface ChatControlsProps {
   userName: string;
@@ -10,6 +10,7 @@ interface ChatControlsProps {
   isLoading: boolean;
   messagesExist: boolean;
   onRetry: () => void;
+  onClear: () => void;
 }
 
 export const ChatControls = ({
@@ -17,7 +18,8 @@ export const ChatControls = ({
   setUserName,
   isLoading,
   messagesExist,
-  onRetry
+  onRetry,
+  onClear
 }: ChatControlsProps) => {
   const [showUserNameInput, setShowUserNameInput] = useState(false);
 
@@ -29,16 +31,28 @@ export const ChatControls = ({
     <div className="flex flex-wrap items-center gap-2">
       <div className="flex items-center gap-2">
         {isLoading ? null : (
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={onRetry}
-            disabled={!messagesExist}
-            title="Retry last question"
-          >
-            <RefreshCcw className="h-4 w-4 mr-2" />
-            Retry
-          </Button>
+          <>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={onRetry}
+              disabled={!messagesExist}
+              title="Retry last question"
+            >
+              <RefreshCcw className="h-4 w-4 mr-2" />
+              Retry
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={onClear}
+              disabled={!messagesExist}
+              title="Clear chat history"
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Clear
+            </Button>
+          </>
         )}
         <Button
           variant="outline"
