@@ -51,7 +51,7 @@ export const Chat = () => {
         />
       </div>
       
-      <div className="w-full">
+      <div className="w-full mb-2">
         <ChatInput onSend={handleMessageSend} disabled={isLoading} />
       </div>
 
