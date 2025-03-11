@@ -1,6 +1,7 @@
 
 import { Chat } from "@/components/Chat";
 import { useEffect } from "react";
+import { toast } from "@/hooks/use-toast";
 
 const Index = () => {
   useEffect(() => {
@@ -15,10 +16,19 @@ const Index = () => {
         
         script.onload = () => {
           console.log("Simli script loaded successfully");
+          toast({
+            title: "Analyst Avatars",
+            description: "Click on either analyst avatar to start a conversation.",
+          });
         };
         
         script.onerror = (error) => {
           console.error("Error loading Simli script:", error);
+          toast({
+            title: "Avatar Error",
+            description: "Failed to load analyst avatars. Please refresh the page.",
+            variant: "destructive",
+          });
         };
         
         document.body.appendChild(script);

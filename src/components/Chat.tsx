@@ -6,12 +6,13 @@ import { ChatControls } from "./ChatControls";
 import { ChatMessagesArea } from "./ChatMessagesArea";
 import { SimliAvatar } from "./SimliAvatar";
 import { Logo } from "./Logo";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
 
 export const Chat = () => {
   const [userName, setUserName] = useState("");
   const [selectedAnalyst, setSelectedAnalyst] = useState<string | null>(null);
   const [simliScriptLoaded, setSimliScriptLoaded] = useState(false);
+  const [avatarsReady, setAvatarsReady] = useState(0);
   
   const {
     messages,
@@ -24,27 +25,57 @@ export const Chat = () => {
 
   // Check if Simli script is loaded
   useEffect(() => {
-    const checkInterval = setInterval(() => {
+    const checkScriptLoaded = () => {
       if (window.customElements && window.customElements.get('simli-widget')) {
         console.log("Simli custom element is defined, script is fully loaded");
         setSimliScriptLoaded(true);
-        clearInterval(checkInterval);
         
         // Notify user once the script is loaded
         toast({
-          title: "Avatars Ready",
-          description: "Click on either analyst avatar to start a conversation.",
+          title: "Avatars Loading",
+          description: "Please wait while the analyst avatars are initializing. Click on either avatar when they appear.",
         });
       }
-    }, 1000);
+    };
+
+    // Check immediately and then on an interval
+    checkScriptLoaded();
+    const checkInterval = setInterval(checkScriptLoaded, 2000);
     
-    return () => clearInterval(checkInterval);
+    // If it doesn't load within 10 seconds, show a message
+    const timeoutId = setTimeout(() => {
+      if (!simliScriptLoaded) {
+        toast({
+          title: "Slow Loading",
+          description: "Avatar initialization is taking longer than expected. Please be patient or try refreshing the page.",
+        });
+      }
+    }, 10000);
+    
+    return () => {
+      clearInterval(checkInterval);
+      clearTimeout(timeoutId);
+    };
   }, []);
+
+  // Track when an avatar notifies us it's ready
+  useEffect(() => {
+    if (avatarsReady === 2) {
+      toast({
+        title: "Both Analysts Ready",
+        description: "Click on either analyst avatar to start a conversation.",
+      });
+    }
+  }, [avatarsReady]);
 
   const handleAvatarMessage = (message: string) => {
     console.log("Avatar message received:", message);
     // When we receive a message from the avatar, send it to the chat
     handleSendMessage(message, userName);
+  };
+
+  const handleAvatarReady = () => {
+    setAvatarsReady(prev => prev + 1);
   };
 
   const handleMessageSend = (content: string) => {
@@ -91,7 +122,7 @@ export const Chat = () => {
         agentId="b36e9ae6-5a88-4235-9e7a-eab88fd52d7b"
         customText="Financial Analyst"
         position="right"
-        customClassName="fixed bottom-[80px] right-4 sm:bottom-10 sm:right-10 z-10 cursor-pointer"
+        customClassName="fixed bottom-[80px] right-4 sm:bottom-10 sm:right-10 z-10 cursor-pointer hover:opacity-80 transition-opacity"
       />
 
       {/* Market Analyst */}
@@ -101,7 +132,7 @@ export const Chat = () => {
         agentId="a730e183-fc16-48d2-9d25-42d64b1a238a"
         customText="Market Analyst"
         position="left"
-        customClassName="fixed bottom-[80px] left-4 sm:bottom-10 sm:left-10 z-10 cursor-pointer"
+        customClassName="fixed bottom-[80px] left-4 sm:bottom-10 sm:left-10 z-10 cursor-pointer hover:opacity-80 transition-opacity"
       />
     </div>
   );
