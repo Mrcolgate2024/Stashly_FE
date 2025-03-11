@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useChat } from "@/hooks/useChat";
 import { ChatInput } from "./ChatInput";
 import { ChatControls } from "./ChatControls";
@@ -35,11 +35,22 @@ export const Chat = () => {
   const handleAnalystSelect = (analyst: string) => {
     console.log("Analyst selected:", analyst);
     
-    // Only change the active analyst without sending any message
+    // Only change the active analyst if different from current
     if (activeAnalyst !== analyst) {
       setActiveAnalyst(analyst);
+      
+      // We don't send automatic messages here
+      // Let the Simli widget handle the interaction
     }
   };
+
+  // Reset any Simli widget state when component unmounts
+  useEffect(() => {
+    return () => {
+      // Cleanup function for when component unmounts
+      console.log("Chat component unmounting, cleaning up");
+    };
+  }, []);
 
   const analysts = {
     financial: {
