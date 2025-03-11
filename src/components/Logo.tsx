@@ -10,8 +10,8 @@ export const Logo = () => {
           alt="$tashly Logo" 
           className="h-16 w-16 object-contain"
         />
-        <div className="font-poppins text-[#0D3B66] font-extrabold text-5xl uppercase tracking-wider drop-shadow-md">
-          <span className="text-[#0D3B66] font-black">$</span>tashly
+        <div className="font-space-grotesk text-white font-extrabold text-5xl uppercase tracking-wider drop-shadow-md">
+          <span className="text-white font-black">$</span>tashly
         </div>
       </div>
     </div>
