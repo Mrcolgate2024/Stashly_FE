@@ -28,7 +28,7 @@ export const ChatInput = ({ onSend, disabled }: ChatInputProps) => {
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Type your message..."
           disabled={disabled}
-          className="flex-1 min-h-[60px] sm:min-h-[80px] resize-none pr-12"
+          className="flex-1 min-h-[80px] resize-none pr-12"
           rows={2}
         />
         <Button 
