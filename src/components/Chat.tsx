@@ -20,13 +20,6 @@ export const Chat = () => {
     clearMessages
   } = useChat();
 
-  const handleAvatarMessage = (message: string) => {
-    console.log("Avatar message received:", message);
-    // When an avatar is clicked, clear existing messages and start a new conversation
-    clearMessages();
-    handleSendMessage(message, userName);
-  };
-
   const handleMessageSend = (content: string) => {
     handleSendMessage(content, userName);
   };
@@ -41,17 +34,11 @@ export const Chat = () => {
 
   const handleAnalystSelect = (analyst: string) => {
     console.log("Analyst selected:", analyst);
-    // Always set active analyst and clear messages
-    setActiveAnalyst(analyst);
-    clearMessages();
     
-    // Generate an appropriate greeting based on which analyst was selected
-    const greeting = analyst === 'financial' 
-      ? `Hello, I'm the Financial Analyst. How can I help you today?` 
-      : `Hello, I'm the Market Analyst. How can I help you today?`;
-    
-    // Send the greeting to start the conversation
-    handleSendMessage(greeting, userName);
+    // Only change the active analyst without sending any message
+    if (activeAnalyst !== analyst) {
+      setActiveAnalyst(analyst);
+    }
   };
 
   const analysts = {
@@ -96,27 +83,25 @@ export const Chat = () => {
 
       <div className="fixed bottom-[80px] right-4 sm:bottom-10 sm:right-10 flex gap-8">
         <div 
-          className={`transition-opacity ${activeAnalyst === 'financial' ? 'opacity-100' : 'opacity-70 hover:opacity-90'}`} 
-          onClick={() => handleAnalystSelect('financial')}
+          className={`transition-opacity ${activeAnalyst === 'financial' ? 'opacity-100' : 'opacity-70 hover:opacity-90'}`}
         >
           <SimliAvatar 
-            onMessageReceived={handleAvatarMessage}
             token={analysts.financial.token}
             agentId={analysts.financial.agentId}
             customText={analysts.financial.customText}
             customImage={analysts.financial.customImage}
+            onClick={() => handleAnalystSelect('financial')}
           />
         </div>
         <div 
-          className={`transition-opacity ${activeAnalyst === 'market' ? 'opacity-100' : 'opacity-70 hover:opacity-90'}`} 
-          onClick={() => handleAnalystSelect('market')}
+          className={`transition-opacity ${activeAnalyst === 'market' ? 'opacity-100' : 'opacity-70 hover:opacity-90'}`}
         >
           <SimliAvatar 
-            onMessageReceived={handleAvatarMessage}
             token={analysts.market.token}
             agentId={analysts.market.agentId}
             customText={analysts.market.customText}
             customImage={analysts.market.customImage}
+            onClick={() => handleAnalystSelect('market')}
           />
         </div>
       </div>
