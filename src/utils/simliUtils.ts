@@ -73,10 +73,20 @@ export const safelyRemoveWidget = (containerRef: React.RefObject<HTMLDivElement>
           console.log("Could not set manual removal flag", e);
         }
         
-        containerRef.current.innerHTML = '';
+        // First try removing the child element
+        try {
+          containerRef.current.removeChild(existingWidget);
+        } catch (e) {
+          console.log("Failed with removeChild, using innerHTML instead", e);
+          containerRef.current.innerHTML = '';
+        }
       }
     } catch (err) {
       console.error("Error safely removing widget:", err);
+      // Last resort, clear the container
+      if (containerRef.current) {
+        containerRef.current.innerHTML = '';
+      }
     }
   }
 };
