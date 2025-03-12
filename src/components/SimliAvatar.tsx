@@ -20,8 +20,8 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
   const [errorMessage, setErrorMessage] = useState("");
   const customImageUrl = "/lovable-uploads/c54ad77b-c6fd-43b7-8063-5803ecec8c64.png";
   
-  // Hard-coded valid token with unique name for Financial Analyst - but this one may need updating
-  const FINANCIAL_ANALYST_TOKEN = "gAAAAABn0WgrjDfB13EKqTvpj6ZEZvNhO9E7mLXtZM7Y2RRFmZAgOkcERx38gkK8TCoAA0B8pXFH2MUCghd18QA0aMxreVeKdbIiGKzTpY0L_zSke0CVqw1VFttwGf0SsN2KDJJVTcStqGcqRYqMjorHlzn3Nf7UWc_BTJQKyVzNluSH0xSzCV7mqnNyEFxQtBwYuZNhWt-GIQTCelp3bvyfxns4OaZ4aJ96hDxV_0XsOF3XLVXKNoXikMCGYl9FvnXG5t68WoCYnJUoBMCVW8WKfeOcpbF8dPk4vW0kPFVGv9W1WSnyh--s3dtSe2YRQth3CRntHujSc9w2SI-oexNMYNSsA7zaDYX0nMccHYBrt2grvhbZmVVMhB4wyoaPIp-EopN1umJmPt-CYfzZGmxoThRRLkZAMPQCbHxrvTCxAUaedjxvENty8qlJdvahdzTN9NIBAOSI8gmGmMV96UCDDiT9L6Q7E7R-ZkyDm8YCaYntvve5DKQ_2cieYqEkhhnXrRia6AMj";
+  // Updated token for Financial Analyst
+  const FINANCIAL_ANALYST_TOKEN = "gAAAAABn0cx5UMO6tFazmf8b6fpNdhqhNk5KGev-hDLsIB9HePud-3A6IJKqDgzTf-R0JQzdvwefDKGZYCLzTQQdS_dC8HC5alJSZ8_CEy5ym7QXJDbJQmEgGnA7emeCWPDNDpx1cw05uao4ybvW4kMAmquGi6NM3Yyj4sbZJa6rE-SbeFiV50Uo1rzTvb89A8_cr_3SKmUXExXRrYjNVUQobYsvavul10FdL8RT9gPrlVBF0jOKqGHWb-52uPtr7k5RB-dRo1qBWh0TV7rLxX56bckGdiyNREEZAon2alU8oYGRfU0FK-21QPSGPsj_zgbyaJhTaSu0m3mB9c_h7XdBmo2L5l2e1aLUltYMsMy6VqDXUrzJvTgNb_pZqWdGoMwIN1l0HwVlD_8enFeCWwHZfIwhZpq-tk9r9EpzIP9JCk0dn3gNMifpGJ7GvVHGdHkLv1-3plDn6CcvLNNvmMrrUPmSbFNpXNSyElbggRlwu1wi4UHpVoYcnyRCPLintdUlabz5h-5c";
 
   // Set up event listener for Simli messages
   useEffect(() => {
