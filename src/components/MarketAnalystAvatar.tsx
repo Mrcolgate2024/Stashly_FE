@@ -1,22 +1,21 @@
 
 import React, { useEffect, useRef } from "react";
 
-interface SimliAvatarProps {
+interface MarketAnalystAvatarProps {
   onMessageReceived: (message: string) => void;
   token: string;
   agentId: string;
   customText?: string;
 }
 
-export const SimliAvatar: React.FC<SimliAvatarProps> = ({
+export const MarketAnalystAvatar: React.FC<MarketAnalystAvatarProps> = ({
   onMessageReceived,
   token,
   agentId,
-  customText = "Financial Analyst",
+  customText = "Market Analyst",
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const customImageUrl = "/lovable-uploads/c54ad77b-c6fd-43b7-8063-5803ecec8c64.png";
-
+  
   useEffect(() => {
     // Create a custom event listener for Simli messages
     const handleSimliMessage = (event: CustomEvent) => {
@@ -26,7 +25,7 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
     };
 
     // Add custom event listener for Simli messages
-    window.addEventListener('simli:financial:message' as any, handleSimliMessage as EventListener);
+    window.addEventListener('simli:market:message' as any, handleSimliMessage as EventListener);
 
     // Add the Simli script if it's not already present
     if (!document.querySelector('script[src="https://app.simli.com/simli-widget/index.js"]')) {
@@ -47,11 +46,10 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
       simliWidget.setAttribute('token', token);
       simliWidget.setAttribute('agentid', agentId);
       simliWidget.setAttribute('position', 'right');
-      simliWidget.setAttribute('customimage', customImageUrl);
       simliWidget.setAttribute('customtext', customText);
       
       // Set a custom event name for this specific avatar
-      simliWidget.setAttribute('eventname', 'simli:financial:message');
+      simliWidget.setAttribute('eventname', 'simli:market:message');
       
       // Append the widget to the container
       containerRef.current.appendChild(simliWidget);
@@ -59,7 +57,7 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
 
     // Cleanup function
     return () => {
-      window.removeEventListener('simli:financial:message' as any, handleSimliMessage as EventListener);
+      window.removeEventListener('simli:market:message' as any, handleSimliMessage as EventListener);
       if (containerRef.current) {
         containerRef.current.innerHTML = '';
       }
@@ -67,7 +65,7 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
   }, [token, agentId, onMessageReceived, customText]);
 
   return (
-    <div className="fixed bottom-[80px] right-4 sm:bottom-10 sm:right-10 z-10" ref={containerRef}>
+    <div className="fixed bottom-[80px] left-4 sm:bottom-10 sm:left-10 z-10" ref={containerRef}>
       {/* Simli widget will be inserted here programmatically */}
     </div>
   );
