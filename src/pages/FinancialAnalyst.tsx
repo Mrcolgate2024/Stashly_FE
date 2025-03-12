@@ -2,14 +2,30 @@
 import { useState } from "react";
 import { SimliAvatar } from "@/components/SimliAvatar";
 import { Toaster } from "@/components/ui/toaster";
+import { toast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { AlertTriangle } from "lucide-react";
 
 const FinancialAnalyst = () => {
   const [messages, setMessages] = useState<string[]>([]);
+  const [ttsError, setTtsError] = useState(false);
 
   const handleAvatarMessage = (message: string) => {
     setMessages(prev => [...prev, message]);
+  };
+
+  const handleError = (error: string) => {
+    console.error("Avatar error:", error);
+    
+    if (error.includes("TTS API Key") || error.includes("401")) {
+      setTtsError(true);
+      toast({
+        title: "TTS API Key Error",
+        description: "The text-to-speech service is currently unavailable. Messages will still work but without audio.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -21,6 +37,15 @@ const FinancialAnalyst = () => {
             <Button variant="outline">Back to Home</Button>
           </Link>
         </div>
+        
+        {ttsError && (
+          <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4 rounded">
+            <div className="flex items-center">
+              <AlertTriangle className="h-5 w-5 mr-2" />
+              <p>Text-to-speech functionality is currently unavailable. The avatar can still provide text responses.</p>
+            </div>
+          </div>
+        )}
         
         <div className="bg-white/80 backdrop-blur-sm p-4 rounded-lg shadow-md mb-20 min-h-[400px]">
           {messages.length === 0 ? (
@@ -40,6 +65,7 @@ const FinancialAnalyst = () => {
         
         <SimliAvatar 
           onMessageReceived={handleAvatarMessage}
+          onError={handleError}
           agentId="b36e9ae6-5a88-4235-9e7a-eab88fd52d7b"
           customText="Financial Analyst"
         />
