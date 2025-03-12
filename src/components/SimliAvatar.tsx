@@ -1,9 +1,7 @@
 
-import React, { useRef, useEffect } from "react";
-import { useSimliAvatar } from "@/hooks/useSimliAvatar";
-import { createSimliWidget, safelyRemoveWidget } from "@/utils/simliUtils";
+import React, { useRef, useEffect, useState } from "react";
 import { AvatarButton } from "./AvatarButton";
-import { AvatarContainer } from "./AvatarContainer";
+import { SimliErrorMessage } from "./SimliErrorMessage";
 
 interface SimliAvatarProps {
   onMessageReceived: (message: string) => void;
@@ -16,60 +14,79 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
   agentId,
   customText = "Financial Analyst",
 }) => {
+  const [isActivated, setIsActivated] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [hasError, setHasError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const containerRef = useRef<HTMLDivElement>(null);
   const customImageUrl = "/lovable-uploads/c54ad77b-c6fd-43b7-8063-5803ecec8c64.png";
   
   // Hard-coded valid token with unique name for Financial Analyst
   const FINANCIAL_ANALYST_TOKEN = "gAAAAABn0WgrjDfB13EKqTvpj6ZEZvNhO9E7mLXtZM7Y2RRFmZAgOkcERx38gkK8TCoAA0B8pXFH2MUCghd18QA0aMxreVeKdbIiGKzTpY0L_zSke0CVqw1VFttwGf0SsN2KDJJVTcStqGcqRYqMjorHlzn3Nf7UWc_BTJQKyVzNluSH0xSzCV7mqnNyEFxQtBwYuZNhWt-GIQTCelp3bvyfxns4OaZ4aJ96hDxV_0XsOF3XLVXKNoXikMCGYl9FvnXG5t68WoCYnJUoBMCVW8WKfeOcpbF8dPk4vW0kPFVGv9W1WSnyh--s3dtSe2YRQth3CRntHujSc9w2SI-oexNMYNSsA7zaDYX0nMccHYBrt2grvhbZmVVMhB4wyoaPIp-EopN1umJmPt-CYfzZGmxoThRRLkZAMPQCbHxrvTCxAUaedjxvENty8qlJdvahdzTN9NIBAOSI8gmGmMV96UCDDiT9L6Q7E7R-ZkyDm8YCaYntvve5DKQ_2cieYqEkhhnXrRia6AMj";
 
-  const {
-    isActivated,
-    hasError,
-    errorMessage,
-    isProcessing,
-    initialize,
-    retryInitialization,
-    updateContainerRef
-  } = useSimliAvatar({
-    token: FINANCIAL_ANALYST_TOKEN,
-    agentId,
-    position: 'right',
-    eventName: 'simli:financial:message',
-    customText,
-    customImage: customImageUrl,
-    onMessageReceived
-  });
-
-  // Create the widget when activated
+  // Set up event listener for Simli messages
   useEffect(() => {
-    if (isActivated && containerRef.current) {
-      try {
-        // First safely remove any existing widget
-        safelyRemoveWidget(containerRef);
-        
-        // Then create a new one
-        createSimliWidget(
-          containerRef,
-          FINANCIAL_ANALYST_TOKEN,
-          agentId,
-          'right',
-          'simli:financial:message',
-          customText,
-          customImageUrl
-        );
-        console.log(`${customText} avatar widget added to DOM`);
-      } catch (err) {
-        console.error(`Error creating ${customText} widget:`, err);
-      }
-    }
-    
-    // Cleanup when component unmounts or deactivates
-    return () => {
-      if (containerRef.current) {
-        safelyRemoveWidget(containerRef);
+    const handleSimliMessage = (event: CustomEvent) => {
+      if (event.detail && event.detail.message) {
+        console.log(`Received message from ${customText}:`, event.detail.message);
+        onMessageReceived(event.detail.message);
       }
     };
-  }, [isActivated, agentId, customText]);
+
+    // Listen for errors from Simli
+    const handleSimliError = (event: Event) => {
+      if (event instanceof CustomEvent && event.detail) {
+        console.error("Simli error:", event.detail);
+        let message = "Error connecting to avatar";
+        
+        if (typeof event.detail === 'object') {
+          if (event.detail.error) message = event.detail.error;
+          if (event.detail.message) message = event.detail.message;
+          if (event.detail.detail) message = event.detail.detail;
+        } else if (typeof event.detail === 'string') {
+          message = event.detail;
+        }
+        
+        setHasError(true);
+        setErrorMessage(message);
+      }
+    };
+
+    // Add custom event listeners
+    window.addEventListener('simli:financial:message' as any, handleSimliMessage as EventListener);
+    window.addEventListener('simli:error' as any, handleSimliError as EventListener);
+    
+    return () => {
+      window.removeEventListener('simli:financial:message' as any, handleSimliMessage as EventListener);
+      window.removeEventListener('simli:error' as any, handleSimliError as EventListener);
+    };
+  }, [customText, onMessageReceived]);
+
+  const initialize = () => {
+    if (isActivated || isProcessing) return;
+    
+    setIsProcessing(true);
+    setHasError(false);
+    setErrorMessage("");
+    
+    try {
+      console.log(`Initializing ${customText} avatar...`);
+      setIsActivated(true);
+      
+      // A short delay to ensure DOM is ready
+      setTimeout(() => setIsProcessing(false), 500);
+    } catch (error) {
+      console.error("Error in initialization:", error);
+      setHasError(true);
+      setErrorMessage(error instanceof Error ? error.message : "Failed to connect to avatar service");
+      setIsProcessing(false);
+    }
+  };
+
+  const retryInitialization = () => {
+    setIsActivated(false);
+    setTimeout(initialize, 100);
+  };
 
   return (
     <div className="fixed bottom-[80px] right-4 sm:bottom-10 sm:right-10 z-10">
@@ -83,14 +100,25 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
           altText={customText}
         />
       ) : (
-        <AvatarContainer
-          hasError={hasError}
-          errorMessage={errorMessage}
-          onRetry={retryInitialization}
-          isProcessing={isProcessing}
-          containerRef={containerRef}
-          updateContainerRef={updateContainerRef}
-        />
+        <div className="relative">
+          {hasError && (
+            <SimliErrorMessage 
+              message={errorMessage}
+              onRetry={retryInitialization}
+              isProcessing={isProcessing}
+            />
+          )}
+          <div ref={containerRef} className="min-h-[60px] min-w-[60px]">
+            <simli-widget 
+              token={FINANCIAL_ANALYST_TOKEN}
+              agentid={agentId}
+              position="right"
+              eventname="simli:financial:message"
+              customtext={customText}
+              customimage={customImageUrl}
+            ></simli-widget>
+          </div>
+        </div>
       )}
     </div>
   );
