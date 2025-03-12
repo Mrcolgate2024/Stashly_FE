@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { AvatarButton } from "./AvatarButton";
 import { SimliErrorMessage } from "./SimliErrorMessage";
@@ -51,29 +52,6 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
         if (onError) {
           onError(message);
         }
-        
-        if (message.includes("TTS API Key") || message.includes("Invalid TTS")) {
-          toast({
-            title: "Text-to-Speech Unavailable",
-            description: "The avatar will continue to function with text-only responses.",
-            variant: "destructive",
-          });
-          
-          return;
-        }
-        
-        if (message.includes("401") || 
-            message.includes("unauthorized") || 
-            message.includes("Unauthorized")) {
-          toast({
-            title: "Avatar Connection Error",
-            description: `${customText} avatar authorization failed. Token may be expired.`,
-            variant: "destructive",
-          });
-          
-          setIsActivated(false);
-          window.simliAvatarActive = false;
-        }
       }
     };
 
@@ -85,30 +63,6 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
       window.removeEventListener('simli:error' as any, handleSimliError as EventListener);
     };
   }, [customText, onMessageReceived, onError]);
-
-  useEffect(() => {
-    if (!isActivated) return;
-    
-    const handleGlobalError = (event: ErrorEvent) => {
-      if (event.message && (
-        event.message.includes('API Error')
-      )) {
-        console.warn(`Caught API error in ${customText}:`, event.message);
-        
-        if (onError) {
-          onError(event.message);
-        }
-        
-        if (event.message.includes('TTS API Key') || event.message.includes('Invalid TTS')) {
-          setErrorMessage("Text-to-speech unavailable. Text responses will still work.");
-          setHasError(true);
-        }
-      }
-    };
-    
-    window.addEventListener('error', handleGlobalError);
-    return () => window.removeEventListener('error', handleGlobalError);
-  }, [customText, isActivated, onError]);
 
   const initialize = () => {
     if (isActivated || isProcessing) return;
@@ -125,7 +79,6 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
     
     try {
       console.log(`Initializing ${customText} avatar...`);
-      console.log(`Using token for ${customText} avatar`);
       setIsActivated(true);
       window.simliAvatarActive = true;
       
@@ -178,7 +131,7 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
         />
       ) : (
         <div className="relative">
-          {hasError && !errorMessage.includes("TTS API Key") && !errorMessage.includes("Invalid TTS") && (
+          {hasError && (
             <SimliErrorMessage 
               message={errorMessage}
               onRetry={retryInitialization}
