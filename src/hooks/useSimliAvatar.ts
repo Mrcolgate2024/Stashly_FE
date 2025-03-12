@@ -1,6 +1,6 @@
 
-import { useState, useEffect, useCallback } from "react";
-import { initializeSimliScript, createSimliWidget } from "@/utils/simliUtils";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { initializeSimliScript, createSimliWidget, safelyRemoveWidget } from "@/utils/simliUtils";
 
 interface UseSimliAvatarProps {
   token: string;
@@ -25,6 +25,16 @@ export const useSimliAvatar = ({
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
+  const widgetContainerRef = useRef<HTMLDivElement | null>(null);
+
+  // Handle cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (widgetContainerRef.current) {
+        safelyRemoveWidget({ current: widgetContainerRef.current });
+      }
+    };
+  }, []);
 
   // Handle error events from Simli
   useEffect(() => {
@@ -85,6 +95,11 @@ export const useSimliAvatar = ({
     };
   }, [isActivated, eventName, onMessageReceived]);
 
+  // Update reference to widget container
+  const updateContainerRef = useCallback((ref: React.RefObject<HTMLDivElement>) => {
+    widgetContainerRef.current = ref.current;
+  }, []);
+
   const initialize = useCallback(async () => {
     if (isActivated || isProcessing) return;
     
@@ -116,6 +131,9 @@ export const useSimliAvatar = ({
   }, [isActivated, isProcessing, customText, token]);
 
   const retryInitialization = useCallback(() => {
+    if (widgetContainerRef.current) {
+      safelyRemoveWidget({ current: widgetContainerRef.current });
+    }
     setIsActivated(false);
     setTimeout(initialize, 100);
   }, [initialize]);
@@ -126,6 +144,7 @@ export const useSimliAvatar = ({
     errorMessage,
     isProcessing,
     initialize,
-    retryInitialization
+    retryInitialization,
+    updateContainerRef
   };
 };

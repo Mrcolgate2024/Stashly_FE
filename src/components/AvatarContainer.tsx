@@ -1,5 +1,5 @@
 
-import React, { useRef } from "react";
+import React, { useEffect } from "react";
 import { SimliErrorMessage } from "./SimliErrorMessage";
 
 interface AvatarContainerProps {
@@ -8,6 +8,7 @@ interface AvatarContainerProps {
   onRetry: () => void;
   isProcessing: boolean;
   containerRef: React.RefObject<HTMLDivElement>;
+  updateContainerRef?: (ref: React.RefObject<HTMLDivElement>) => void;
 }
 
 export const AvatarContainer: React.FC<AvatarContainerProps> = ({
@@ -15,8 +16,16 @@ export const AvatarContainer: React.FC<AvatarContainerProps> = ({
   errorMessage,
   onRetry,
   isProcessing,
-  containerRef
+  containerRef,
+  updateContainerRef
 }) => {
+  // Update the ref in the hook when the container is mounted
+  useEffect(() => {
+    if (updateContainerRef) {
+      updateContainerRef(containerRef);
+    }
+  }, [containerRef, updateContainerRef]);
+
   return (
     <div className="relative">
       {hasError && (

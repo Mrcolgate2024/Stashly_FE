@@ -26,7 +26,7 @@ export const createSimliWidget = (
   customText?: string,
   customImage?: string
 ) => {
-  if (!containerRef.current) return;
+  if (!containerRef.current) return null;
   
   try {
     // Clear any existing content
@@ -54,6 +54,29 @@ export const createSimliWidget = (
     return simliWidget;
   } catch (err) {
     console.error("Error creating Simli widget:", err);
-    throw err;
+    return null;
+  }
+};
+
+// Helper function to safely remove widget
+export const safelyRemoveWidget = (containerRef: React.RefObject<HTMLDivElement>) => {
+  if (containerRef.current) {
+    try {
+      // Remove any existing widget to prevent leave() errors
+      const existingWidget = containerRef.current.querySelector('simli-widget');
+      if (existingWidget) {
+        // Try to gracefully disconnect before removal
+        try {
+          // Set a flag to prevent leave() call during disconnectedCallback
+          (existingWidget as any)._isManuallyRemoved = true;
+        } catch (e) {
+          console.log("Could not set manual removal flag", e);
+        }
+        
+        containerRef.current.innerHTML = '';
+      }
+    } catch (err) {
+      console.error("Error safely removing widget:", err);
+    }
   }
 };

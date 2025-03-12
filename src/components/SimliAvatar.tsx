@@ -1,7 +1,7 @@
 
 import React, { useRef, useEffect } from "react";
 import { useSimliAvatar } from "@/hooks/useSimliAvatar";
-import { createSimliWidget } from "@/utils/simliUtils";
+import { createSimliWidget, safelyRemoveWidget } from "@/utils/simliUtils";
 import { AvatarButton } from "./AvatarButton";
 import { AvatarContainer } from "./AvatarContainer";
 
@@ -30,7 +30,8 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
     errorMessage,
     isProcessing,
     initialize,
-    retryInitialization
+    retryInitialization,
+    updateContainerRef
   } = useSimliAvatar({
     token: VALID_TOKEN,
     agentId,
@@ -45,6 +46,10 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
   useEffect(() => {
     if (isActivated && containerRef.current) {
       try {
+        // First safely remove any existing widget
+        safelyRemoveWidget(containerRef);
+        
+        // Then create a new one
         createSimliWidget(
           containerRef,
           VALID_TOKEN,
@@ -59,6 +64,13 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
         console.error(`Error creating ${customText} widget:`, err);
       }
     }
+    
+    // Cleanup when component unmounts or deactivates
+    return () => {
+      if (containerRef.current) {
+        safelyRemoveWidget(containerRef);
+      }
+    };
   }, [isActivated, agentId, customText]);
 
   return (
@@ -79,6 +91,7 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
           onRetry={retryInitialization}
           isProcessing={isProcessing}
           containerRef={containerRef}
+          updateContainerRef={updateContainerRef}
         />
       )}
     </div>

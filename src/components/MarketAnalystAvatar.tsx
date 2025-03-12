@@ -1,7 +1,7 @@
 
 import React, { useRef, useEffect } from "react";
 import { useSimliAvatar } from "@/hooks/useSimliAvatar";
-import { createSimliWidget } from "@/utils/simliUtils";
+import { createSimliWidget, safelyRemoveWidget } from "@/utils/simliUtils";
 import { AvatarButton } from "./AvatarButton";
 import { AvatarContainer } from "./AvatarContainer";
 
@@ -29,7 +29,8 @@ export const MarketAnalystAvatar: React.FC<MarketAnalystAvatarProps> = ({
     errorMessage,
     isProcessing,
     initialize,
-    retryInitialization
+    retryInitialization,
+    updateContainerRef
   } = useSimliAvatar({
     token: VALID_TOKEN,
     agentId,
@@ -43,6 +44,10 @@ export const MarketAnalystAvatar: React.FC<MarketAnalystAvatarProps> = ({
   useEffect(() => {
     if (isActivated && containerRef.current) {
       try {
+        // First safely remove any existing widget
+        safelyRemoveWidget(containerRef);
+        
+        // Then create a new one
         createSimliWidget(
           containerRef,
           VALID_TOKEN,
@@ -56,6 +61,13 @@ export const MarketAnalystAvatar: React.FC<MarketAnalystAvatarProps> = ({
         console.error(`Error creating ${customText} widget:`, err);
       }
     }
+    
+    // Cleanup when component unmounts or deactivates
+    return () => {
+      if (containerRef.current) {
+        safelyRemoveWidget(containerRef);
+      }
+    };
   }, [isActivated, agentId, customText]);
 
   return (
@@ -75,6 +87,7 @@ export const MarketAnalystAvatar: React.FC<MarketAnalystAvatarProps> = ({
           onRetry={retryInitialization}
           isProcessing={isProcessing}
           containerRef={containerRef}
+          updateContainerRef={updateContainerRef}
         />
       )}
     </div>
