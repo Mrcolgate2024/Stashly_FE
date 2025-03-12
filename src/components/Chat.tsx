@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useChat } from "@/hooks/useChat";
 import { ChatInput } from "./ChatInput";
@@ -91,7 +92,7 @@ export const Chat = () => {
         <ChatInput onSend={handleMessageSend} disabled={isLoading} />
       </div>
 
-      {/* Financial Analyst Avatar - keeping separate from Market Analyst */}
+      {/* Financial Analyst Avatar */}
       <SimliAvatar 
         onMessageReceived={handleFinancialAvatarMessage}
         token="gAAAAABnzdaSAK9eo1dXkjVPB4_sVJG_nvq_ThvMivYcfoVrYJOusk52PhgOtaEvqhmFbXbkJp9W06_DP4NWnN7v_TWO7dGKmi92oeC1aMmIHky98JNaYF4fBMn-6JqaEy_act99q0g46P7C571b2Sa9oA9NuqS6qi0OhQx1zKG67JsKtGj0ECL5Xj_KksIeXjvnUMcDeiDQEE1mBQAA6yO_yRV1l--P4WJSrLMQffvMdwGS6i36EH184LHY-ZWo-spsrVhZaY-e2jQukFkS__Ydv2XPz5DnIdp6K92KC3qFVsIDUltHEeTVKwGklz67_AkQwkHClFDYHseeM301guXCvGxk0F7icSHFyAaryiKyfBsIirJ5UR8-rbBf-XSrgspGqwMG6ue6ZiLJYoCQ2qPNIzLKgMFyOQ=="
@@ -99,7 +100,7 @@ export const Chat = () => {
         customText="Financial Analyst"
       />
 
-      {/* Market Analyst Avatar - keeping separate from Financial Analyst */}
+      {/* Market Analyst Avatar */}
       <SimliAvatar2 
         onMessageReceived={handleMarketAvatarMessage}
         token="gAAAAABn0S1jLCExW5IjIuT_Kq_J4DZUfZCkWwWPgAATyRikZb86rwF94Sp5XWT_U9a2pIRoYKAoEcdhss-_Q4YDNm7i_MfZwHIYM6A_-J1actfzX7mVi9II_9XXCHCj4idT6JH5aTgsAugUZWc04Meb5CIETV4W5ORQotGNQirLi6voQ_Y5QGJo23IjorymDB4Rv_xE-CgyYOaYUV5tV4t7cjPM4k0-Rz0FD680ohxgU6ENBf0yZJdc_497VQp_ENvckTuji4h54ZrowdgLZkAdST-mVrI_DYE1Xsmm1Q1qyXDdUIqvM7uaieT5GPRHLv_Dlb8Oe8He5-bInsIbFztVqRwmlTQKojotFjKLJSh8DqZjWwhc_-Y58s1PIyoCoEC9GCCfrXZWXhmGqhMyogMbZJQbUch3wyr19_3BdRWVrYTqQEwHH42tgpoweu0dV-GQxMjDc0dmXK3t0eJ6H1RnViLl2YQIyqxWRIpH4XXxA0z_Adl8J7xnW63hjSnSiPS-GcEjSOej"
