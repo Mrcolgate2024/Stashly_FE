@@ -75,11 +75,12 @@ export const createSimliWidget = async (
   customImage?: string,
   onMessage?: (message: string) => void
 ): Promise<() => void> => {
-  console.log(`Creating Simli widget: ${instanceId}`);
+  console.log(`Creating Simli widget: ${instanceId} with token: ${token.substring(0, 10)}...`);
   
   const container = document.getElementById(containerId);
   if (!container) {
     console.error(`Container not found: ${containerId}`);
+    toast.error(`Widget container not found: ${customText}`);
     return () => {};
   }
   
@@ -113,6 +114,22 @@ export const createSimliWidget = async (
     // Set up message handler if provided
     let messageHandler: EventListener | null = null;
     
+    // Listen for auth errors
+    const authErrorHandler = ((event: Event) => {
+      const customEvent = event as CustomEvent;
+      if (customEvent.detail && customEvent.detail.error) {
+        const targetElement = customEvent.target as HTMLElement;
+        const elementId = targetElement.getAttribute('data-instance-id');
+        
+        if (elementId === instanceId) {
+          console.error(`Auth error from ${instanceId}:`, customEvent.detail.error);
+          toast.error(`Authentication failed for ${customText}. Please try again later.`);
+        }
+      }
+    }) as EventListener;
+    
+    window.addEventListener('simli:error', authErrorHandler);
+    
     if (onMessage) {
       messageHandler = ((event: Event) => {
         const customEvent = event as CustomEvent;
@@ -136,6 +153,8 @@ export const createSimliWidget = async (
       if (messageHandler) {
         window.removeEventListener('simli:message', messageHandler);
       }
+      
+      window.removeEventListener('simli:error', authErrorHandler);
       
       if (container) {
         container.innerHTML = '';
