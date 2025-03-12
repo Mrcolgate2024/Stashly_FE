@@ -90,18 +90,18 @@ export const Chat = () => {
         <ChatInput onSend={handleMessageSend} disabled={isLoading} />
       </div>
 
-      {/* Financial Analyst Avatar - Updated with new token */}
+      {/* Financial Analyst Avatar - Temporary disabled the token for debugging */}
       <SimliAvatar 
         onMessageReceived={handleFinancialAvatarMessage}
-        token="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTQ1NzgzMjYsImlhdCI6MTcxMTk4NjMyNiwiZW1haWwiOiJtYXJrZXRAZmluYW5jaWFsLmFpIiwic3VwcGxpZXIiOiJTaW1saSJ9.kzwO7JvTWS7Ik0vCqU-4P8UGOTslE0KbQhzUk9xygjQ"
+        token="gAAAAABn1AQO5Xo4ymtgLPIGwESisjZw3uf4-Gs3K16t-UGKYaMb9E09W-D3hfdNKTqKGQ2uOJJZDYZLB-Vwg3mXnI3xQdZUJ0gzv-M5i_qwEDvyJy7uHNbzD7a60Kph8wEiurlV8wMEOw48r-g4w67jXb2TDOdP46dKBgJjLiXZR1TUHJbXuYCRljC3kUbIYOmV0UqWuI8MXnUHvt9jKrjECKSp7FwoCsE8Xdz-JXqLcjKnXXjpQ5k3CqNGn2hfGEzRO-5fJh8MH4WiCGi-fDtK1-UzQQZGtOkRQgkXkl-JpWrL1I_fv-cxbXxHo8hJ96a9nw1Ps9mE0_uVmAkK79XQZFmkAH6KGKLyuXzrNyhNuOGgLQpUiDk="
         agentId="b36e9ae6-5a88-4235-9e7a-eab88fd52d7b"
         customText="Financial Analyst"
       />
 
-      {/* Market Analyst Avatar - Updated with new token */}
+      {/* Market Analyst Avatar - Temporary disabled the token for debugging */}
       <SimliAvatar2 
         onMessageReceived={handleMarketAvatarMessage}
-        token="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTQ1NzgzMjYsImlhdCI6MTcxMTk4NjMyNiwiZW1haWwiOiJtYXJrZXRAZmluYW5jaWFsLmFpIiwic3VwcGxpZXIiOiJTaW1saSJ9.kzwO7JvTWS7Ik0vCqU-4P8UGOTslE0KbQhzUk9xygjQ"
+        token="gAAAAABn1AQO5Xo4ymtgLPIGwESisjZw3uf4-Gs3K16t-UGKYaMb9E09W-D3hfdNKTqKGQ2uOJJZDYZLB-Vwg3mXnI3xQdZUJ0gzv-M5i_qwEDvyJy7uHNbzD7a60Kph8wEiurlV8wMEOw48r-g4w67jXb2TDOdP46dKBgJjLiXZR1TUHJbXuYCRljC3kUbIYOmV0UqWuI8MXnUHvt9jKrjECKSp7FwoCsE8Xdz-JXqLcjKnXXjpQ5k3CqNGn2hfGEzRO-5fJh8MH4WiCGi-fDtK1-UzQQZGtOkRQgkXkl-JpWrL1I_fv-cxbXxHo8hJ96a9nw1Ps9mE0_uVmAkK79XQZFmkAH6KGKLyuXzrNyhNuOGgLQpUiDk="
         agentId="a730e183-fc16-48d2-9d25-42d64b1a238a"
         customText="Market Analyst"
       />

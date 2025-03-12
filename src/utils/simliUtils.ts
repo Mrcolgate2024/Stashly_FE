@@ -147,21 +147,26 @@ export const createSimliWidget = async (
       window.addEventListener('simli:message', messageHandler);
     }
     
-    // Return cleanup function
+    // Improved cleanup function to handle errors gracefully
     return () => {
       console.log(`Cleaning up widget: ${instanceId}`);
-      if (messageHandler) {
-        window.removeEventListener('simli:message', messageHandler);
-      }
-      
-      window.removeEventListener('simli:error', authErrorHandler);
-      
-      if (container) {
-        container.innerHTML = '';
-      }
-      
-      if (widgetInstances[instanceId]) {
-        delete widgetInstances[instanceId];
+      try {
+        if (messageHandler) {
+          window.removeEventListener('simli:message', messageHandler);
+        }
+        
+        window.removeEventListener('simli:error', authErrorHandler);
+        
+        if (container) {
+          container.innerHTML = '';
+        }
+        
+        if (widgetInstances[instanceId]) {
+          delete widgetInstances[instanceId];
+        }
+      } catch (error) {
+        console.error(`Error during cleanup of ${instanceId}:`, error);
+        // Continue with cleanup even if there's an error
       }
     };
   } catch (error) {
