@@ -27,6 +27,9 @@ export const SimliErrorMessage: React.FC<SimliErrorMessageProps> = ({
   } else if (message.includes("Duplicate DailyIframe")) {
     formattedMessage = "Avatar session already exists. Please refresh the page and try again.";
     actionLabel = "Reset";
+  } else if (message.includes("API Error")) {
+    formattedMessage = "API connection error. Please check your credentials and try again.";
+    actionLabel = "Retry";
   } else if (!message) {
     formattedMessage = "Error connecting to avatar";
     actionLabel = "Retry";

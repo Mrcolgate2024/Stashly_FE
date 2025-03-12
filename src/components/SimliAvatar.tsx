@@ -187,11 +187,11 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
             />
           )}
           <div className="min-h-[60px] min-w-[60px]">
-            {/* Using simli-widget as a custom element */}
+            {/* Update the attributes to include $ prefix if needed by the API */}
             <div id="financial-analyst-container">
               <simli-widget 
-                token={FINANCIAL_ANALYST_TOKEN}
-                agentid={agentId}
+                token={`$${FINANCIAL_ANALYST_TOKEN}`}
+                agentid={`$${agentId}`}
                 position="right"
                 eventname="simli:financial:message"
                 customtext={customText}
