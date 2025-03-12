@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { AvatarButton } from "./AvatarButton";
 import { SimliErrorMessage } from "./SimliErrorMessage";
@@ -16,6 +15,7 @@ export interface BaseAvatarProps {
   hoverColor: string;
   initials?: string;
   imageUrl?: string;
+  disableTTS?: boolean;
 }
 
 export const BaseAvatar: React.FC<BaseAvatarProps> = ({
@@ -30,6 +30,7 @@ export const BaseAvatar: React.FC<BaseAvatarProps> = ({
   hoverColor,
   initials,
   imageUrl,
+  disableTTS = false,
 }) => {
   const [isActivated, setIsActivated] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -55,6 +56,15 @@ export const BaseAvatar: React.FC<BaseAvatarProps> = ({
           if (event.detail.detail) message = event.detail.detail;
         } else if (typeof event.detail === 'string') {
           message = event.detail;
+        }
+        
+        if (disableTTS && (message.includes("TTS API Key") || message.includes("Invalid TTS"))) {
+          console.warn("TTS API Key error ignored as TTS is disabled for this avatar");
+          if (onError) {
+            onError(message);
+          }
+          
+          return;
         }
         
         setHasError(true);
@@ -87,7 +97,7 @@ export const BaseAvatar: React.FC<BaseAvatarProps> = ({
       window.removeEventListener(eventName as any, handleSimliMessage as EventListener);
       window.removeEventListener('simli:error' as any, handleSimliError as EventListener);
     };
-  }, [customText, onMessageReceived, onError, eventName]);
+  }, [customText, onMessageReceived, onError, eventName, disableTTS]);
 
   const initialize = () => {
     if (isActivated || isProcessing) return;
@@ -155,6 +165,16 @@ export const BaseAvatar: React.FC<BaseAvatarProps> = ({
         console.warn(`Caught Simli error in ${customText}:`, event.message);
         
         if (isActivated) {
+          if (disableTTS && (event.message.includes("TTS API Key") || event.message.includes("Invalid TTS"))) {
+            console.warn("TTS API Key error ignored as TTS is disabled for this avatar");
+            
+            if (onError) {
+              onError(event.message);
+            }
+            
+            return;
+          }
+          
           setHasError(true);
           setErrorMessage(event.message);
           
@@ -171,7 +191,7 @@ export const BaseAvatar: React.FC<BaseAvatarProps> = ({
     
     window.addEventListener('error', handleGlobalError);
     return () => window.removeEventListener('error', handleGlobalError);
-  }, [customText, isActivated]);
+  }, [customText, isActivated, onError, disableTTS]);
 
   const containerClass = position === "left" ? "fixed bottom-10 left-10 z-10" : "fixed bottom-10 right-10 z-10";
 
@@ -205,6 +225,7 @@ export const BaseAvatar: React.FC<BaseAvatarProps> = ({
                 eventname={eventName}
                 customtext={customText}
                 customimage={imageUrl}
+                disabletts={disableTTS ? "true" : "false"}
               ></simli-widget>
             </div>
           </div>
