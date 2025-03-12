@@ -1,6 +1,7 @@
 
 import { Chat } from "@/components/Chat";
 import { useEffect, useState } from "react";
+import { Toaster } from "@/components/ui/toaster";
 
 // Global variable to track script loading state across component remounts
 declare global {
@@ -46,7 +47,7 @@ const Index = () => {
           event.preventDefault();
           
           // Reset the avatar state if there's a duplicate instance error
-          if (event.message.includes('Duplicate DailyIframe instances')) {
+          if (event.message.includes('Duplicate DailyIframe')) {
             window.simliAvatarActive = false;
           }
           
@@ -74,6 +75,7 @@ const Index = () => {
           <Chat />
         </div>
       </div>
+      <Toaster />
     </>
   );
 };

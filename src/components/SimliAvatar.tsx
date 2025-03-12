@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { AvatarButton } from "./AvatarButton";
 import { SimliErrorMessage } from "./SimliErrorMessage";
+import { toast } from "@/hooks/use-toast";
 
 interface SimliAvatarProps {
   onMessageReceived: (message: string) => void;
@@ -49,11 +50,18 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
         setHasError(true);
         setErrorMessage(message);
         
-        // Auto-deactivate on auth/TTS errors to allow retry
+        // Show a toast notification for critical errors
         if (message.includes("401") || 
             message.includes("unauthorized") || 
-            message.includes("TTS API Key") ||
-            message.includes("Duplicate DailyIframe")) {
+            message.includes("Unauthorized") ||
+            message.includes("Invalid")) {
+          toast({
+            title: "Avatar Connection Error",
+            description: `${customText} avatar authorization failed. Token may be expired.`,
+            variant: "destructive",
+          });
+          
+          // Auto-deactivate on auth errors to allow retry
           setIsActivated(false);
           window.simliAvatarActive = false;
         }
@@ -86,7 +94,7 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
     
     try {
       console.log(`Initializing ${customText} avatar...`);
-      console.log(`Using provided token for ${customText} avatar`);
+      console.log(`Using token for ${customText} avatar`);
       setIsActivated(true);
       window.simliAvatarActive = true;
       
@@ -101,6 +109,12 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
       setErrorMessage(error instanceof Error ? error.message : "Failed to connect to avatar service");
       setIsProcessing(false);
       window.simliAvatarActive = false;
+      
+      toast({
+        title: "Avatar Initialization Error",
+        description: `Failed to initialize ${customText} avatar. Please try again.`,
+        variant: "destructive",
+      });
     }
   };
 
@@ -108,6 +122,11 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
     setIsActivated(false);
     window.simliAvatarActive = false;
     setTimeout(initialize, 100);
+    
+    toast({
+      title: "Reconnecting",
+      description: `Attempting to reconnect ${customText} avatar...`,
+    });
   };
 
   useEffect(() => {
@@ -116,6 +135,36 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
       window.simliAvatarActive = false;
     }
   }, [isActivated]);
+
+  // Listen for global Simli errors regardless of avatar type
+  useEffect(() => {
+    const handleGlobalError = (event: ErrorEvent) => {
+      if (event.message && (
+        event.message.includes('DailyIframe') || 
+        event.message.includes('daily-js') ||
+        event.message.includes('duplicate') ||
+        event.message.includes('Unauthorized') ||
+        event.message.includes('401')
+      )) {
+        console.warn(`Caught Simli error in ${customText}:`, event.message);
+        
+        if (isActivated) {
+          setHasError(true);
+          setErrorMessage(event.message);
+          
+          // Only show toast when avatar is active to avoid duplicate notifications
+          toast({
+            title: "Avatar Connection Issue",
+            description: `${customText} encountered an error: ${event.message.slice(0, 50)}...`,
+            variant: "destructive",
+          });
+        }
+      }
+    };
+    
+    window.addEventListener('error', handleGlobalError);
+    return () => window.removeEventListener('error', handleGlobalError);
+  }, [customText, isActivated]);
 
   return (
     <div className="fixed bottom-[80px] right-4 sm:bottom-10 sm:right-10 z-10">
