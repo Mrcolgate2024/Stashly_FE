@@ -14,9 +14,16 @@ export const SimliErrorMessage: React.FC<SimliErrorMessageProps> = ({
   isProcessing
 }) => {
   // Format the error message to be more user-friendly
-  const formattedMessage = message.includes("unauthorized") || message.includes("401") 
-    ? "Session expired. Please reconnect the avatar."
-    : message || "Error connecting to avatar";
+  let formattedMessage = message;
+  
+  // Check for specific error patterns
+  if (message.includes("unauthorized") || message.includes("401")) {
+    formattedMessage = "Session expired. Please reconnect the avatar.";
+  } else if (message.includes("TTS API Key") || message.includes("Invalid TTS")) {
+    formattedMessage = "Text-to-speech service unavailable. Please try again later.";
+  } else if (!message) {
+    formattedMessage = "Error connecting to avatar";
+  }
 
   return (
     <div className="absolute -top-16 right-0 bg-white p-2 rounded-md shadow-md text-sm max-w-[250px]">

@@ -52,13 +52,14 @@ export const useSimliAvatar = ({
         // Extract error message
         let message = "Unknown error";
         let isAuthError = false;
+        let isTtsError = false;
         
         if (errorDetails.error) message = errorDetails.error;
         if (errorDetails.message) message = errorDetails.message;
         if (typeof errorDetails === 'string') message = errorDetails;
         if (errorDetails.detail) message = errorDetails.detail;
         
-        // Check if it's a token-related error
+        // Check for specific error types
         if (
           message.includes("token") || 
           message.includes("401") || 
@@ -71,11 +72,24 @@ export const useSimliAvatar = ({
           console.error(`Authentication error for ${customText} avatar:`, message);
         }
         
+        // Check for TTS API key errors
+        if (
+          message.includes("TTS API Key") || 
+          message.includes("Invalid TTS") || 
+          (typeof errorDetails === 'object' && 
+           errorDetails.detail && 
+           errorDetails.detail.includes("TTS API Key"))
+        ) {
+          isTtsError = true;
+          message = "Invalid TTS API Key";
+          console.error(`TTS API error for ${customText} avatar:`, message);
+        }
+        
         setErrorMessage(message);
         setHasError(true);
         
-        // If it's an auth error, deactivate so user can retry
-        if (isAuthError) {
+        // If it's an auth error or TTS error, deactivate so user can retry
+        if (isAuthError || isTtsError) {
           setIsActivated(false);
           safelyRemoveWidget({ current: widgetContainerRef.current });
         }
@@ -91,6 +105,31 @@ export const useSimliAvatar = ({
       window.removeEventListener(`${eventName}:error` as any, handleError as EventListener);
     };
   }, [eventName, customText]);
+
+  // Monitor console errors for TTS API Key issues
+  useEffect(() => {
+    if (!isActivated) return;
+    
+    const originalConsoleError = console.error;
+    console.error = function(...args) {
+      // Call the original console.error
+      originalConsoleError.apply(console, args);
+      
+      // Check if this is a TTS API key error
+      const errorString = args.join(' ');
+      if (
+        errorString.includes('TTS API Key') || 
+        errorString.includes('Invalid TTS')
+      ) {
+        setErrorMessage("Invalid TTS API Key");
+        setHasError(true);
+      }
+    };
+    
+    return () => {
+      console.error = originalConsoleError;
+    };
+  }, [isActivated]);
 
   // Set up message listener when activated
   useEffect(() => {
@@ -152,16 +191,17 @@ export const useSimliAvatar = ({
         setScriptInitialized(true);
       }
       
-      // Log token for debugging (masked)
-      if (token) {
-        const maskedToken = token.length > 20 
-          ? `${token.substring(0, 10)}...${token.substring(token.length - 5)}`
-          : "[TOKEN ERROR]";
-        console.log(`Using token for ${customText}: ${maskedToken}`);
-      } else {
+      // Validate token
+      if (!token || token.trim() === '') {
         console.error(`No token provided for ${customText}`);
         throw new Error("No token provided");
       }
+      
+      // Log token for debugging (masked)
+      const maskedToken = token.length > 20 
+        ? `${token.substring(0, 10)}...${token.substring(token.length - 5)}`
+        : "[TOKEN ERROR]";
+      console.log(`Using token for ${customText}: ${maskedToken}`);
       
       setIsActivated(true);
       

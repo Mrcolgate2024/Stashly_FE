@@ -74,20 +74,25 @@ export const createSimliWidget = (
       simliWidget.setAttribute('customimage', customImage);
     }
     
-    // Setup error listener for authentication errors
-    const checkAuthErrors = () => {
+    // Setup error listeners
+    const checkErrors = () => {
       setTimeout(() => {
         const shadowRoot = simliWidget.shadowRoot;
         if (shadowRoot) {
+          // Check for error elements
           const errorElements = shadowRoot.querySelectorAll('.error-message');
           for (const errorEl of Array.from(errorElements)) {
             const errorText = errorEl.textContent || '';
-            if (errorText.toLowerCase().includes('unauthorized') || 
-                errorText.toLowerCase().includes('authentication') ||
-                errorText.toLowerCase().includes('permission')) {
-              console.error('Authentication error detected in widget:', errorText);
+            processErrorMessage(errorText, eventName);
+          }
+          
+          // Check console outputs within shadow DOM
+          const consoleOutputs = shadowRoot.querySelectorAll('.console-output');
+          for (const consoleEl of Array.from(consoleOutputs)) {
+            const consoleText = consoleEl.textContent || '';
+            if (consoleText.includes('TTS API Key') || consoleText.includes('Invalid TTS')) {
               const errorEvent = new CustomEvent(eventName + ':error', { 
-                detail: { message: "unauthorized" } 
+                detail: { message: "Invalid TTS API Key" } 
               });
               window.dispatchEvent(errorEvent);
             }
@@ -96,16 +101,59 @@ export const createSimliWidget = (
       }, 1000); // Check after 1 second
     };
     
-    simliWidget.addEventListener('error', () => {
-      checkAuthErrors();
+    // Helper to process error messages and dispatch events
+    const processErrorMessage = (errorText: string, eventName: string) => {
+      if (errorText.toLowerCase().includes('unauthorized') || 
+          errorText.toLowerCase().includes('authentication') ||
+          errorText.toLowerCase().includes('permission')) {
+        console.error('Authentication error detected in widget:', errorText);
+        const errorEvent = new CustomEvent(eventName + ':error', { 
+          detail: { message: "unauthorized" } 
+        });
+        window.dispatchEvent(errorEvent);
+      }
+      
+      if (errorText.toLowerCase().includes('tts api key') || 
+          errorText.toLowerCase().includes('invalid tts')) {
+        console.error('TTS API Key error detected in widget:', errorText);
+        const errorEvent = new CustomEvent(eventName + ':error', { 
+          detail: { message: "Invalid TTS API Key" } 
+        });
+        window.dispatchEvent(errorEvent);
+      }
+    };
+    
+    simliWidget.addEventListener('error', (e) => {
+      console.log('Error event from widget:', e);
+      checkErrors();
     });
+    
+    // Listen for console errors that might indicate TTS API issues
+    const originalConsoleError = console.error;
+    const errorHandler = (...args: any[]) => {
+      originalConsoleError.apply(console, args);
+      const errorString = args.join(' ');
+      if (errorString.includes('TTS API Key') || errorString.includes('Invalid TTS')) {
+        const errorEvent = new CustomEvent(eventName + ':error', { 
+          detail: { message: "Invalid TTS API Key" } 
+        });
+        window.dispatchEvent(errorEvent);
+      }
+    };
+    
+    console.error = errorHandler;
     
     // Append the widget to the container
     containerRef.current.appendChild(simliWidget);
     console.log(`Simli widget created and appended to DOM for ${customText || "avatar"}`);
     
-    // Check for auth errors after a delay
-    checkAuthErrors();
+    // Check for errors after a delay
+    checkErrors();
+    
+    // Reset console.error after a delay to avoid affecting other components
+    setTimeout(() => {
+      console.error = originalConsoleError;
+    }, 5000);
     
     return simliWidget;
   } catch (err) {
