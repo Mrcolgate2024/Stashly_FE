@@ -9,7 +9,7 @@ const Index = () => {
       <div 
         className="min-h-screen w-full bg-[#1e2a38]"
       >
-        <div className="mx-auto max-w-4xl backdrop-blur-sm bg-white/40 min-h-screen">
+        <div className="mx-auto max-w-4xl backdrop-blur-sm bg-white/40 min-h-screen px-16 sm:px-4">
           <Chat />
         </div>
       </div>
