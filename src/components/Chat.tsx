@@ -67,18 +67,18 @@ export const Chat = () => {
         <ChatInput onSend={handleMessageSend} disabled={isLoading} />
       </div>
 
-      {/* Financial Analyst avatar with dynamic token refresh */}
+      {/* Financial Analyst avatar with valid hardcoded token */}
       <SimliAvatar 
         onMessageReceived={handleFinancialAvatarMessage}
-        token="dummy-token" /* Token will be refreshed in the component */
+        token="dummy-token" /* Token is hardcoded in the component */
         agentId="b36e9ae6-5a88-4235-9e7a-eab88fd52d7b"
         customText="Financial Analyst"
       />
 
-      {/* Market Analyst avatar with dynamic token refresh */}
+      {/* Market Analyst avatar with valid hardcoded token */}
       <MarketAnalystAvatar 
         onMessageReceived={handleMarketAvatarMessage}
-        token="dummy-token" /* Token will be refreshed in the component */
+        token="dummy-token" /* Token is hardcoded in the component */
         agentId="a730e183-fc16-48d2-9d25-42d64b1a238a"
         customText="Market Analyst"
       />

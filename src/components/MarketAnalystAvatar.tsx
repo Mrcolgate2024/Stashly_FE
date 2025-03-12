@@ -1,7 +1,5 @@
-
 import React, { useRef, useState, useEffect } from "react";
 import { Button } from "./ui/button";
-import axios from "axios";
 
 interface MarketAnalystAvatarProps {
   onMessageReceived: (message: string) => void;
@@ -22,25 +20,8 @@ export const MarketAnalystAvatar: React.FC<MarketAnalystAvatarProps> = ({
   const [errorMessage, setErrorMessage] = useState("");
   const [isTokenRefreshing, setIsTokenRefreshing] = useState(false);
   
-  // Function to generate a new token - in a real implementation, this would call your backend
-  const generateNewToken = async () => {
-    try {
-      setIsTokenRefreshing(true);
-      
-      // In a real implementation, you would call your backend to get a fresh token
-      // For now we'll just return a sample token to demonstrate the flow
-      // This is a placeholder token and won't actually work with Simli API
-      const demoToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzaW1saS1kZW1vLXRva2VuIiwiaWF0IjoxNjQ3MzU2Nzg5LCJleHAiOjE2Nzg4OTI3ODl9.lWpH7Y9g6aFP0TySByRLWjmDZvS_TCRcEzCiJqy45rY";
-      
-      console.log("Generated a new token for Market Analyst avatar");
-      return demoToken;
-    } catch (error) {
-      console.error("Error generating token:", error);
-      throw error;
-    } finally {
-      setIsTokenRefreshing(false);
-    }
-  };
+  // Hard-coded valid token from user
+  const VALID_TOKEN = "gAAAAABn0WhoVTdSnRpLy7op0O79gAka6U1SfH7GCpjx-dIc37msMAii2eFpvsrwKqANei9SvQOY1GDN1QiSqF-AkIwxRvnsw82_6chiyQ2YT1jiAQkZtmsJidt_Wq2aIwZFRcwtUpaqoKBExOGmwvv7Et2Av-AQV9VFMyjiph_X6QGcHraeVUgGIRc_cSIMCvKCv4apFOMgv8onii6wiWVcItyhXl0ebMhlRVOX7O1XU4S1kTXV27LkXuTrDmMAFK7MkxV9mwV6XEqylxl_N8qaVvh_578hVHIsk1PRDkQfJ14ZVONwmt45w3o8xOpvFithxj8C4eS3XywkVTG9JKG9EbbHIUpoll_xbR2kg0Qz2vgjGEdkS_npQHK9ayVXUNhQW3bMwBP2Tlnxg2iF3Wv7y5t7Q01jQgaa2cZVvMIiZ3BQmpjCZrCxbDaBagCpG1Zzn4EeHz_QCACKFax6AAzGB0YdW8uO0pq_2PvBon2pcLnE91Jng21Y3GJTL2bxmFaI9P-fnY9d";
 
   useEffect(() => {
     // Listen for errors from Simli
@@ -92,8 +73,9 @@ export const MarketAnalystAvatar: React.FC<MarketAnalystAvatarProps> = ({
       console.log("Initializing Market Analyst avatar...");
       setIsActivated(true);
 
-      // Get a fresh token - in a real app this would call your backend
-      const freshToken = await generateNewToken();
+      // Use the hardcoded valid token
+      const token = VALID_TOKEN;
+      console.log("Using provided token for Market Analyst avatar");
 
       // Create a custom event listener for Simli messages
       const handleSimliMessage = (event: CustomEvent) => {
@@ -132,7 +114,7 @@ export const MarketAnalystAvatar: React.FC<MarketAnalystAvatarProps> = ({
             // Create the widget element
             const simliWidget = document.createElement('simli-widget');
             
-            simliWidget.setAttribute('token', freshToken);
+            simliWidget.setAttribute('token', token);
             simliWidget.setAttribute('agentid', agentId);
             simliWidget.setAttribute('position', 'left');
             simliWidget.setAttribute('customtext', customText);
