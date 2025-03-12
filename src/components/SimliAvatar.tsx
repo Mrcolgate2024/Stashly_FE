@@ -1,7 +1,5 @@
 
-import React, { useRef, useState, useEffect } from "react";
-import { Button } from "./ui/button";
-import { createSimliWidget } from "@/utils/simliUtils";
+import React, { useEffect, useRef } from "react";
 
 interface SimliAvatarProps {
   onMessageReceived: (message: string) => void;
@@ -16,78 +14,55 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
   agentId,
   customText = "Financial Analyst",
 }) => {
-  const containerId = `financial-container-${agentId}`;
-  const instanceId = `financial-${agentId}`;
+  const containerRef = useRef<HTMLDivElement>(null);
   const customImageUrl = "/lovable-uploads/c54ad77b-c6fd-43b7-8063-5803ecec8c64.png";
-  
-  const [isActive, setIsActive] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const cleanupRef = useRef<(() => void) | null>(null);
 
-  // Clean up on unmount
   useEffect(() => {
-    return () => {
-      if (cleanupRef.current) {
-        cleanupRef.current();
-        cleanupRef.current = null;
+    // Create a custom event listener for Simli messages
+    const handleSimliMessage = (event: CustomEvent) => {
+      if (event.detail && event.detail.message) {
+        onMessageReceived(event.detail.message);
       }
     };
-  }, []);
 
-  const handleButtonClick = async () => {
-    console.log("Financial Analyst button clicked", isActive ? "hiding" : "showing");
-    
-    if (isActive) {
-      // Hide and cleanup
-      setIsActive(false);
-      if (cleanupRef.current) {
-        cleanupRef.current();
-        cleanupRef.current = null;
-      }
-      return;
+    // Add custom event listener for Simli messages
+    window.addEventListener('simli:message' as any, handleSimliMessage as EventListener);
+
+    // Add the Simli script if it's not already present
+    if (!document.querySelector('script[src="https://app.simli.com/simli-widget/index.js"]')) {
+      const script = document.createElement('script');
+      script.src = "https://app.simli.com/simli-widget/index.js";
+      script.async = true;
+      script.type = "text/javascript";
+      document.body.appendChild(script);
     }
-    
-    // Show and initialize
-    setIsLoading(true);
-    
-    try {
-      // Initialize widget
-      const cleanup = await createSimliWidget(
-        containerId,
-        instanceId,
-        token,
-        agentId,
-        customText,
-        customImageUrl,
-        onMessageReceived
-      );
+
+    // Create and append the Simli widget to our container
+    if (containerRef.current) {
+      // Clear any existing content
+      containerRef.current.innerHTML = '';
       
-      cleanupRef.current = cleanup;
-      setIsActive(true);
-    } catch (error) {
-      console.error("Error initializing Financial Analyst widget:", error);
-    } finally {
-      setIsLoading(false);
+      // Create the widget element
+      const simliWidget = document.createElement('simli-widget');
+      simliWidget.setAttribute('token', token);
+      simliWidget.setAttribute('agentid', agentId);
+      simliWidget.setAttribute('position', 'relative');
+      simliWidget.setAttribute('customimage', customImageUrl);
+      simliWidget.setAttribute('customtext', customText);
+      
+      // Append the widget to the container
+      containerRef.current.appendChild(simliWidget);
     }
-  };
+
+    // Cleanup function
+    return () => {
+      window.removeEventListener('simli:message' as any, handleSimliMessage as EventListener);
+    };
+  }, [token, agentId, onMessageReceived, customText]);
 
   return (
-    <div className="fixed bottom-[80px] right-4 sm:bottom-10 sm:right-10 z-10 flex flex-col items-end gap-2">
-      <Button 
-        onClick={handleButtonClick}
-        variant="outline"
-        className="bg-white/90 hover:bg-white"
-        disabled={isLoading}
-      >
-        {isLoading ? "Loading..." : isActive ? "Hide" : "Talk to Financial Analyst"}
-      </Button>
-      
-      <div 
-        id={containerId}
-        className={`bg-white/90 p-2 rounded-lg shadow-lg ${isActive ? 'block' : 'hidden'}`}
-      >
-        {/* Simli widget will be inserted here */}
-      </div>
+    <div className="fixed bottom-[80px] right-4 sm:bottom-10 sm:right-10 z-10" ref={containerRef}>
+      {/* Simli widget will be inserted here programmatically */}
     </div>
   );
 };
