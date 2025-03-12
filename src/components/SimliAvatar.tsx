@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { AvatarButton } from "./AvatarButton";
 import { SimliErrorMessage } from "./SimliErrorMessage";
@@ -157,7 +158,7 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
   }, [customText, isActivated]);
 
   return (
-    <div className="fixed bottom-[80px] right-4 sm:bottom-10 sm:right-10 z-10">
+    <div className="fixed bottom-10 right-10 z-10">
       {!isActivated ? (
         <AvatarButton
           onClick={initialize}
@@ -179,7 +180,7 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
           <div className="min-h-[60px] min-w-[60px]">
             <div id="financial-analyst-container">
               <simli-widget 
-                token={`$${FINANCIAL_ANALYST_TOKEN}`}
+                token={`${FINANCIAL_ANALYST_TOKEN}`}
                 agentid={agentId}
                 position="right"
                 eventname="simli:financial:message"

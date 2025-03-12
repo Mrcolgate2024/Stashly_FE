@@ -1,10 +1,9 @@
+
 import { useState } from "react";
 import { useChat } from "@/hooks/useChat";
 import { ChatInput } from "./ChatInput";
 import { ChatControls } from "./ChatControls";
 import { ChatMessagesArea } from "./ChatMessagesArea";
-import { SimliAvatar } from "./SimliAvatar";
-import { MarketAnalystAvatar } from "./MarketAnalystAvatar";
 import { Logo } from "./Logo";
 
 export const Chat = () => {
@@ -19,14 +18,6 @@ export const Chat = () => {
     clearMessages
   } = useChat();
 
-  const handleFinancialAvatarMessage = (message: string) => {
-    handleSendMessage("Financial Analyst: " + message, userName);
-  };
-
-  const handleMarketAvatarMessage = (message: string) => {
-    handleSendMessage("Market Analyst: " + message, userName);
-  };
-
   const handleMessageSend = (content: string) => {
     handleSendMessage(content, userName);
   };
@@ -40,7 +31,7 @@ export const Chat = () => {
   };
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] flex-col gap-4 p-4 relative">
+    <div className="flex h-[calc(100vh-12rem)] flex-col gap-4 relative">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <Logo />
         <ChatControls
@@ -63,18 +54,6 @@ export const Chat = () => {
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#1e2a38]/80 backdrop-blur-sm sm:static sm:bg-transparent sm:backdrop-blur-none">
         <ChatInput onSend={handleMessageSend} disabled={isLoading} />
       </div>
-
-      <SimliAvatar 
-        onMessageReceived={handleFinancialAvatarMessage}
-        agentId="b36e9ae6-5a88-4235-9e7a-eab88fd52d7b"
-        customText="Financial Analyst"
-      />
-
-      <MarketAnalystAvatar 
-        onMessageReceived={handleMarketAvatarMessage}
-        agentId="a730e183-fc16-48d2-9d25-42d64b1a238a"
-        customText="Market Analyst"
-      />
     </div>
   );
 };

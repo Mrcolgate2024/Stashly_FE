@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { AvatarButton } from "./AvatarButton";
 import { SimliErrorMessage } from "./SimliErrorMessage";
@@ -155,7 +156,7 @@ export const MarketAnalystAvatar: React.FC<MarketAnalystAvatarProps> = ({
   }, [customText, isActivated]);
 
   return (
-    <div className="fixed bottom-[80px] left-4 sm:bottom-10 sm:left-10 z-10">
+    <div className="fixed bottom-10 left-10 z-10">
       {!isActivated ? (
         <AvatarButton
           onClick={initialize}
@@ -176,7 +177,7 @@ export const MarketAnalystAvatar: React.FC<MarketAnalystAvatarProps> = ({
           <div className="min-h-[60px] min-w-[60px]">
             <div id="market-analyst-container">
               <simli-widget 
-                token={`$${MARKET_ANALYST_TOKEN}`}
+                token={`${MARKET_ANALYST_TOKEN}`}
                 agentid={agentId}
                 position="left"
                 eventname="simli:market:message"
