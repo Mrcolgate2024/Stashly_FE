@@ -90,18 +90,18 @@ export const Chat = () => {
         <ChatInput onSend={handleMessageSend} disabled={isLoading} />
       </div>
 
-      {/* Financial Analyst Avatar - Temporary disabled the token for debugging */}
+      {/* Financial Analyst Avatar */}
       <SimliAvatar 
         onMessageReceived={handleFinancialAvatarMessage}
-        token="gAAAAABn1AQO5Xo4ymtgLPIGwESisjZw3uf4-Gs3K16t-UGKYaMb9E09W-D3hfdNKTqKGQ2uOJJZDYZLB-Vwg3mXnI3xQdZUJ0gzv-M5i_qwEDvyJy7uHNbzD7a60Kph8wEiurlV8wMEOw48r-g4w67jXb2TDOdP46dKBgJjLiXZR1TUHJbXuYCRljC3kUbIYOmV0UqWuI8MXnUHvt9jKrjECKSp7FwoCsE8Xdz-JXqLcjKnXXjpQ5k3CqNGn2hfGEzRO-5fJh8MH4WiCGi-fDtK1-UzQQZGtOkRQgkXkl-JpWrL1I_fv-cxbXxHo8hJ96a9nw1Ps9mE0_uVmAkK79XQZFmkAH6KGKLyuXzrNyhNuOGgLQpUiDk="
+        token="gAAAAABn0TbcF2qb2t6qsS4vvTzkZ7Cl608bt3qfiaAw1bp1VAJFstT88mQVftN3gwkTr0vtc6dQXaWB7-u8-uE9pPfL5EA1cQu5AUMk3OeOulhlmegNSOOLjxF0agoAYMwrzrqjg29d9uKuvztQPgLJqvVwUlCTRITnZ62AaHuE69O6-u9jObX2wp-4AI3ten2lmzRjeWFJZIJmxYAlmMp9bw4FQtjRN_dT_jE6jIe7Nysrx1MZCDaADMKdsUP2s3RFUROMYkIVVnSpjtt0qyzetf8KSQY9yYgRz6mGF4bxmDB2jf6QhT_ENkP67eIhLuj3NPIscHVJulUvclUWaEVqoSyh1Epg0d9YB4Qw6jySFxMePENVClzeDrUKUvQ7aZuDcZXTfMcU74dokJHThB0RM2pqzwQl_n_iIjhhDc9aHoeMzqNrR9Rkhvuwa3HaDaD0lvBinMd2M99VmQzXcL8Vp8iikJYHWnu0f6VRgoS-p9E7D0_c-CIxFGV-a1xlw0JgFnbkM-JT"
         agentId="b36e9ae6-5a88-4235-9e7a-eab88fd52d7b"
         customText="Financial Analyst"
       />
 
-      {/* Market Analyst Avatar - Temporary disabled the token for debugging */}
+      {/* Market Analyst Avatar */}
       <SimliAvatar2 
         onMessageReceived={handleMarketAvatarMessage}
-        token="gAAAAABn1AQO5Xo4ymtgLPIGwESisjZw3uf4-Gs3K16t-UGKYaMb9E09W-D3hfdNKTqKGQ2uOJJZDYZLB-Vwg3mXnI3xQdZUJ0gzv-M5i_qwEDvyJy7uHNbzD7a60Kph8wEiurlV8wMEOw48r-g4w67jXb2TDOdP46dKBgJjLiXZR1TUHJbXuYCRljC3kUbIYOmV0UqWuI8MXnUHvt9jKrjECKSp7FwoCsE8Xdz-JXqLcjKnXXjpQ5k3CqNGn2hfGEzRO-5fJh8MH4WiCGi-fDtK1-UzQQZGtOkRQgkXkl-JpWrL1I_fv-cxbXxHo8hJ96a9nw1Ps9mE0_uVmAkK79XQZFmkAH6KGKLyuXzrNyhNuOGgLQpUiDk="
+        token="gAAAAABn0TcMqd4UKDdYzx8H7ApwZ4GVn-1kN1sTkzjoSPwvhBH-iHc8tcPJWXQ-ochA-dAX6tUMfhHxxuHcVZkuHkFvFPoNmGfoi8HEI7Nj0JXUUeT0ONH4ng2H23UFe4RFvURmefQh-N8jd997YIORJGnhrAVeJPm0F1WrBtN4-CKGc0LJ6v2sc-mg3KytY_F_dbBfhYYAc7FeLuWjB4CU0w-HGG1Eq1aOgVOBGICmeNK61hBXDIx9fTS6mH-_2ibb0x8wi98ZitWz48RGEfJfTUIff8z_EuulXfQvYP_Wiw7zrCXbp4uMp2QO9EKJ2AnCtMzvGKOzTfJwdysMvgc28hQyZeTrVRirdFxUNOZX9d0cyGdbB-Fsm03CiQ9A_-0mR9f0s5Ag3FesfxbzGM6Co2RqsjNizQEY548iPkw31lVrX_XB4a0e0XvsHa3r1gDApUk7ZOL3nFJ7KFE4YwbekHTuaa4qnG_OKWrlCLJ4KiQs6LMYbnde4d_XzjTxXPLvcBcC1f6V"
         agentId="a730e183-fc16-48d2-9d25-42d64b1a238a"
         customText="Market Analyst"
       />
