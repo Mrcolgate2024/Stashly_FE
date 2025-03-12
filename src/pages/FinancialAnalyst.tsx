@@ -18,7 +18,7 @@ const FinancialAnalyst = () => {
   const handleError = (error: string) => {
     console.error("Avatar error:", error);
     
-    if (error.includes("TTS API Key") || error.includes("401")) {
+    if (error.includes("TTS API Key") || error.includes("Invalid TTS")) {
       setTtsError(true);
       toast({
         title: "TTS API Key Error",

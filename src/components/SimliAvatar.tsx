@@ -22,7 +22,7 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
   const [errorMessage, setErrorMessage] = useState("");
   const customImageUrl = "/lovable-uploads/c54ad77b-c6fd-43b7-8063-5803ecec8c64.png";
   
-  const FINANCIAL_ANALYST_TOKEN = "gAAAAABn0cx5UMO6tFazmf8b6fpNdhqhNk5KGev-hDLsIB9HePud-3A6IJKqDgzTf-R0JQzdvwefDKGZYCLzTQQdS_dC8HC5alJSZ8_CEy5ym7QXJDbJQmEgGnA7emeCWPDNDpx1cw05uao4ybvW4kMAmquGi6NM3Yyj4sbZJa6rE-SbeFiV50Uo1rzTvb89A8_cr_3SKmUXExXRrYjNVUQobYsvavul10FdL8RT9gPrlVBF0jOKqGHWb-52uPtr7k5RB-dRo1qBWh0TV7rLxX56bckGdiyNREEZAon2alU8oYGRfU0FK-21QPSGPsj_zgbyaJhTaSu0m3mB9c_h7XdBmo2L5l2e1aLUltYMsMy6VqDXUrzJvTgNb_pZqWdGoMwIN1l0HwVlD_8enFeCWwHZfIwhZpq-tk9r9EpzIP9JCk0dn3gNMifpGJ7GvVHGdHkLv1-3plDn6CcvLNNvmMrrUPmSbFNpXNSyElbggRlwu1wi4UHpVoYcnyRCPLintdUlabz5h-5c";
+  const FINANCIAL_ANALYST_TOKEN = "gAAAAABn0dDXLk0o0H5uQWBU9jnpTDVUuukDGqMubTQfc6nF1rngpGJLQ9xctKg9iUVHC7IZYR8RHJ4Q5rLjnQRKHlWiYlN-VC3uazW1DMmpepV-MyVzVmCn8dncpRPs7ldyK7NbwRUOj1aNt96TkBHgd3pkfBdoe4po1zA0BIANvs11pbHNsROfAwbybnsY_lAtp4utAw7jk9jBLVOFiAVtaHup7loSqGdcGMGQOajIlA93oV7_hzdT1fQCULCYzMhBn-tlYCt2JBySSc7xxYdlzwqtne6q6QOND0-G72O35MfVm36cYpaKr7qQyphbqXo1KuB6YzR4Ynk6OyMhSrjJESr2htfEC7t7LUhygtt3mMDp0hNMOD_1ZS1-3O0bAKFMzKf_I0sEFiKV_-whEdvB1m_UP5-KNuAdisDryg8EVQcqIWogux5hsexCvJa4JxRi9vpnmZiz4wnWhQ0xg9Z7uLulX_1Oi-u2-2_jEDn6Ed2wi0D9Cv7J5yJ_KskEVog3BxGUJVhZ";
 
   useEffect(() => {
     const handleSimliMessage = (event: CustomEvent) => {
@@ -56,7 +56,7 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
           toast({
             title: "Text-to-Speech Unavailable",
             description: "The avatar will continue to function with text-only responses.",
-            variant: "warning",
+            variant: "destructive",
           });
           
           return;
@@ -202,4 +202,3 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
     </div>
   );
 };
-
