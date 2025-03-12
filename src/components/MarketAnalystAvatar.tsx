@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect } from "react";
 import { useSimliAvatar } from "@/hooks/useSimliAvatar";
 import { createSimliWidget, safelyRemoveWidget } from "@/utils/simliUtils";

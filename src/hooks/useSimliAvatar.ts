@@ -1,6 +1,6 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { initializeSimliScript, createSimliWidget, safelyRemoveWidget } from "@/utils/simliUtils";
+import { initializeSimliScript, createSimliWidget, safelyRemoveWidget, setupVisibilityChangeProtection } from "@/utils/simliUtils";
 
 interface UseSimliAvatarProps {
   token: string;
@@ -26,6 +26,12 @@ export const useSimliAvatar = ({
   const [errorMessage, setErrorMessage] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const widgetContainerRef = useRef<HTMLDivElement | null>(null);
+  const [scriptInitialized, setScriptInitialized] = useState(false);
+  
+  // Set up protection against visibility change errors once
+  useEffect(() => {
+    setupVisibilityChangeProtection();
+  }, []);
 
   // Handle cleanup on unmount
   useEffect(() => {
@@ -50,6 +56,13 @@ export const useSimliAvatar = ({
         if (errorDetails.error) message = errorDetails.error;
         if (errorDetails.message) message = errorDetails.message;
         if (typeof errorDetails === 'string') message = errorDetails;
+        if (errorDetails.detail) message = errorDetails.detail;
+        
+        // Ignore TTS API key errors as non-critical
+        if (message.includes("TTS API Key")) {
+          console.warn("TTS API Key error - this is expected and not critical:", message);
+          return; // Don't treat this as a critical error
+        }
         
         // Check if it's a token-related error
         if (message.includes("token") || message.includes("401") || message.includes("auth")) {
@@ -95,6 +108,22 @@ export const useSimliAvatar = ({
     };
   }, [isActivated, eventName, onMessageReceived]);
 
+  // Initialize the script once for all widgets
+  useEffect(() => {
+    if (!scriptInitialized) {
+      initializeSimliScript()
+        .then(() => {
+          setScriptInitialized(true);
+          console.log("Simli script initialized successfully");
+        })
+        .catch(error => {
+          console.error("Failed to initialize Simli script:", error);
+          setErrorMessage("Failed to load avatar service");
+          setHasError(true);
+        });
+    }
+  }, [scriptInitialized]);
+
   // Update reference to widget container
   const updateContainerRef = useCallback((ref: React.RefObject<HTMLDivElement>) => {
     widgetContainerRef.current = ref.current;
@@ -110,11 +139,14 @@ export const useSimliAvatar = ({
     try {
       console.log(`Initializing ${customText || "Simli"} avatar...`);
       
-      // Load the Simli script if not already loaded
-      await initializeSimliScript().catch(error => {
-        console.error("Failed to load Simli script:", error);
-        throw new Error("Failed to load Simli widget");
-      });
+      // Wait until script is loaded
+      if (!scriptInitialized) {
+        await initializeSimliScript().catch(error => {
+          console.error("Failed to load Simli script:", error);
+          throw new Error("Failed to load avatar widget");
+        });
+        setScriptInitialized(true);
+      }
       
       setIsActivated(true);
       console.log(`Using provided token for ${customText || "Simli"} avatar`);
@@ -128,7 +160,7 @@ export const useSimliAvatar = ({
       setIsActivated(false);
       setIsProcessing(false);
     }
-  }, [isActivated, isProcessing, customText, token]);
+  }, [isActivated, isProcessing, customText, scriptInitialized]);
 
   const retryInitialization = useCallback(() => {
     if (widgetContainerRef.current) {

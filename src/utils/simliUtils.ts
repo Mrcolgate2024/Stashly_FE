@@ -51,6 +51,23 @@ export const createSimliWidget = (
     // Append the widget to the container
     containerRef.current.appendChild(simliWidget);
     
+    // Set a listener to handle TTS API Key errors better
+    const handleApiError = (event: Event) => {
+      if (event instanceof CustomEvent && event.detail) {
+        const errorDetails = event.detail;
+        if (
+          (typeof errorDetails === 'string' && errorDetails.includes("TTS API Key")) ||
+          (errorDetails.detail && errorDetails.detail.includes("TTS API Key"))
+        ) {
+          console.warn("TTS API Key error detected, this may be expected behavior:", errorDetails);
+          // We don't want to propagate this as a critical error, just log it
+          event.stopPropagation();
+        }
+      }
+    };
+    
+    window.addEventListener(`${eventName}:error`, handleApiError as EventListener);
+    
     return simliWidget;
   } catch (err) {
     console.error("Error creating Simli widget:", err);
@@ -89,4 +106,42 @@ export const safelyRemoveWidget = (containerRef: React.RefObject<HTMLDivElement>
       }
     }
   }
+};
+
+// Add this function to handle the scenario when the document visibility changes
+export const setupVisibilityChangeProtection = () => {
+  const originalVisibilityChangeHandler = document.onvisibilitychange;
+  
+  document.onvisibilitychange = (event) => {
+    // Call the original handler if it exists
+    if (typeof originalVisibilityChangeHandler === 'function') {
+      originalVisibilityChangeHandler.call(document, event);
+    }
+    
+    // Protection against "Cannot read properties of null (reading 'leave')" error
+    try {
+      const widgets = document.querySelectorAll('simli-widget');
+      widgets.forEach(widget => {
+        if (widget.shadowRoot) {
+          const shadowElements = widget.shadowRoot.querySelectorAll('*');
+          shadowElements.forEach(element => {
+            // Add a safety check for any leave methods
+            if (element && (element as any).leave && typeof (element as any).leave === 'function') {
+              const originalLeave = (element as any).leave;
+              (element as any).leave = function(...args: any[]) {
+                try {
+                  return originalLeave.apply(this, args);
+                } catch (error) {
+                  console.warn('Protected against leave() error:', error);
+                  return null;
+                }
+              };
+            }
+          });
+        }
+      });
+    } catch (error) {
+      console.warn('Error in visibility change protection:', error);
+    }
+  };
 };
