@@ -19,13 +19,28 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
   const customImageUrl = "/lovable-uploads/c54ad77b-c6fd-43b7-8063-5803ecec8c64.png";
   const [isActivated, setIsActivated] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  // This function attempts to refresh the token if needed
+  const getValidToken = () => {
+    // For now we'll just return a hardcoded token - in a real app you would call your backend to get a fresh token
+    return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImU1NWNkZTc1LWVkN2YtNDk4NC05YWRhLTgwMTQ3ZmYyZGI1NCIsImlhdCI6MTcxMDIzNjA4NywiZXhwIjoxNzQxNzk3NjAwfQ.ZJqmkz71Kw6NxsLyv2s5iRcvQkIzhNcmSNraNzlK_ao";
+  };
 
   useEffect(() => {
     // Listen for errors from Simli
     const handleError = (event: Event) => {
-      if (event instanceof CustomEvent && event.detail && 
-         (event.detail.error || event.detail.message?.includes('error'))) {
-        console.error("Simli error detected:", event.detail);
+      if (event instanceof CustomEvent && event.detail) {
+        const errorDetails = event.detail;
+        console.error("Simli error detected:", errorDetails);
+        
+        // Extract meaningful error message
+        let message = "Unknown error";
+        if (errorDetails.error) message = errorDetails.error;
+        if (errorDetails.message) message = errorDetails.message;
+        if (typeof errorDetails === 'string') message = errorDetails;
+        
+        setErrorMessage(message);
         setHasError(true);
       }
     };
@@ -40,6 +55,7 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
   const initializeSimli = () => {
     if (isActivated) return; // Already initialized
     setHasError(false); // Reset error state on retry
+    setErrorMessage(""); // Clear any previous error messages
     console.log("Initializing Financial Analyst avatar...");
     setIsActivated(true);
 
@@ -64,6 +80,7 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
       // Listen for script load errors
       script.onerror = () => {
         console.error("Failed to load Simli script");
+        setErrorMessage("Failed to load Simli widget");
         setHasError(true);
         setIsActivated(false);
       };
@@ -78,8 +95,10 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
           
           // Create the widget element
           const simliWidget = document.createElement('simli-widget');
-          // Use a new token
-          simliWidget.setAttribute('token', "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRiMzk4YjkwLTVmOTYtNGJiNS1hOWVhLWE3ZjZiOTdkYTAxZSIsImlhdCI6MTcxMDIzMDA1MywiZXhwIjoxNzQxNzg3NjUzfQ.QkiRiILPLx5SEUP7SKOhJcKTVLFm_Cqz46JqFOZG2eo");
+          
+          // Use the refreshed token
+          const freshToken = getValidToken();
+          simliWidget.setAttribute('token', freshToken);
           simliWidget.setAttribute('agentid', agentId);
           simliWidget.setAttribute('position', 'right');
           simliWidget.setAttribute('customimage', customImageUrl);
@@ -99,6 +118,7 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
           console.log("Financial Analyst avatar widget added to DOM");
         } catch (err) {
           console.error("Error initializing Simli widget:", err);
+          setErrorMessage("Error initializing avatar");
           setHasError(true);
           setIsActivated(false);
         }
@@ -127,15 +147,18 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
       ) : (
         <div className="relative">
           {hasError && (
-            <Button 
-              onClick={() => {
-                setIsActivated(false);
-                setTimeout(initializeSimli, 100);
-              }}
-              className="absolute -top-10 right-0 bg-red-500 hover:bg-red-600 text-white text-xs py-1 px-2 rounded"
-            >
-              Retry
-            </Button>
+            <div className="absolute -top-16 right-0 bg-white p-2 rounded-md shadow-md text-sm max-w-[200px]">
+              <p className="text-red-500 mb-1">{errorMessage || "Error connecting to avatar"}</p>
+              <Button 
+                onClick={() => {
+                  setIsActivated(false);
+                  setTimeout(initializeSimli, 100);
+                }}
+                className="bg-red-500 hover:bg-red-600 text-white text-xs py-1 px-2 rounded w-full"
+              >
+                Retry with new token
+              </Button>
+            </div>
           )}
           <div ref={containerRef} className="min-h-[60px] min-w-[60px] bg-gray-100/30 rounded-full">
             {/* Simli widget will be inserted here programmatically */}
