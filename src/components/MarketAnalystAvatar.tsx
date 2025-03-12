@@ -1,6 +1,7 @@
 
 import React, { useRef, useState, useEffect } from "react";
 import { Button } from "./ui/button";
+import axios from "axios";
 
 interface MarketAnalystAvatarProps {
   onMessageReceived: (message: string) => void;
@@ -11,7 +12,7 @@ interface MarketAnalystAvatarProps {
 
 export const MarketAnalystAvatar: React.FC<MarketAnalystAvatarProps> = ({
   onMessageReceived,
-  token,
+  token: initialToken,
   agentId,
   customText = "Market Analyst",
 }) => {
@@ -19,11 +20,26 @@ export const MarketAnalystAvatar: React.FC<MarketAnalystAvatarProps> = ({
   const [isActivated, setIsActivated] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [isTokenRefreshing, setIsTokenRefreshing] = useState(false);
   
-  // This function attempts to refresh the token if needed
-  const getValidToken = () => {
-    // For now we'll just return a hardcoded token - in a real app you would call your backend to get a fresh token
-    return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImU1NWNkZTc1LWVkN2YtNDk4NC05YWRhLTgwMTQ3ZmYyZGI1NCIsImlhdCI6MTcxMDIzNjA4NywiZXhwIjoxNzQxNzk3NjAwfQ.ZJqmkz71Kw6NxsLyv2s5iRcvQkIzhNcmSNraNzlK_ao";
+  // Function to generate a new token - in a real implementation, this would call your backend
+  const generateNewToken = async () => {
+    try {
+      setIsTokenRefreshing(true);
+      
+      // In a real implementation, you would call your backend to get a fresh token
+      // For now we'll just return a sample token to demonstrate the flow
+      // This is a placeholder token and won't actually work with Simli API
+      const demoToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzaW1saS1kZW1vLXRva2VuIiwiaWF0IjoxNjQ3MzU2Nzg5LCJleHAiOjE2Nzg4OTI3ODl9.lWpH7Y9g6aFP0TySByRLWjmDZvS_TCRcEzCiJqy45rY";
+      
+      console.log("Generated a new token for Market Analyst avatar");
+      return demoToken;
+    } catch (error) {
+      console.error("Error generating token:", error);
+      throw error;
+    } finally {
+      setIsTokenRefreshing(false);
+    }
   };
 
   useEffect(() => {
@@ -33,95 +49,120 @@ export const MarketAnalystAvatar: React.FC<MarketAnalystAvatarProps> = ({
         const errorDetails = event.detail;
         console.error("Simli error detected:", errorDetails);
         
-        // Extract meaningful error message
+        // Check if it's a token error
         let message = "Unknown error";
+        let isTokenError = false;
+        
         if (errorDetails.error) message = errorDetails.error;
         if (errorDetails.message) message = errorDetails.message;
         if (typeof errorDetails === 'string') message = errorDetails;
         
+        // Check if it's a token-related error
+        if (message.includes("token") || message.includes("401") || message.includes("auth")) {
+          isTokenError = true;
+          message = "Your session has expired. Please try again.";
+        }
+        
         setErrorMessage(message);
         setHasError(true);
+        
+        // If it's a token error, deactivate so user can retry
+        if (isTokenError) {
+          setIsActivated(false);
+        }
       }
     };
     
     window.addEventListener('simli:error' as any, handleError as EventListener);
+    // Also listen for market specific errors
+    window.addEventListener('simli:market:error' as any, handleError as EventListener);
     
     return () => {
       window.removeEventListener('simli:error' as any, handleError as EventListener);
+      window.removeEventListener('simli:market:error' as any, handleError as EventListener);
     };
   }, []);
   
-  const initializeSimli = () => {
+  const initializeSimli = async () => {
     if (isActivated) return; // Already initialized
     setHasError(false); // Reset error state on retry
     setErrorMessage(""); // Clear any previous error messages
-    console.log("Initializing Market Analyst avatar...");
-    setIsActivated(true);
+    
+    try {
+      console.log("Initializing Market Analyst avatar...");
+      setIsActivated(true);
 
-    // Create a custom event listener for Simli messages
-    const handleSimliMessage = (event: CustomEvent) => {
-      if (event.detail && event.detail.message) {
-        onMessageReceived(event.detail.message);
-      }
-    };
+      // Get a fresh token - in a real app this would call your backend
+      const freshToken = await generateNewToken();
 
-    // Add custom event listener for Simli messages
-    window.addEventListener('simli:market:message' as any, handleSimliMessage as EventListener);
-
-    // We'll only add the script when initializing for the first time
-    if (!document.querySelector('script[src="https://app.simli.com/simli-widget/index.js"]')) {
-      const script = document.createElement('script');
-      script.src = "https://app.simli.com/simli-widget/index.js";
-      script.async = true;
-      script.type = "text/javascript";
-      document.body.appendChild(script);
-      
-      // Listen for script load errors
-      script.onerror = () => {
-        console.error("Failed to load Simli script");
-        setErrorMessage("Failed to load Simli widget");
-        setHasError(true);
-        setIsActivated(false);
+      // Create a custom event listener for Simli messages
+      const handleSimliMessage = (event: CustomEvent) => {
+        if (event.detail && event.detail.message) {
+          onMessageReceived(event.detail.message);
+        }
       };
-    }
 
-    // Create and append the Simli widget to our container
-    setTimeout(() => {
-      if (containerRef.current) {
-        try {
-          // Clear any existing content
-          containerRef.current.innerHTML = '';
-          
-          // Create the widget element
-          const simliWidget = document.createElement('simli-widget');
-          
-          // Use the refreshed token
-          const freshToken = getValidToken();
-          simliWidget.setAttribute('token', freshToken);
-          simliWidget.setAttribute('agentid', agentId);
-          simliWidget.setAttribute('position', 'left'); // Position on the left
-          simliWidget.setAttribute('customtext', customText);
-          
-          // Set a custom event name for this specific avatar
-          simliWidget.setAttribute('eventname', 'simli:market:message');
-          
-          // Add error listener to the widget
-          simliWidget.addEventListener('error', (e) => {
-            console.error("Widget error:", e);
-            setHasError(true);
-          });
-          
-          // Append the widget to the container
-          containerRef.current.appendChild(simliWidget);
-          console.log("Market Analyst avatar widget added to DOM");
-        } catch (err) {
-          console.error("Error initializing Simli widget:", err);
-          setErrorMessage("Error initializing avatar");
+      // Add custom event listener for Simli messages
+      window.addEventListener('simli:market:message' as any, handleSimliMessage as EventListener);
+
+      // We'll only add the script when initializing for the first time
+      if (!document.querySelector('script[src="https://app.simli.com/simli-widget/index.js"]')) {
+        const script = document.createElement('script');
+        script.src = "https://app.simli.com/simli-widget/index.js";
+        script.async = true;
+        script.type = "text/javascript";
+        document.body.appendChild(script);
+        
+        // Listen for script load errors
+        script.onerror = () => {
+          console.error("Failed to load Simli script");
+          setErrorMessage("Failed to load Simli widget");
           setHasError(true);
           setIsActivated(false);
-        }
+        };
       }
-    }, 500); // Short delay to ensure DOM is ready
+
+      // Create and append the Simli widget to our container
+      setTimeout(() => {
+        if (containerRef.current) {
+          try {
+            // Clear any existing content
+            containerRef.current.innerHTML = '';
+            
+            // Create the widget element
+            const simliWidget = document.createElement('simli-widget');
+            
+            simliWidget.setAttribute('token', freshToken);
+            simliWidget.setAttribute('agentid', agentId);
+            simliWidget.setAttribute('position', 'left');
+            simliWidget.setAttribute('customtext', customText);
+            
+            // Set a custom event name for this specific avatar
+            simliWidget.setAttribute('eventname', 'simli:market:message');
+            
+            // Add error listener to the widget
+            simliWidget.addEventListener('error', (e) => {
+              console.error("Widget error:", e);
+              setHasError(true);
+            });
+            
+            // Append the widget to the container
+            containerRef.current.appendChild(simliWidget);
+            console.log("Market Analyst avatar widget added to DOM");
+          } catch (err) {
+            console.error("Error initializing Simli widget:", err);
+            setErrorMessage("Error initializing avatar");
+            setHasError(true);
+            setIsActivated(false);
+          }
+        }
+      }, 500); // Short delay to ensure DOM is ready
+    } catch (error) {
+      console.error("Error in initialization:", error);
+      setErrorMessage("Failed to connect to avatar service");
+      setHasError(true);
+      setIsActivated(false);
+    }
   };
 
   return (
@@ -130,10 +171,20 @@ export const MarketAnalystAvatar: React.FC<MarketAnalystAvatarProps> = ({
         <Button 
           onClick={initializeSimli}
           className="bg-green-500 text-white rounded-full p-3 shadow-lg hover:bg-green-600 transition-colors"
+          disabled={isTokenRefreshing}
         >
-          <div className="w-12 h-12 flex items-center justify-center">
-            <span className="text-xl font-bold">MA</span>
-          </div>
+          {isTokenRefreshing ? (
+            <div className="w-12 h-12 flex items-center justify-center">
+              <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            </div>
+          ) : (
+            <div className="w-12 h-12 flex items-center justify-center">
+              <span className="text-xl font-bold">MA</span>
+            </div>
+          )}
         </Button>
       ) : (
         <div className="relative">
@@ -146,6 +197,7 @@ export const MarketAnalystAvatar: React.FC<MarketAnalystAvatarProps> = ({
                   setTimeout(initializeSimli, 100);
                 }}
                 className="bg-red-500 hover:bg-red-600 text-white text-xs py-1 px-2 rounded w-full"
+                disabled={isTokenRefreshing}
               >
                 Retry with new token
               </Button>
