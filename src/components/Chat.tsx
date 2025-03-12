@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useChat } from "@/hooks/useChat";
 import { ChatInput } from "./ChatInput";
@@ -21,12 +20,10 @@ export const Chat = () => {
   } = useChat();
 
   const handleFinancialAvatarMessage = (message: string) => {
-    // When we receive a message from the financial avatar, send it to the chat
     handleSendMessage("Financial Analyst: " + message, userName);
   };
 
   const handleMarketAvatarMessage = (message: string) => {
-    // When we receive a message from the market avatar, send it to the chat
     handleSendMessage("Market Analyst: " + message, userName);
   };
 
@@ -67,18 +64,14 @@ export const Chat = () => {
         <ChatInput onSend={handleMessageSend} disabled={isLoading} />
       </div>
 
-      {/* Financial Analyst avatar with valid hardcoded token */}
       <SimliAvatar 
         onMessageReceived={handleFinancialAvatarMessage}
-        token="dummy-token" /* Token is hardcoded in the component */
         agentId="b36e9ae6-5a88-4235-9e7a-eab88fd52d7b"
         customText="Financial Analyst"
       />
 
-      {/* Market Analyst avatar with valid hardcoded token */}
       <MarketAnalystAvatar 
         onMessageReceived={handleMarketAvatarMessage}
-        token="dummy-token" /* Token is hardcoded in the component */
         agentId="a730e183-fc16-48d2-9d25-42d64b1a238a"
         customText="Market Analyst"
       />

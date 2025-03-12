@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect } from "react";
 import { useSimliAvatar } from "@/hooks/useSimliAvatar";
 import { createSimliWidget, safelyRemoveWidget } from "@/utils/simliUtils";
@@ -7,14 +6,12 @@ import { AvatarContainer } from "./AvatarContainer";
 
 interface SimliAvatarProps {
   onMessageReceived: (message: string) => void;
-  token: string;
   agentId: string;
   customText?: string;
 }
 
 export const SimliAvatar: React.FC<SimliAvatarProps> = ({
   onMessageReceived,
-  token: initialToken,
   agentId,
   customText = "Financial Analyst",
 }) => {
