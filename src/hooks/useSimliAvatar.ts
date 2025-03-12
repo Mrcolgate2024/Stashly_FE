@@ -51,7 +51,7 @@ export const useSimliAvatar = ({
         
         // Extract error message
         let message = "Unknown error";
-        let isTokenError = false;
+        let isAuthError = false;
         
         if (errorDetails.error) message = errorDetails.error;
         if (errorDetails.message) message = errorDetails.message;
@@ -59,20 +59,25 @@ export const useSimliAvatar = ({
         if (errorDetails.detail) message = errorDetails.detail;
         
         // Check if it's a token-related error
-        if (message.includes("token") || message.includes("401") || message.includes("auth")) {
-          isTokenError = true;
-          message = "Your session has expired. Please try again.";
+        if (
+          message.includes("token") || 
+          message.includes("401") || 
+          message.includes("auth") || 
+          message.includes("unauthorized") ||
+          message.toLowerCase().includes("permission")
+        ) {
+          isAuthError = true;
+          message = "unauthorized";
+          console.error(`Authentication error for ${customText} avatar:`, message);
         }
-        
-        // Log all errors for debugging
-        console.warn(`Avatar error (${customText}):`, message);
         
         setErrorMessage(message);
         setHasError(true);
         
-        // If it's a token error, deactivate so user can retry
-        if (isTokenError) {
+        // If it's an auth error, deactivate so user can retry
+        if (isAuthError) {
           setIsActivated(false);
+          safelyRemoveWidget({ current: widgetContainerRef.current });
         }
       }
     };
@@ -148,7 +153,15 @@ export const useSimliAvatar = ({
       }
       
       // Log token for debugging (masked)
-      console.log(`Using token for ${customText}: ${token.substring(0, 10)}...`);
+      if (token) {
+        const maskedToken = token.length > 20 
+          ? `${token.substring(0, 10)}...${token.substring(token.length - 5)}`
+          : "[TOKEN ERROR]";
+        console.log(`Using token for ${customText}: ${maskedToken}`);
+      } else {
+        console.error(`No token provided for ${customText}`);
+        throw new Error("No token provided");
+      }
       
       setIsActivated(true);
       

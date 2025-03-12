@@ -39,6 +39,16 @@ export const createSimliWidget = (
     return null;
   }
   
+  if (!token || token.trim() === '') {
+    console.error("Token is empty or invalid");
+    // Dispatch a custom error event
+    const errorEvent = new CustomEvent(eventName + ':error', { 
+      detail: { message: "unauthorized" } 
+    });
+    window.dispatchEvent(errorEvent);
+    return null;
+  }
+  
   try {
     // First ensure we clean up properly
     safelyRemoveWidget(containerRef);
@@ -64,9 +74,38 @@ export const createSimliWidget = (
       simliWidget.setAttribute('customimage', customImage);
     }
     
+    // Setup error listener for authentication errors
+    const checkAuthErrors = () => {
+      setTimeout(() => {
+        const shadowRoot = simliWidget.shadowRoot;
+        if (shadowRoot) {
+          const errorElements = shadowRoot.querySelectorAll('.error-message');
+          for (const errorEl of Array.from(errorElements)) {
+            const errorText = errorEl.textContent || '';
+            if (errorText.toLowerCase().includes('unauthorized') || 
+                errorText.toLowerCase().includes('authentication') ||
+                errorText.toLowerCase().includes('permission')) {
+              console.error('Authentication error detected in widget:', errorText);
+              const errorEvent = new CustomEvent(eventName + ':error', { 
+                detail: { message: "unauthorized" } 
+              });
+              window.dispatchEvent(errorEvent);
+            }
+          }
+        }
+      }, 1000); // Check after 1 second
+    };
+    
+    simliWidget.addEventListener('error', () => {
+      checkAuthErrors();
+    });
+    
     // Append the widget to the container
     containerRef.current.appendChild(simliWidget);
     console.log(`Simli widget created and appended to DOM for ${customText || "avatar"}`);
+    
+    // Check for auth errors after a delay
+    checkAuthErrors();
     
     return simliWidget;
   } catch (err) {
