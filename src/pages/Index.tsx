@@ -1,17 +1,48 @@
 
 import { Chat } from "@/components/Chat";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const Index = () => {
+  const [scriptLoaded, setScriptLoaded] = useState(false);
+
   useEffect(() => {
-    // Load Simli widget script if it hasn't been loaded yet
-    if (!document.querySelector('script[src="https://app.simli.com/simli-widget/index.js"]')) {
-      const script = document.createElement('script');
-      script.src = "https://app.simli.com/simli-widget/index.js";
-      script.async = true;
-      script.type = "text/javascript";
-      document.body.appendChild(script);
+    // Check if we've already loaded the script in this session
+    if (window.simliScriptLoaded) {
+      setScriptLoaded(true);
+      return;
     }
+
+    // Remove any existing Simli scripts to prevent duplicate issues
+    const existingScripts = document.querySelectorAll('script[src="https://app.simli.com/simli-widget/index.js"]');
+    existingScripts.forEach(script => script.remove());
+
+    // Load Simli widget script if it hasn't been loaded yet
+    const script = document.createElement('script');
+    script.src = "https://app.simli.com/simli-widget/index.js";
+    script.async = true;
+    script.type = "text/javascript";
+    
+    script.onload = () => {
+      console.log("Simli widget script loaded");
+      window.simliScriptLoaded = true;
+      setScriptLoaded(true);
+
+      // Add a global error handler for any DailyJS errors
+      window.addEventListener('error', (event) => {
+        if (event.message.includes('DailyIframe') || event.message.includes('daily-js')) {
+          console.warn("Caught DailyIframe error:", event.message);
+          event.preventDefault();
+          return true;
+        }
+        return false;
+      });
+    };
+    
+    document.body.appendChild(script);
+    
+    return () => {
+      // Don't remove the script on unmount to prevent reloading issues
+    };
   }, []);
 
   return (

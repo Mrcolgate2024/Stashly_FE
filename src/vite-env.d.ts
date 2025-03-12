@@ -14,3 +14,8 @@ declare namespace JSX {
     }, HTMLElement>;
   }
 }
+
+// Global window property for tracking script loading
+interface Window {
+  simliScriptLoaded?: boolean;
+}

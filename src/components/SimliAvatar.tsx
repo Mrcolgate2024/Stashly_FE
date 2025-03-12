@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AvatarButton } from "./AvatarButton";
 import { SimliErrorMessage } from "./SimliErrorMessage";
 
@@ -20,11 +20,11 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
   const [errorMessage, setErrorMessage] = useState("");
   const customImageUrl = "/lovable-uploads/c54ad77b-c6fd-43b7-8063-5803ecec8c64.png";
   
-  // Hard-coded valid token with unique name for Financial Analyst
+  // Hard-coded valid token with unique name for Financial Analyst - but this one may need updating
   const FINANCIAL_ANALYST_TOKEN = "gAAAAABn0WgrjDfB13EKqTvpj6ZEZvNhO9E7mLXtZM7Y2RRFmZAgOkcERx38gkK8TCoAA0B8pXFH2MUCghd18QA0aMxreVeKdbIiGKzTpY0L_zSke0CVqw1VFttwGf0SsN2KDJJVTcStqGcqRYqMjorHlzn3Nf7UWc_BTJQKyVzNluSH0xSzCV7mqnNyEFxQtBwYuZNhWt-GIQTCelp3bvyfxns4OaZ4aJ96hDxV_0XsOF3XLVXKNoXikMCGYl9FvnXG5t68WoCYnJUoBMCVW8WKfeOcpbF8dPk4vW0kPFVGv9W1WSnyh--s3dtSe2YRQth3CRntHujSc9w2SI-oexNMYNSsA7zaDYX0nMccHYBrt2grvhbZmVVMhB4wyoaPIp-EopN1umJmPt-CYfzZGmxoThRRLkZAMPQCbHxrvTCxAUaedjxvENty8qlJdvahdzTN9NIBAOSI8gmGmMV96UCDDiT9L6Q7E7R-ZkyDm8YCaYntvve5DKQ_2cieYqEkhhnXrRia6AMj";
 
   // Set up event listener for Simli messages
-  React.useEffect(() => {
+  useEffect(() => {
     const handleSimliMessage = (event: CustomEvent) => {
       if (event.detail && event.detail.message) {
         console.log(`Received message from ${customText}:`, event.detail.message);
@@ -48,6 +48,13 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
         
         setHasError(true);
         setErrorMessage(message);
+        
+        // Auto-deactivate on auth/TTS errors to allow retry
+        if (message.includes("401") || 
+            message.includes("unauthorized") || 
+            message.includes("TTS API Key")) {
+          setIsActivated(false);
+        }
       }
     };
 
@@ -113,14 +120,16 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
           )}
           <div className="min-h-[60px] min-w-[60px]">
             {/* Using simli-widget as a custom element */}
-            <simli-widget 
-              token={FINANCIAL_ANALYST_TOKEN}
-              agentid={agentId}
-              position="right"
-              eventname="simli:financial:message"
-              customtext={customText}
-              customimage={customImageUrl}
-            ></simli-widget>
+            <div id="financial-analyst-container">
+              <simli-widget 
+                token={FINANCIAL_ANALYST_TOKEN}
+                agentid={agentId}
+                position="right"
+                eventname="simli:financial:message"
+                customtext={customText}
+                customimage={customImageUrl}
+              ></simli-widget>
+            </div>
           </div>
         </div>
       )}
