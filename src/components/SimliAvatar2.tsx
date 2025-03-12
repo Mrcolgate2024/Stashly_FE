@@ -1,3 +1,4 @@
+
 import React, { useRef, useState, useEffect } from "react";
 import { Button } from "./ui/button";
 import { createSimliWidget } from "@/utils/simliUtils";
@@ -17,6 +18,7 @@ export const SimliAvatar2: React.FC<SimliAvatar2Props> = ({
 }) => {
   const containerId = `market-container-${agentId}`;
   const instanceId = `market-${agentId}`;
+  const customImageUrl = "/lovable-uploads/764376fe-62be-4bfa-88e6-158932a49662.png"; // Added market analyst image
   
   const [isActive, setIsActive] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -49,14 +51,14 @@ export const SimliAvatar2: React.FC<SimliAvatar2Props> = ({
     setIsLoading(true);
     
     try {
-      // Initialize widget
+      // Initialize widget with custom image
       const cleanup = await createSimliWidget(
         containerId,
         instanceId,
         token,
         agentId,
         customText,
-        undefined, // No custom image for market analyst
+        customImageUrl, // Added custom image for market analyst
         onMessageReceived
       );
       

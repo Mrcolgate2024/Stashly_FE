@@ -98,10 +98,10 @@ export const Chat = () => {
         customText="Financial Analyst"
       />
 
-      {/* Market Analyst Avatar */}
+      {/* Market Analyst Avatar - Updated token */}
       <SimliAvatar2 
         onMessageReceived={handleMarketAvatarMessage}
-        token="gAAAAABn0S1jLCExW5IjIuT_Kq_J4DZUfZCkWwWPgAATyRikZb86rwF94Sp5XWT_U9a2pIRoYKAoEcdhss-_Q4YDNm7i_MfZwHIYM6A_-J1actfzX7mVi9II_9XXCHCj4idT6JH5aTgsAugUZWc04Meb5CIETV4W5ORQotGNQirLi6voQ_Y5QGJo23IjorymDB4Rv_xE-CgyYOaYUV5tV4t7cjPM4k0-Rz0FD680ohxgU6ENBf0yZJdc_497VQp_ENvckTuji4h54ZrowdgLZkAdST-mVrI_DYE1Xsmm1Q1qyXDdUIqvM7uaieT5GPRHLv_Dlb8Oe8He5-bInsIbFztVqRwmlTQKojotFjKLJSh8DqZjWwhc_-Y58s1PIyoCoEC9GCCfrXZWXhmGqhMyogMbZJQbUch3wyr19_3BdRWVrYTqQEwHH42tgpoweu0dV-GQxMjDc0dmXK3t0eJ6H1RnViLl2YQIyqxWRIpH4XXxA0z_Adl8J7xnW63hjSnSiPS-GcEjSOej"
+        token="gAAAAABnzdwxawWJB42YOEqaY00TMUfLdeBF-bpx9sLtTFBULBqXgE62aTR-7H2KCNjyhpnbVUMSAOk1l4JZflfYbOqBVXoRzKZi4yLd9SDTRKtQlc5FCfdYgQjUDUaTwl-iM07v5ZgQIRwzulH0wCbPIv3RZfIBb7r0xBe_dK2pxrPPTrHB0TnqEJdFPH_FdJWUbDrdFXgBM9WQ50YS3NM4EoXb-QLO5YRjmNLRYfuuVNi3Wm9W-3QfXqJNJrK5jPrlx0TP2_Dm0fW0-4Uya0UCJBFM7n2d2XD0VZaPxNDn3LPL33W3NqlGP14TdEeR6iTPpv8d2CsLY-bAiSxxr0WL23iLAhPxQoQXsT9Lk-EKQ98UJ6xnRE4="
         agentId="a730e183-fc16-48d2-9d25-42d64b1a238a"
         customText="Market Analyst"
       />
