@@ -45,7 +45,7 @@ export const MarketAnalystAvatar: React.FC<MarketAnalystAvatarProps> = ({
       const simliWidget = document.createElement('simli-widget');
       simliWidget.setAttribute('token', token);
       simliWidget.setAttribute('agentid', agentId);
-      simliWidget.setAttribute('position', 'right');
+      simliWidget.setAttribute('position', 'left'); // Changed to left
       simliWidget.setAttribute('customtext', customText);
       
       // Set a custom event name for this specific avatar
