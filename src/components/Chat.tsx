@@ -24,8 +24,14 @@ export const Chat = () => {
   const handleFinancialAvatarMessage = (message: string) => {
     // When we receive a message from the Financial Analyst avatar, send it to the chat
     console.log("Message from Financial Analyst received and forwarded to chat:", message);
+    if (!message || message.trim() === "") {
+      console.warn("Empty message received from Financial Analyst, ignoring");
+      return;
+    }
+
     try {
-      handleSendMessage(`Financial Analyst: ${message}`, userName);
+      const formattedMessage = `Financial Analyst: ${message}`;
+      handleSendMessage(formattedMessage, userName);
       toast.success("Received message from Financial Analyst");
     } catch (error) {
       console.error("Error handling Financial Analyst message:", error);
@@ -36,8 +42,14 @@ export const Chat = () => {
   const handleMarketAvatarMessage = (message: string) => {
     // When we receive a message from the Market Analyst avatar, send it to the chat
     console.log("Message from Market Analyst received and forwarded to chat:", message);
+    if (!message || message.trim() === "") {
+      console.warn("Empty message received from Market Analyst, ignoring");
+      return;
+    }
+
     try {
-      handleSendMessage(`Market Analyst: ${message}`, userName);
+      const formattedMessage = `Market Analyst: ${message}`;
+      handleSendMessage(formattedMessage, userName);
       toast.success("Received message from Market Analyst");
     } catch (error) {
       console.error("Error handling Market Analyst message:", error);
