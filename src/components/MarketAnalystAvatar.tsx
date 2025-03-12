@@ -1,5 +1,6 @@
 
 import React, { useRef, useState } from "react";
+import { Button } from "./ui/button";
 
 interface MarketAnalystAvatarProps {
   onMessageReceived: (message: string) => void;
@@ -19,6 +20,7 @@ export const MarketAnalystAvatar: React.FC<MarketAnalystAvatarProps> = ({
   
   const initializeSimli = () => {
     if (isActivated) return; // Already initialized
+    console.log("Initializing Market Analyst avatar...");
     setIsActivated(true);
 
     // Create a custom event listener for Simli messages
@@ -41,46 +43,41 @@ export const MarketAnalystAvatar: React.FC<MarketAnalystAvatarProps> = ({
     }
 
     // Create and append the Simli widget to our container
-    if (containerRef.current) {
-      // Clear any existing content
-      containerRef.current.innerHTML = '';
-      
-      // Create the widget element
-      const simliWidget = document.createElement('simli-widget');
-      simliWidget.setAttribute('token', token);
-      simliWidget.setAttribute('agentid', agentId);
-      simliWidget.setAttribute('position', 'left'); // Position on the left
-      simliWidget.setAttribute('customtext', customText);
-      
-      // Set a custom event name for this specific avatar
-      simliWidget.setAttribute('eventname', 'simli:market:message');
-      
-      // Append the widget to the container
-      containerRef.current.appendChild(simliWidget);
-    }
-
-    // Return a cleanup function
-    return () => {
-      window.removeEventListener('simli:market:message' as any, handleSimliMessage as EventListener);
+    setTimeout(() => {
       if (containerRef.current) {
+        // Clear any existing content
         containerRef.current.innerHTML = '';
+        
+        // Create the widget element
+        const simliWidget = document.createElement('simli-widget');
+        simliWidget.setAttribute('token', token);
+        simliWidget.setAttribute('agentid', agentId);
+        simliWidget.setAttribute('position', 'left'); // Position on the left
+        simliWidget.setAttribute('customtext', customText);
+        
+        // Set a custom event name for this specific avatar
+        simliWidget.setAttribute('eventname', 'simli:market:message');
+        
+        // Append the widget to the container
+        containerRef.current.appendChild(simliWidget);
+        console.log("Market Analyst avatar widget added to DOM");
       }
-    };
+    }, 500); // Short delay to ensure DOM is ready
   };
 
   return (
     <div className="fixed bottom-[80px] left-4 sm:bottom-10 sm:left-10 z-10">
       {!isActivated ? (
-        <button 
+        <Button 
           onClick={initializeSimli}
           className="bg-green-500 text-white rounded-full p-3 shadow-lg hover:bg-green-600 transition-colors"
         >
           <div className="w-12 h-12 flex items-center justify-center">
             <span className="text-xl font-bold">MA</span>
           </div>
-        </button>
+        </Button>
       ) : (
-        <div ref={containerRef}>
+        <div ref={containerRef} className="min-h-[60px] min-w-[60px]">
           {/* Simli widget will be inserted here programmatically */}
         </div>
       )}

@@ -1,5 +1,6 @@
 
 import React, { useRef, useState } from "react";
+import { Button } from "./ui/button";
 
 interface SimliAvatarProps {
   onMessageReceived: (message: string) => void;
@@ -20,6 +21,7 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
 
   const initializeSimli = () => {
     if (isActivated) return; // Already initialized
+    console.log("Initializing Financial Analyst avatar...");
     setIsActivated(true);
 
     // Create a custom event listener for Simli messages
@@ -42,38 +44,33 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
     }
 
     // Create and append the Simli widget to our container
-    if (containerRef.current) {
-      // Clear any existing content
-      containerRef.current.innerHTML = '';
-      
-      // Create the widget element
-      const simliWidget = document.createElement('simli-widget');
-      simliWidget.setAttribute('token', token);
-      simliWidget.setAttribute('agentid', agentId);
-      simliWidget.setAttribute('position', 'right');
-      simliWidget.setAttribute('customimage', customImageUrl);
-      simliWidget.setAttribute('customtext', customText);
-      
-      // Set a custom event name for this specific avatar
-      simliWidget.setAttribute('eventname', 'simli:financial:message');
-      
-      // Append the widget to the container
-      containerRef.current.appendChild(simliWidget);
-    }
-
-    // Return a cleanup function
-    return () => {
-      window.removeEventListener('simli:financial:message' as any, handleSimliMessage as EventListener);
+    setTimeout(() => {
       if (containerRef.current) {
+        // Clear any existing content
         containerRef.current.innerHTML = '';
+        
+        // Create the widget element
+        const simliWidget = document.createElement('simli-widget');
+        simliWidget.setAttribute('token', token);
+        simliWidget.setAttribute('agentid', agentId);
+        simliWidget.setAttribute('position', 'right');
+        simliWidget.setAttribute('customimage', customImageUrl);
+        simliWidget.setAttribute('customtext', customText);
+        
+        // Set a custom event name for this specific avatar
+        simliWidget.setAttribute('eventname', 'simli:financial:message');
+        
+        // Append the widget to the container
+        containerRef.current.appendChild(simliWidget);
+        console.log("Financial Analyst avatar widget added to DOM");
       }
-    };
+    }, 500); // Short delay to ensure DOM is ready
   };
 
   return (
     <div className="fixed bottom-[80px] right-4 sm:bottom-10 sm:right-10 z-10">
       {!isActivated ? (
-        <button 
+        <Button 
           onClick={initializeSimli}
           className="bg-blue-500 text-white rounded-full p-3 shadow-lg hover:bg-blue-600 transition-colors"
         >
@@ -87,9 +84,9 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
               }}
             />
           </div>
-        </button>
+        </Button>
       ) : (
-        <div ref={containerRef}>
+        <div ref={containerRef} className="min-h-[60px] min-w-[60px]">
           {/* Simli widget will be inserted here programmatically */}
         </div>
       )}
