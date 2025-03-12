@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { AvatarButton } from "./AvatarButton";
 import { SimliErrorMessage } from "./SimliErrorMessage";
@@ -21,10 +20,8 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
   const [errorMessage, setErrorMessage] = useState("");
   const customImageUrl = "/lovable-uploads/c54ad77b-c6fd-43b7-8063-5803ecec8c64.png";
   
-  // Updated token for Financial Analyst
   const FINANCIAL_ANALYST_TOKEN = "gAAAAABn0cx5UMO6tFazmf8b6fpNdhqhNk5KGev-hDLsIB9HePud-3A6IJKqDgzTf-R0JQzdvwefDKGZYCLzTQQdS_dC8HC5alJSZ8_CEy5ym7QXJDbJQmEgGnA7emeCWPDNDpx1cw05uao4ybvW4kMAmquGi6NM3Yyj4sbZJa6rE-SbeFiV50Uo1rzTvb89A8_cr_3SKmUXExXRrYjNVUQobYsvavul10FdL8RT9gPrlVBF0jOKqGHWb-52uPtr7k5RB-dRo1qBWh0TV7rLxX56bckGdiyNREEZAon2alU8oYGRfU0FK-21QPSGPsj_zgbyaJhTaSu0m3mB9c_h7XdBmo2L5l2e1aLUltYMsMy6VqDXUrzJvTgNb_pZqWdGoMwIN1l0HwVlD_8enFeCWwHZfIwhZpq-tk9r9EpzIP9JCk0dn3gNMifpGJ7GvVHGdHkLv1-3plDn6CcvLNNvmMrrUPmSbFNpXNSyElbggRlwu1wi4UHpVoYcnyRCPLintdUlabz5h-5c";
 
-  // Set up event listener for Simli messages
   useEffect(() => {
     const handleSimliMessage = (event: CustomEvent) => {
       if (event.detail && event.detail.message) {
@@ -33,7 +30,6 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
       }
     };
 
-    // Listen for errors from Simli
     const handleSimliError = (event: Event) => {
       if (event instanceof CustomEvent && event.detail) {
         console.error("Simli error:", event.detail);
@@ -50,7 +46,6 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
         setHasError(true);
         setErrorMessage(message);
         
-        // Show a toast notification for critical errors
         if (message.includes("401") || 
             message.includes("unauthorized") || 
             message.includes("Unauthorized") ||
@@ -61,14 +56,12 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
             variant: "destructive",
           });
           
-          // Auto-deactivate on auth errors to allow retry
           setIsActivated(false);
           window.simliAvatarActive = false;
         }
       }
     };
 
-    // Add custom event listeners
     window.addEventListener('simli:financial:message' as any, handleSimliMessage as EventListener);
     window.addEventListener('simli:error' as any, handleSimliError as EventListener);
     
@@ -81,7 +74,6 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
   const initialize = () => {
     if (isActivated || isProcessing) return;
     
-    // Check if another avatar is already active
     if (window.simliAvatarActive) {
       setHasError(true);
       setErrorMessage("Please deactivate the other avatar first");
@@ -98,7 +90,6 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
       setIsActivated(true);
       window.simliAvatarActive = true;
       
-      // A short delay to ensure DOM is ready
       setTimeout(() => {
         console.log(`${customText} avatar widget added to DOM`);
         setIsProcessing(false);
@@ -130,13 +121,11 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
   };
 
   useEffect(() => {
-    // When deactivated, update the global state
     if (!isActivated) {
       window.simliAvatarActive = false;
     }
   }, [isActivated]);
 
-  // Listen for global Simli errors regardless of avatar type
   useEffect(() => {
     const handleGlobalError = (event: ErrorEvent) => {
       if (event.message && (
@@ -152,12 +141,13 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
           setHasError(true);
           setErrorMessage(event.message);
           
-          // Only show toast when avatar is active to avoid duplicate notifications
-          toast({
-            title: "Avatar Connection Issue",
-            description: `${customText} encountered an error: ${event.message.slice(0, 50)}...`,
-            variant: "destructive",
-          });
+          if (isActivated) {
+            toast({
+              title: "Avatar Connection Issue",
+              description: `${customText} encountered an error: ${event.message.slice(0, 50)}...`,
+              variant: "destructive",
+            });
+          }
         }
       }
     };
@@ -187,11 +177,10 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
             />
           )}
           <div className="min-h-[60px] min-w-[60px]">
-            {/* Update the attributes to include $ prefix if needed by the API */}
             <div id="financial-analyst-container">
               <simli-widget 
                 token={`$${FINANCIAL_ANALYST_TOKEN}`}
-                agentid={`$${agentId}`}
+                agentid={agentId}
                 position="right"
                 eventname="simli:financial:message"
                 customtext={customText}
