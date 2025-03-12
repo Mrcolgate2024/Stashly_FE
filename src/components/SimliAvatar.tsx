@@ -1,8 +1,9 @@
+
 import React, { useRef, useEffect } from "react";
-import { Button } from "./ui/button";
 import { useSimliAvatar } from "@/hooks/useSimliAvatar";
 import { createSimliWidget } from "@/utils/simliUtils";
-import { SimliErrorMessage } from "./SimliErrorMessage";
+import { AvatarButton } from "./AvatarButton";
+import { AvatarContainer } from "./AvatarContainer";
 
 interface SimliAvatarProps {
   onMessageReceived: (message: string) => void;
@@ -63,44 +64,22 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
   return (
     <div className="fixed bottom-[80px] right-4 sm:bottom-10 sm:right-10 z-10">
       {!isActivated ? (
-        <Button 
+        <AvatarButton
           onClick={initialize}
-          className="bg-blue-500 text-white rounded-full p-3 shadow-lg hover:bg-blue-600 transition-colors"
-          disabled={isProcessing}
-        >
-          {isProcessing ? (
-            <div className="w-12 h-12 flex items-center justify-center">
-              <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-            </div>
-          ) : (
-            <div className="w-12 h-12 flex items-center justify-center">
-              <img 
-                src={customImageUrl} 
-                alt={customText} 
-                className="w-10 h-10 rounded-full object-cover"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = "https://via.placeholder.com/40";
-                }}
-              />
-            </div>
-          )}
-        </Button>
+          isProcessing={isProcessing}
+          bgColor="bg-blue-500"
+          hoverColor="hover:bg-blue-600"
+          imageUrl={customImageUrl}
+          altText={customText}
+        />
       ) : (
-        <div className="relative">
-          {hasError && (
-            <SimliErrorMessage 
-              message={errorMessage}
-              onRetry={retryInitialization}
-              isProcessing={isProcessing}
-            />
-          )}
-          <div ref={containerRef} className="min-h-[60px] min-w-[60px] bg-gray-100/30 rounded-full">
-            {/* Simli widget will be inserted here programmatically */}
-          </div>
-        </div>
+        <AvatarContainer
+          hasError={hasError}
+          errorMessage={errorMessage}
+          onRetry={retryInitialization}
+          isProcessing={isProcessing}
+          containerRef={containerRef}
+        />
       )}
     </div>
   );
