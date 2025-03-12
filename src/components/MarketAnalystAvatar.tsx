@@ -77,7 +77,8 @@ export const MarketAnalystAvatar: React.FC<MarketAnalystAvatarProps> = ({
           
           // Create the widget element
           const simliWidget = document.createElement('simli-widget');
-          simliWidget.setAttribute('token', token);
+          // Use the updated token
+          simliWidget.setAttribute('token', "gAAAAABn0TcMqd4UKDdYzx8H7ApwZ4GVn-1kN1sTkzjoSPwvhBH-iHc8tcPJWXQ-ochA-dAX6tUMfhHxxuHcVZkuHkFvFPoNmGfoi8HEI7Nj0JXUUeT0ONH4ng2H23UFe4RFvURmefQh-N8jd997YIORJGnhrAVeJPm0F1WrBtN4-CKGc0LJ6v2sc-mg3KytY_F_dbBfhYYAc7FeLuWjB4CU0w-HGG1Eq1aOgVOBGICmeNK61hBXDIx9fTS6mH-_2ibb0x8wi98ZitWz48RGEfJfTUIff8z_EuulXfQvYP_Wiw7zrCXbp4uMp2QO9EKJ2AnCtMzvGKOzTfJwdysMvgc28hQyZeTrVRirdFxUNOZX9d0cyGdbB-Fsm03CiQ9A_-0mR9f0s5Ag3FesfxbzGM6Co2RqsjNizQEY548iPkw31lVrX_XB4a0e0XvsHa3r1gDApUk7ZOL3nFJ7KFE4YwbekHTuaa4qnG_OKWrlCLJ4KiQs6LMYbnde4d_XzjTxXPLvcBcC1f6V");
           simliWidget.setAttribute('agentid', agentId);
           simliWidget.setAttribute('position', 'left'); // Position on the left
           simliWidget.setAttribute('customtext', customText);

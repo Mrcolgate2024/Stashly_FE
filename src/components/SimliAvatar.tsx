@@ -78,7 +78,8 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
           
           // Create the widget element
           const simliWidget = document.createElement('simli-widget');
-          simliWidget.setAttribute('token', token);
+          // Use the updated token
+          simliWidget.setAttribute('token', "gAAAAABn0Tst5Mfzk1Q8yAihj1maQrzRbn5bIydW0-_rTiyXFQB2nZhYN-P5DQtwZUO4wDOfDU6l1m009COmB6Hl4Cx7iPLkowc7dBHb6byl0qcpUK9zDRss2iM5uOSdn2zpwHsRDtDN7j9NPOYYIHTOZ2z2WvwzdU1Kgx70DqkJLTOaeh6SR0y-puUYDTn3GGFDGC0OAAotQjj10-gVVGov_eRCxcX5SvgzD4fEbJT5XY8JjfnZNHlbj6_LFqovf6fq11TH9wU0zoXmZM2yJsza-9fWD-EG2xg5JP6OQVqEoPr-9aFgymVYBEuBYe5g4DBZLfqQ5pDNT_CcdtnzVzRPhwW9UTdSz-flLKSzzxNs5PzOoFIbg9Po9is8DpI_M-w-sLU5Jnt9gJAM8cDJasruJK6DT9JwbgYreUTlr0KoUURXGEIXG1IciUkgw2AYe5hUPNnc4d8S44cqtJUbX6Xcig-qzcawao0UnPNjfA00R965WPjijqzWZvohMhmhsBeXk5N7n2hS");
           simliWidget.setAttribute('agentid', agentId);
           simliWidget.setAttribute('position', 'right');
           simliWidget.setAttribute('customimage', customImageUrl);
