@@ -22,7 +22,6 @@ export const Chat = () => {
   } = useChat();
 
   const handleFinancialAvatarMessage = (message: string) => {
-    // When we receive a message from the Financial Analyst avatar, send it to the chat
     console.log("Message from Financial Analyst received in Chat:", message);
     if (!message || message.trim() === "") {
       console.warn("Empty message received from Financial Analyst, ignoring");
@@ -39,7 +38,6 @@ export const Chat = () => {
   };
 
   const handleMarketAvatarMessage = (message: string) => {
-    // When we receive a message from the Market Analyst avatar, send it to the chat
     console.log("Message from Market Analyst received in Chat:", message);
     if (!message || message.trim() === "") {
       console.warn("Empty message received from Market Analyst, ignoring");
