@@ -1,5 +1,5 @@
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Button } from "./ui/button";
 
@@ -19,27 +19,46 @@ export const SimliAvatar2: React.FC<SimliAvatar2Props> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const [isActive, setIsActive] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const instanceId = `market-${agentId}`;
+  const messageHandlerRef = useRef<any>(null);
 
-  // Ensure we have a global state tracker for script loading
-  if (typeof window !== 'undefined' && !window.simliScriptLoaded) {
-    window.simliScriptLoaded = false;
-    window.simliWidgetInstances = {};
-  }
+  // Clean up event listeners on unmount
+  useEffect(() => {
+    return () => {
+      if (messageHandlerRef.current) {
+        window.removeEventListener('simli:message' as any, messageHandlerRef.current);
+        messageHandlerRef.current = null;
+      }
+    };
+  }, []);
 
   const loadSimliScript = (): Promise<void> => {
     return new Promise((resolve, reject) => {
+      // Make sure window globals are initialized
+      if (typeof window !== 'undefined') {
+        if (!window.simliScriptLoaded) {
+          window.simliScriptLoaded = false;
+        }
+        if (!window.simliWidgetInstances) {
+          window.simliWidgetInstances = {};
+        }
+      }
+
       if (window.simliScriptLoaded) {
+        console.log("Simli script already loaded");
         resolve();
         return;
       }
 
       const existingScript = document.getElementById('simli-widget-script');
       if (existingScript) {
+        console.log("Found existing script element");
         window.simliScriptLoaded = true;
         resolve();
         return;
       }
 
+      console.log("Loading Simli script");
       const script = document.createElement('script');
       script.src = "https://app.simli.com/simli-widget/index.js";
       script.async = true;
@@ -62,10 +81,27 @@ export const SimliAvatar2: React.FC<SimliAvatar2Props> = ({
     });
   };
 
+  const cleanupWidget = () => {
+    if (messageHandlerRef.current) {
+      window.removeEventListener('simli:message' as any, messageHandlerRef.current);
+      messageHandlerRef.current = null;
+    }
+    
+    if (containerRef.current) {
+      containerRef.current.innerHTML = '';
+    }
+    
+    // Clean up instance reference
+    if (window.simliWidgetInstances && window.simliWidgetInstances[instanceId]) {
+      delete window.simliWidgetInstances[instanceId];
+    }
+  };
+
   const initializeWidget = async () => {
     if (!containerRef.current) return;
     
     setIsLoading(true);
+    console.log("Initializing Market Analyst widget");
     
     try {
       // Load the script first
@@ -80,12 +116,12 @@ export const SimliAvatar2: React.FC<SimliAvatar2Props> = ({
       simliWidget.setAttribute('agentid', agentId);
       simliWidget.setAttribute('position', 'relative');
       simliWidget.setAttribute('customtext', customText);
-      simliWidget.setAttribute('data-instance-id', `market-${agentId}`);
+      simliWidget.setAttribute('data-instance-id', instanceId);
       
       containerRef.current.appendChild(simliWidget);
       
       // Store instance reference
-      window.simliWidgetInstances[`market-${agentId}`] = simliWidget;
+      window.simliWidgetInstances[instanceId] = simliWidget;
       
       console.log("Market Analyst widget created");
       
@@ -94,15 +130,18 @@ export const SimliAvatar2: React.FC<SimliAvatar2Props> = ({
         const customEvent = event as CustomEvent;
         if (customEvent.detail && customEvent.detail.message) {
           const targetElement = customEvent.target as HTMLElement;
-          const instanceId = targetElement.getAttribute('data-instance-id');
+          const elementId = targetElement.getAttribute('data-instance-id');
           
-          if (instanceId === `market-${agentId}`) {
+          if (elementId === instanceId) {
             console.log("Message from Market Analyst:", customEvent.detail.message);
             onMessageReceived(customEvent.detail.message);
           }
         }
       };
 
+      // Save reference to the handler for cleanup
+      messageHandlerRef.current = handleMessage;
+      
       window.addEventListener('simli:message' as any, handleMessage as EventListener);
       
       setIsActive(true);
@@ -115,17 +154,14 @@ export const SimliAvatar2: React.FC<SimliAvatar2Props> = ({
   };
 
   const handleButtonClick = () => {
+    console.log("Market Analyst button clicked", isActive ? "hiding" : "showing");
+    
     if (!isActive) {
       initializeWidget();
     } else {
       // If already active, just toggle visibility
       setIsActive(false);
-      if (containerRef.current) {
-        containerRef.current.innerHTML = '';
-      }
-      
-      // Remove event listeners when deactivating
-      window.removeEventListener('simli:message' as any, () => {});
+      cleanupWidget();
     }
   };
 
@@ -147,5 +183,3 @@ export const SimliAvatar2: React.FC<SimliAvatar2Props> = ({
     </div>
   );
 };
-
-// TypeScript declaration is in SimliAvatar.tsx
