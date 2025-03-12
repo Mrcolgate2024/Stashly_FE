@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useChat } from "@/hooks/useChat";
 import { ChatInput } from "./ChatInput";
@@ -23,7 +22,7 @@ export const Chat = () => {
 
   const handleFinancialAvatarMessage = (message: string) => {
     // When we receive a message from the Financial Analyst avatar, send it to the chat
-    console.log("Message from Financial Analyst received and forwarded to chat:", message);
+    console.log("Message from Financial Analyst received:", message);
     if (!message || message.trim() === "") {
       console.warn("Empty message received from Financial Analyst, ignoring");
       return;
@@ -32,7 +31,6 @@ export const Chat = () => {
     try {
       const formattedMessage = `Financial Analyst: ${message}`;
       handleSendMessage(formattedMessage, userName);
-      toast.success("Received message from Financial Analyst");
     } catch (error) {
       console.error("Error handling Financial Analyst message:", error);
       toast.error("Failed to process Financial Analyst message");
@@ -41,7 +39,7 @@ export const Chat = () => {
 
   const handleMarketAvatarMessage = (message: string) => {
     // When we receive a message from the Market Analyst avatar, send it to the chat
-    console.log("Message from Market Analyst received and forwarded to chat:", message);
+    console.log("Message from Market Analyst received:", message);
     if (!message || message.trim() === "") {
       console.warn("Empty message received from Market Analyst, ignoring");
       return;
@@ -50,7 +48,6 @@ export const Chat = () => {
     try {
       const formattedMessage = `Market Analyst: ${message}`;
       handleSendMessage(formattedMessage, userName);
-      toast.success("Received message from Market Analyst");
     } catch (error) {
       console.error("Error handling Market Analyst message:", error);
       toast.error("Failed to process Market Analyst message");
@@ -94,7 +91,7 @@ export const Chat = () => {
         <ChatInput onSend={handleMessageSend} disabled={isLoading} />
       </div>
 
-      {/* Financial Analyst Avatar (right side) */}
+      {/* Financial Analyst Avatar - keeping separate from Market Analyst */}
       <SimliAvatar 
         onMessageReceived={handleFinancialAvatarMessage}
         token="gAAAAABnzdaSAK9eo1dXkjVPB4_sVJG_nvq_ThvMivYcfoVrYJOusk52PhgOtaEvqhmFbXbkJp9W06_DP4NWnN7v_TWO7dGKmi92oeC1aMmIHky98JNaYF4fBMn-6JqaEy_act99q0g46P7C571b2Sa9oA9NuqS6qi0OhQx1zKG67JsKtGj0ECL5Xj_KksIeXjvnUMcDeiDQEE1mBQAA6yO_yRV1l--P4WJSrLMQffvMdwGS6i36EH184LHY-ZWo-spsrVhZaY-e2jQukFkS__Ydv2XPz5DnIdp6K92KC3qFVsIDUltHEeTVKwGklz67_AkQwkHClFDYHseeM301guXCvGxk0F7icSHFyAaryiKyfBsIirJ5UR8-rbBf-XSrgspGqwMG6ue6ZiLJYoCQ2qPNIzLKgMFyOQ=="
@@ -102,7 +99,7 @@ export const Chat = () => {
         customText="Financial Analyst"
       />
 
-      {/* Market Analyst Avatar (left side) */}
+      {/* Market Analyst Avatar - keeping separate from Financial Analyst */}
       <SimliAvatar2 
         onMessageReceived={handleMarketAvatarMessage}
         token="gAAAAABn0S1jLCExW5IjIuT_Kq_J4DZUfZCkWwWPgAATyRikZb86rwF94Sp5XWT_U9a2pIRoYKAoEcdhss-_Q4YDNm7i_MfZwHIYM6A_-J1actfzX7mVi9II_9XXCHCj4idT6JH5aTgsAugUZWc04Meb5CIETV4W5ORQotGNQirLi6voQ_Y5QGJo23IjorymDB4Rv_xE-CgyYOaYUV5tV4t7cjPM4k0-Rz0FD680ohxgU6ENBf0yZJdc_497VQp_ENvckTuji4h54ZrowdgLZkAdST-mVrI_DYE1Xsmm1Q1qyXDdUIqvM7uaieT5GPRHLv_Dlb8Oe8He5-bInsIbFztVqRwmlTQKojotFjKLJSh8DqZjWwhc_-Y58s1PIyoCoEC9GCCfrXZWXhmGqhMyogMbZJQbUch3wyr19_3BdRWVrYTqQEwHH42tgpoweu0dV-GQxMjDc0dmXK3t0eJ6H1RnViLl2YQIyqxWRIpH4XXxA0z_Adl8J7xnW63hjSnSiPS-GcEjSOej"
