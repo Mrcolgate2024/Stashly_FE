@@ -1,5 +1,5 @@
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Button } from "./ui/button";
 
 interface SimliAvatarProps {
@@ -18,9 +18,28 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const customImageUrl = "/lovable-uploads/c54ad77b-c6fd-43b7-8063-5803ecec8c64.png";
   const [isActivated, setIsActivated] = useState(false);
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    // Listen for errors from Simli
+    const handleError = (event: Event) => {
+      if (event instanceof CustomEvent && event.detail && 
+         (event.detail.error || event.detail.message?.includes('error'))) {
+        console.error("Simli error detected:", event.detail);
+        setHasError(true);
+      }
+    };
+    
+    window.addEventListener('simli:error' as any, handleError as EventListener);
+    
+    return () => {
+      window.removeEventListener('simli:error' as any, handleError as EventListener);
+    };
+  }, []);
 
   const initializeSimli = () => {
     if (isActivated) return; // Already initialized
+    setHasError(false); // Reset error state on retry
     console.log("Initializing Financial Analyst avatar...");
     setIsActivated(true);
 
@@ -34,35 +53,54 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
     // Add custom event listener for Simli messages
     window.addEventListener('simli:financial:message' as any, handleSimliMessage as EventListener);
 
-    // Add the Simli script if it's not already present
+    // We'll only add the script when initializing for the first time
     if (!document.querySelector('script[src="https://app.simli.com/simli-widget/index.js"]')) {
       const script = document.createElement('script');
       script.src = "https://app.simli.com/simli-widget/index.js";
       script.async = true;
       script.type = "text/javascript";
       document.body.appendChild(script);
+      
+      // Listen for script load errors
+      script.onerror = () => {
+        console.error("Failed to load Simli script");
+        setHasError(true);
+        setIsActivated(false);
+      };
     }
 
     // Create and append the Simli widget to our container
     setTimeout(() => {
       if (containerRef.current) {
-        // Clear any existing content
-        containerRef.current.innerHTML = '';
-        
-        // Create the widget element
-        const simliWidget = document.createElement('simli-widget');
-        simliWidget.setAttribute('token', token);
-        simliWidget.setAttribute('agentid', agentId);
-        simliWidget.setAttribute('position', 'right');
-        simliWidget.setAttribute('customimage', customImageUrl);
-        simliWidget.setAttribute('customtext', customText);
-        
-        // Set a custom event name for this specific avatar
-        simliWidget.setAttribute('eventname', 'simli:financial:message');
-        
-        // Append the widget to the container
-        containerRef.current.appendChild(simliWidget);
-        console.log("Financial Analyst avatar widget added to DOM");
+        try {
+          // Clear any existing content
+          containerRef.current.innerHTML = '';
+          
+          // Create the widget element
+          const simliWidget = document.createElement('simli-widget');
+          simliWidget.setAttribute('token', token);
+          simliWidget.setAttribute('agentid', agentId);
+          simliWidget.setAttribute('position', 'right');
+          simliWidget.setAttribute('customimage', customImageUrl);
+          simliWidget.setAttribute('customtext', customText);
+          
+          // Set a custom event name for this specific avatar
+          simliWidget.setAttribute('eventname', 'simli:financial:message');
+          
+          // Add error listener to the widget
+          simliWidget.addEventListener('error', (e) => {
+            console.error("Widget error:", e);
+            setHasError(true);
+          });
+          
+          // Append the widget to the container
+          containerRef.current.appendChild(simliWidget);
+          console.log("Financial Analyst avatar widget added to DOM");
+        } catch (err) {
+          console.error("Error initializing Simli widget:", err);
+          setHasError(true);
+          setIsActivated(false);
+        }
       }
     }, 500); // Short delay to ensure DOM is ready
   };
@@ -86,8 +124,21 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
           </div>
         </Button>
       ) : (
-        <div ref={containerRef} className="min-h-[60px] min-w-[60px]">
-          {/* Simli widget will be inserted here programmatically */}
+        <div className="relative">
+          {hasError && (
+            <Button 
+              onClick={() => {
+                setIsActivated(false);
+                setTimeout(initializeSimli, 100);
+              }}
+              className="absolute -top-10 right-0 bg-red-500 hover:bg-red-600 text-white text-xs py-1 px-2 rounded"
+            >
+              Retry
+            </Button>
+          )}
+          <div ref={containerRef} className="min-h-[60px] min-w-[60px] bg-gray-100/30 rounded-full">
+            {/* Simli widget will be inserted here programmatically */}
+          </div>
         </div>
       )}
     </div>
