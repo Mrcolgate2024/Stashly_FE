@@ -1,5 +1,6 @@
 
 import React, { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 
 interface SimliAvatarProps {
   onMessageReceived: (message: string) => void;
@@ -16,13 +17,13 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isScriptLoaded, setIsScriptLoaded] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(false);
   const customImageUrl = "/lovable-uploads/c54ad77b-c6fd-43b7-8063-5803ecec8c64.png";
-  const eventHandlerName = "financial_simli_message"; // Unique event name for this avatar
 
   // Function to safely load the Simli script
   const loadSimliScript = () => {
     return new Promise<void>((resolve, reject) => {
-      if (document.querySelector('script[src="https://app.simli.com/simli-widget/index.js"]')) {
+      if (document.querySelector('script[id="simli-widget-script"]')) {
         setIsScriptLoaded(true);
         resolve();
         return;
@@ -30,17 +31,18 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
 
       const script = document.createElement('script');
       script.src = "https://app.simli.com/simli-widget/index.js";
+      script.id = "simli-widget-script";
       script.async = true;
       script.type = "text/javascript";
       
       script.onload = () => {
-        console.log("Simli script loaded successfully for Financial Analyst");
+        console.log("Simli script loaded successfully");
         setIsScriptLoaded(true);
         resolve();
       };
       
       script.onerror = (error) => {
-        console.error("Error loading Simli script for Financial Analyst:", error);
+        console.error("Error loading Simli script:", error);
         reject(error);
       };
       
@@ -50,26 +52,34 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
 
   // Function to create and append the Simli widget
   const createSimliWidget = () => {
-    if (!containerRef.current) return;
+    if (!containerRef.current) {
+      console.error("Container ref is null, cannot create widget");
+      return;
+    }
     
-    // Clear any existing content
-    containerRef.current.innerHTML = '';
-    
-    // Create the widget element
-    const simliWidget = document.createElement('simli-widget');
-    simliWidget.setAttribute('token', token);
-    simliWidget.setAttribute('agentid', agentId);
-    simliWidget.setAttribute('position', 'relative');
-    simliWidget.setAttribute('customimage', customImageUrl);
-    simliWidget.setAttribute('customtext', customText);
-    
-    // Add a custom attribute to identify this widget
-    simliWidget.setAttribute('data-avatar-type', 'financial');
-    
-    // Append the widget to the container
-    containerRef.current.appendChild(simliWidget);
-    
-    console.log("Financial Analyst widget created with ID:", agentId);
+    try {
+      // Clear any existing content
+      containerRef.current.innerHTML = '';
+      
+      // Create the widget element
+      const simliWidget = document.createElement('simli-widget');
+      simliWidget.setAttribute('token', token);
+      simliWidget.setAttribute('agentid', agentId);
+      simliWidget.setAttribute('position', 'relative');
+      simliWidget.setAttribute('customimage', customImageUrl);
+      simliWidget.setAttribute('customtext', customText);
+      
+      // Add a custom attribute to identify this widget
+      simliWidget.setAttribute('data-avatar-type', 'financial');
+      
+      // Append the widget to the container
+      containerRef.current.appendChild(simliWidget);
+      
+      console.log("Financial Analyst widget created with ID:", agentId);
+    } catch (error) {
+      console.error("Error creating Financial Analyst widget:", error);
+      toast.error("Failed to create Financial Analyst widget");
+    }
   };
 
   useEffect(() => {
@@ -94,14 +104,22 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
     let timeoutId: number;
     
     const initialize = async () => {
+      if (isInitializing) return;
+      
+      setIsInitializing(true);
+      
       try {
         await loadSimliScript();
-        // Wait a moment for the script to fully initialize
+        
+        // Give more time for the script to fully initialize
         timeoutId = window.setTimeout(() => {
           createSimliWidget();
-        }, 500);
+          setIsInitializing(false);
+        }, 1000);
       } catch (error) {
         console.error("Failed to initialize Financial Analyst:", error);
+        toast.error("Failed to initialize Financial Analyst");
+        setIsInitializing(false);
       }
     };
 

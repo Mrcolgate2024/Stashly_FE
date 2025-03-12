@@ -7,6 +7,7 @@ import { ChatMessagesArea } from "./ChatMessagesArea";
 import { SimliAvatar } from "./SimliAvatar";
 import { SimliAvatar2 } from "./SimliAvatar2";
 import { Logo } from "./Logo";
+import { toast } from "sonner";
 
 export const Chat = () => {
   const [userName, setUserName] = useState("");
@@ -23,13 +24,25 @@ export const Chat = () => {
   const handleFinancialAvatarMessage = (message: string) => {
     // When we receive a message from the Financial Analyst avatar, send it to the chat
     console.log("Message from Financial Analyst received and forwarded to chat:", message);
-    handleSendMessage(`Financial Analyst: ${message}`, userName);
+    try {
+      handleSendMessage(`Financial Analyst: ${message}`, userName);
+      toast.success("Received message from Financial Analyst");
+    } catch (error) {
+      console.error("Error handling Financial Analyst message:", error);
+      toast.error("Failed to process Financial Analyst message");
+    }
   };
 
   const handleMarketAvatarMessage = (message: string) => {
     // When we receive a message from the Market Analyst avatar, send it to the chat
     console.log("Message from Market Analyst received and forwarded to chat:", message);
-    handleSendMessage(`Market Analyst: ${message}`, userName);
+    try {
+      handleSendMessage(`Market Analyst: ${message}`, userName);
+      toast.success("Received message from Market Analyst");
+    } catch (error) {
+      console.error("Error handling Market Analyst message:", error);
+      toast.error("Failed to process Market Analyst message");
+    }
   };
 
   const handleMessageSend = (content: string) => {
