@@ -47,9 +47,9 @@ export const useSimliAvatar = ({
     const handleError = (event: Event) => {
       if (event instanceof CustomEvent && event.detail) {
         const errorDetails = event.detail;
-        console.error(`Simli error detected on ${eventName}:`, errorDetails);
+        console.log(`Simli ${eventName} error detected:`, errorDetails);
         
-        // Check if it's a token error
+        // Extract error message
         let message = "Unknown error";
         let isTokenError = false;
         
@@ -58,17 +58,14 @@ export const useSimliAvatar = ({
         if (typeof errorDetails === 'string') message = errorDetails;
         if (errorDetails.detail) message = errorDetails.detail;
         
-        // Ignore TTS API key errors as non-critical
-        if (message.includes("TTS API Key")) {
-          console.warn("TTS API Key error - this is expected and not critical:", message);
-          return; // Don't treat this as a critical error
-        }
-        
         // Check if it's a token-related error
         if (message.includes("token") || message.includes("401") || message.includes("auth")) {
           isTokenError = true;
           message = "Your session has expired. Please try again.";
         }
+        
+        // Log all errors for debugging
+        console.warn(`Avatar error (${customText}):`, message);
         
         setErrorMessage(message);
         setHasError(true);
@@ -80,15 +77,15 @@ export const useSimliAvatar = ({
       }
     };
     
+    // Listen for both global and specific avatar errors
     window.addEventListener('simli:error' as any, handleError as EventListener);
-    // Also listen for specific avatar errors
     window.addEventListener(`${eventName}:error` as any, handleError as EventListener);
     
     return () => {
       window.removeEventListener('simli:error' as any, handleError as EventListener);
       window.removeEventListener(`${eventName}:error` as any, handleError as EventListener);
     };
-  }, [eventName]);
+  }, [eventName, customText]);
 
   // Set up message listener when activated
   useEffect(() => {
@@ -96,6 +93,7 @@ export const useSimliAvatar = ({
 
     const handleSimliMessage = (event: CustomEvent) => {
       if (event.detail && event.detail.message) {
+        console.log(`Received message from ${customText}:`, event.detail.message);
         onMessageReceived(event.detail.message);
       }
     };
@@ -106,11 +104,12 @@ export const useSimliAvatar = ({
     return () => {
       window.removeEventListener(eventName as any, handleSimliMessage as EventListener);
     };
-  }, [isActivated, eventName, onMessageReceived]);
+  }, [isActivated, eventName, onMessageReceived, customText]);
 
   // Initialize the script once for all widgets
   useEffect(() => {
     if (!scriptInitialized) {
+      console.log("Initializing Simli script...");
       initializeSimliScript()
         .then(() => {
           setScriptInitialized(true);
@@ -148,8 +147,10 @@ export const useSimliAvatar = ({
         setScriptInitialized(true);
       }
       
+      // Log token for debugging (masked)
+      console.log(`Using token for ${customText}: ${token.substring(0, 10)}...`);
+      
       setIsActivated(true);
-      console.log(`Using provided token for ${customText || "Simli"} avatar`);
       
       // A short delay to ensure DOM is ready
       setTimeout(() => setIsProcessing(false), 500);
@@ -160,15 +161,16 @@ export const useSimliAvatar = ({
       setIsActivated(false);
       setIsProcessing(false);
     }
-  }, [isActivated, isProcessing, customText, scriptInitialized]);
+  }, [isActivated, isProcessing, customText, scriptInitialized, token]);
 
   const retryInitialization = useCallback(() => {
+    console.log(`Retrying initialization for ${customText}...`);
     if (widgetContainerRef.current) {
       safelyRemoveWidget({ current: widgetContainerRef.current });
     }
     setIsActivated(false);
     setTimeout(initialize, 100);
-  }, [initialize]);
+  }, [initialize, customText]);
 
   return {
     isActivated,

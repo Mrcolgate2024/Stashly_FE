@@ -2,6 +2,7 @@
 export const initializeSimliScript = () => {
   // Only add the script if it's not already present
   if (!document.querySelector('script[src="https://app.simli.com/simli-widget/index.js"]')) {
+    console.log("Creating Simli script tag");
     const script = document.createElement('script');
     script.src = "https://app.simli.com/simli-widget/index.js";
     script.async = true;
@@ -9,11 +10,18 @@ export const initializeSimliScript = () => {
     document.body.appendChild(script);
     
     return new Promise<void>((resolve, reject) => {
-      script.onload = () => resolve();
-      script.onerror = () => reject(new Error("Failed to load Simli script"));
+      script.onload = () => {
+        console.log("Simli script loaded successfully");
+        resolve();
+      };
+      script.onerror = () => {
+        console.error("Failed to load Simli script");
+        reject(new Error("Failed to load Simli script"));
+      };
     });
   }
   
+  console.log("Simli script already exists");
   return Promise.resolve();
 };
 
@@ -26,9 +34,17 @@ export const createSimliWidget = (
   customText?: string,
   customImage?: string
 ) => {
-  if (!containerRef.current) return null;
+  if (!containerRef.current) {
+    console.error("Container ref is null, cannot create widget");
+    return null;
+  }
   
   try {
+    // First ensure we clean up properly
+    safelyRemoveWidget(containerRef);
+    
+    console.log(`Creating Simli widget for ${customText || "avatar"} with agentId: ${agentId}`);
+    
     // Clear any existing content
     containerRef.current.innerHTML = '';
     
@@ -50,23 +66,7 @@ export const createSimliWidget = (
     
     // Append the widget to the container
     containerRef.current.appendChild(simliWidget);
-    
-    // Set a listener to handle TTS API Key errors better
-    const handleApiError = (event: Event) => {
-      if (event instanceof CustomEvent && event.detail) {
-        const errorDetails = event.detail;
-        if (
-          (typeof errorDetails === 'string' && errorDetails.includes("TTS API Key")) ||
-          (errorDetails.detail && errorDetails.detail.includes("TTS API Key"))
-        ) {
-          console.warn("TTS API Key error detected, this may be expected behavior:", errorDetails);
-          // We don't want to propagate this as a critical error, just log it
-          event.stopPropagation();
-        }
-      }
-    };
-    
-    window.addEventListener(`${eventName}:error`, handleApiError as EventListener);
+    console.log(`Simli widget created and appended to DOM for ${customText || "avatar"}`);
     
     return simliWidget;
   } catch (err) {
@@ -79,13 +79,16 @@ export const createSimliWidget = (
 export const safelyRemoveWidget = (containerRef: React.RefObject<HTMLDivElement>) => {
   if (containerRef.current) {
     try {
+      console.log("Safely removing existing widget");
       // Remove any existing widget to prevent leave() errors
       const existingWidget = containerRef.current.querySelector('simli-widget');
       if (existingWidget) {
+        console.log("Found existing widget, attempting to remove");
         // Try to gracefully disconnect before removal
         try {
           // Set a flag to prevent leave() call during disconnectedCallback
           (existingWidget as any)._isManuallyRemoved = true;
+          console.log("Set manual removal flag");
         } catch (e) {
           console.log("Could not set manual removal flag", e);
         }
@@ -93,10 +96,13 @@ export const safelyRemoveWidget = (containerRef: React.RefObject<HTMLDivElement>
         // First try removing the child element
         try {
           containerRef.current.removeChild(existingWidget);
+          console.log("Successfully removed widget with removeChild");
         } catch (e) {
           console.log("Failed with removeChild, using innerHTML instead", e);
           containerRef.current.innerHTML = '';
         }
+      } else {
+        console.log("No existing widget found to remove");
       }
     } catch (err) {
       console.error("Error safely removing widget:", err);
@@ -105,11 +111,14 @@ export const safelyRemoveWidget = (containerRef: React.RefObject<HTMLDivElement>
         containerRef.current.innerHTML = '';
       }
     }
+  } else {
+    console.warn("Container ref is null in safelyRemoveWidget");
   }
 };
 
 // Add this function to handle the scenario when the document visibility changes
 export const setupVisibilityChangeProtection = () => {
+  console.log("Setting up visibility change protection");
   const originalVisibilityChangeHandler = document.onvisibilitychange;
   
   document.onvisibilitychange = (event) => {
@@ -121,6 +130,7 @@ export const setupVisibilityChangeProtection = () => {
     // Protection against "Cannot read properties of null (reading 'leave')" error
     try {
       const widgets = document.querySelectorAll('simli-widget');
+      console.log(`Found ${widgets.length} widgets during visibility change`);
       widgets.forEach(widget => {
         if (widget.shadowRoot) {
           const shadowElements = widget.shadowRoot.querySelectorAll('*');
