@@ -17,6 +17,7 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const [isScriptLoaded, setIsScriptLoaded] = useState(false);
   const customImageUrl = "/lovable-uploads/c54ad77b-c6fd-43b7-8063-5803ecec8c64.png";
+  const eventHandlerName = "financial_simli_message"; // Unique event name for this avatar
 
   // Function to safely load the Simli script
   const loadSimliScript = () => {
@@ -33,13 +34,13 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
       script.type = "text/javascript";
       
       script.onload = () => {
-        console.log("Simli script loaded successfully");
+        console.log("Simli script loaded successfully for Financial Analyst");
         setIsScriptLoaded(true);
         resolve();
       };
       
       script.onerror = (error) => {
-        console.error("Error loading Simli script:", error);
+        console.error("Error loading Simli script for Financial Analyst:", error);
         reject(error);
       };
       
@@ -62,18 +63,27 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
     simliWidget.setAttribute('customimage', customImageUrl);
     simliWidget.setAttribute('customtext', customText);
     
+    // Add a custom attribute to identify this widget
+    simliWidget.setAttribute('data-avatar-type', 'financial');
+    
     // Append the widget to the container
     containerRef.current.appendChild(simliWidget);
     
-    console.log("Simli widget created with ID:", agentId);
+    console.log("Financial Analyst widget created with ID:", agentId);
   };
 
   useEffect(() => {
     // Create a custom event listener for Simli messages
     const handleSimliMessage = (event: CustomEvent) => {
       if (event.detail && event.detail.message) {
-        console.log("Received message from Simli (Financial):", event.detail.message);
-        onMessageReceived(event.detail.message);
+        // Only process events from this avatar type
+        const targetElement = event.target as HTMLElement;
+        const avatarParent = targetElement.closest('[data-avatar-type="financial"]');
+        
+        if (avatarParent) {
+          console.log("Received message from Financial Analyst:", event.detail.message);
+          onMessageReceived(event.detail.message);
+        }
       }
     };
 
@@ -91,7 +101,7 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
           createSimliWidget();
         }, 500);
       } catch (error) {
-        console.error("Failed to initialize Simli (Financial):", error);
+        console.error("Failed to initialize Financial Analyst:", error);
       }
     };
 

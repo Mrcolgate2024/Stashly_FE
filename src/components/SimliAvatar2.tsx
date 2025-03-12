@@ -16,6 +16,7 @@ export const SimliAvatar2: React.FC<SimliAvatar2Props> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isScriptLoaded, setIsScriptLoaded] = useState(false);
+  const eventHandlerName = "market_simli_message"; // Unique event name for this avatar
 
   // Function to safely load the Simli script
   const loadSimliScript = () => {
@@ -32,13 +33,13 @@ export const SimliAvatar2: React.FC<SimliAvatar2Props> = ({
       script.type = "text/javascript";
       
       script.onload = () => {
-        console.log("Simli script loaded successfully");
+        console.log("Simli script loaded successfully for Market Analyst");
         setIsScriptLoaded(true);
         resolve();
       };
       
       script.onerror = (error) => {
-        console.error("Error loading Simli script:", error);
+        console.error("Error loading Simli script for Market Analyst:", error);
         reject(error);
       };
       
@@ -57,21 +58,30 @@ export const SimliAvatar2: React.FC<SimliAvatar2Props> = ({
     const simliWidget = document.createElement('simli-widget');
     simliWidget.setAttribute('token', token);
     simliWidget.setAttribute('agentid', agentId);
-    simliWidget.setAttribute('position', 'left');
+    simliWidget.setAttribute('position', 'relative');
     simliWidget.setAttribute('customtext', customText);
+    
+    // Add a custom attribute to identify this widget
+    simliWidget.setAttribute('data-avatar-type', 'market');
     
     // Append the widget to the container
     containerRef.current.appendChild(simliWidget);
     
-    console.log("Simli widget created with ID:", agentId);
+    console.log("Market Analyst widget created with ID:", agentId);
   };
 
   useEffect(() => {
     // Create a custom event listener for Simli messages
     const handleSimliMessage = (event: CustomEvent) => {
       if (event.detail && event.detail.message) {
-        console.log("Received message from Simli (Market):", event.detail.message);
-        onMessageReceived(event.detail.message);
+        // Only process events from this avatar type
+        const targetElement = event.target as HTMLElement;
+        const avatarParent = targetElement.closest('[data-avatar-type="market"]');
+        
+        if (avatarParent) {
+          console.log("Received message from Market Analyst:", event.detail.message);
+          onMessageReceived(event.detail.message);
+        }
       }
     };
 
@@ -89,7 +99,7 @@ export const SimliAvatar2: React.FC<SimliAvatar2Props> = ({
           createSimliWidget();
         }, 1000); // Use a slightly longer delay for the second avatar
       } catch (error) {
-        console.error("Failed to initialize Simli (Market):", error);
+        console.error("Failed to initialize Market Analyst:", error);
       }
     };
 
