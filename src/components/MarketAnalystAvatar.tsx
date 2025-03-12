@@ -51,8 +51,10 @@ export const MarketAnalystAvatar: React.FC<MarketAnalystAvatarProps> = ({
         // Auto-deactivate on auth/TTS errors to allow retry
         if (message.includes("401") || 
             message.includes("unauthorized") || 
-            message.includes("TTS API Key")) {
+            message.includes("TTS API Key") ||
+            message.includes("Duplicate DailyIframe")) {
           setIsActivated(false);
+          window.simliAvatarActive = false;
         }
       }
     };
@@ -70,6 +72,13 @@ export const MarketAnalystAvatar: React.FC<MarketAnalystAvatarProps> = ({
   const initialize = () => {
     if (isActivated || isProcessing) return;
     
+    // Check if another avatar is already active
+    if (window.simliAvatarActive) {
+      setHasError(true);
+      setErrorMessage("Please deactivate the other avatar first");
+      return;
+    }
+    
     setIsProcessing(true);
     setHasError(false);
     setErrorMessage("");
@@ -77,21 +86,34 @@ export const MarketAnalystAvatar: React.FC<MarketAnalystAvatarProps> = ({
     try {
       console.log(`Initializing ${customText} avatar...`);
       setIsActivated(true);
+      window.simliAvatarActive = true;
       
       // A short delay to ensure DOM is ready
-      setTimeout(() => setIsProcessing(false), 500);
+      setTimeout(() => {
+        console.log(`${customText} avatar widget added to DOM`);
+        setIsProcessing(false);
+      }, 500);
     } catch (error) {
       console.error("Error in initialization:", error);
       setHasError(true);
       setErrorMessage(error instanceof Error ? error.message : "Failed to connect to avatar service");
       setIsProcessing(false);
+      window.simliAvatarActive = false;
     }
   };
 
   const retryInitialization = () => {
     setIsActivated(false);
+    window.simliAvatarActive = false;
     setTimeout(initialize, 100);
   };
+
+  useEffect(() => {
+    // When deactivated, update the global state
+    if (!isActivated) {
+      window.simliAvatarActive = false;
+    }
+  }, [isActivated]);
 
   return (
     <div className="fixed bottom-[80px] left-4 sm:bottom-10 sm:left-10 z-10">

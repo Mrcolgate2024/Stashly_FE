@@ -52,8 +52,10 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
         // Auto-deactivate on auth/TTS errors to allow retry
         if (message.includes("401") || 
             message.includes("unauthorized") || 
-            message.includes("TTS API Key")) {
+            message.includes("TTS API Key") ||
+            message.includes("Duplicate DailyIframe")) {
           setIsActivated(false);
+          window.simliAvatarActive = false;
         }
       }
     };
@@ -71,6 +73,13 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
   const initialize = () => {
     if (isActivated || isProcessing) return;
     
+    // Check if another avatar is already active
+    if (window.simliAvatarActive) {
+      setHasError(true);
+      setErrorMessage("Please deactivate the other avatar first");
+      return;
+    }
+    
     setIsProcessing(true);
     setHasError(false);
     setErrorMessage("");
@@ -79,6 +88,7 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
       console.log(`Initializing ${customText} avatar...`);
       console.log(`Using provided token for ${customText} avatar`);
       setIsActivated(true);
+      window.simliAvatarActive = true;
       
       // A short delay to ensure DOM is ready
       setTimeout(() => {
@@ -90,13 +100,22 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
       setHasError(true);
       setErrorMessage(error instanceof Error ? error.message : "Failed to connect to avatar service");
       setIsProcessing(false);
+      window.simliAvatarActive = false;
     }
   };
 
   const retryInitialization = () => {
     setIsActivated(false);
+    window.simliAvatarActive = false;
     setTimeout(initialize, 100);
   };
+
+  useEffect(() => {
+    // When deactivated, update the global state
+    if (!isActivated) {
+      window.simliAvatarActive = false;
+    }
+  }, [isActivated]);
 
   return (
     <div className="fixed bottom-[80px] right-4 sm:bottom-10 sm:right-10 z-10">

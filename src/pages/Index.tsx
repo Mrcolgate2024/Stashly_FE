@@ -2,6 +2,14 @@
 import { Chat } from "@/components/Chat";
 import { useEffect, useState } from "react";
 
+// Global variable to track script loading state across component remounts
+declare global {
+  interface Window {
+    simliScriptLoaded?: boolean;
+    simliAvatarActive?: boolean;
+  }
+}
+
 const Index = () => {
   const [scriptLoaded, setScriptLoaded] = useState(false);
 
@@ -29,9 +37,19 @@ const Index = () => {
 
       // Add a global error handler for any DailyJS errors
       window.addEventListener('error', (event) => {
-        if (event.message.includes('DailyIframe') || event.message.includes('daily-js')) {
+        if (event.message && (
+            event.message.includes('DailyIframe') || 
+            event.message.includes('daily-js') ||
+            event.message.includes('duplicate')
+          )) {
           console.warn("Caught DailyIframe error:", event.message);
           event.preventDefault();
+          
+          // Reset the avatar state if there's a duplicate instance error
+          if (event.message.includes('Duplicate DailyIframe instances')) {
+            window.simliAvatarActive = false;
+          }
+          
           return true;
         }
         return false;
