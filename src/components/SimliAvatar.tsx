@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef } from "react";
+import React, { useRef, useState } from "react";
 
 interface SimliAvatarProps {
   onMessageReceived: (message: string) => void;
@@ -16,8 +16,12 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const customImageUrl = "/lovable-uploads/c54ad77b-c6fd-43b7-8063-5803ecec8c64.png";
+  const [isActivated, setIsActivated] = useState(false);
 
-  useEffect(() => {
+  const initializeSimli = () => {
+    if (isActivated) return; // Already initialized
+    setIsActivated(true);
+
     // Create a custom event listener for Simli messages
     const handleSimliMessage = (event: CustomEvent) => {
       if (event.detail && event.detail.message) {
@@ -57,18 +61,38 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
       containerRef.current.appendChild(simliWidget);
     }
 
-    // Cleanup function
+    // Return a cleanup function
     return () => {
       window.removeEventListener('simli:financial:message' as any, handleSimliMessage as EventListener);
       if (containerRef.current) {
         containerRef.current.innerHTML = '';
       }
     };
-  }, [token, agentId, onMessageReceived, customText]);
+  };
 
   return (
-    <div className="fixed bottom-[80px] right-4 sm:bottom-10 sm:right-10 z-10" ref={containerRef}>
-      {/* Simli widget will be inserted here programmatically */}
+    <div className="fixed bottom-[80px] right-4 sm:bottom-10 sm:right-10 z-10">
+      {!isActivated ? (
+        <button 
+          onClick={initializeSimli}
+          className="bg-blue-500 text-white rounded-full p-3 shadow-lg hover:bg-blue-600 transition-colors"
+        >
+          <div className="w-12 h-12 flex items-center justify-center">
+            <img 
+              src={customImageUrl} 
+              alt={customText} 
+              className="w-10 h-10 rounded-full object-cover"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = "https://via.placeholder.com/40";
+              }}
+            />
+          </div>
+        </button>
+      ) : (
+        <div ref={containerRef}>
+          {/* Simli widget will be inserted here programmatically */}
+        </div>
+      )}
     </div>
   );
 };

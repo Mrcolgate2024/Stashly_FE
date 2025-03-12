@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef } from "react";
+import React, { useRef, useState } from "react";
 
 interface MarketAnalystAvatarProps {
   onMessageReceived: (message: string) => void;
@@ -15,8 +15,12 @@ export const MarketAnalystAvatar: React.FC<MarketAnalystAvatarProps> = ({
   customText = "Market Analyst",
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isActivated, setIsActivated] = useState(false);
   
-  useEffect(() => {
+  const initializeSimli = () => {
+    if (isActivated) return; // Already initialized
+    setIsActivated(true);
+
     // Create a custom event listener for Simli messages
     const handleSimliMessage = (event: CustomEvent) => {
       if (event.detail && event.detail.message) {
@@ -45,7 +49,7 @@ export const MarketAnalystAvatar: React.FC<MarketAnalystAvatarProps> = ({
       const simliWidget = document.createElement('simli-widget');
       simliWidget.setAttribute('token', token);
       simliWidget.setAttribute('agentid', agentId);
-      simliWidget.setAttribute('position', 'left'); // Changed to left
+      simliWidget.setAttribute('position', 'left'); // Position on the left
       simliWidget.setAttribute('customtext', customText);
       
       // Set a custom event name for this specific avatar
@@ -55,18 +59,31 @@ export const MarketAnalystAvatar: React.FC<MarketAnalystAvatarProps> = ({
       containerRef.current.appendChild(simliWidget);
     }
 
-    // Cleanup function
+    // Return a cleanup function
     return () => {
       window.removeEventListener('simli:market:message' as any, handleSimliMessage as EventListener);
       if (containerRef.current) {
         containerRef.current.innerHTML = '';
       }
     };
-  }, [token, agentId, onMessageReceived, customText]);
+  };
 
   return (
-    <div className="fixed bottom-[80px] left-4 sm:bottom-10 sm:left-10 z-10" ref={containerRef}>
-      {/* Simli widget will be inserted here programmatically */}
+    <div className="fixed bottom-[80px] left-4 sm:bottom-10 sm:left-10 z-10">
+      {!isActivated ? (
+        <button 
+          onClick={initializeSimli}
+          className="bg-green-500 text-white rounded-full p-3 shadow-lg hover:bg-green-600 transition-colors"
+        >
+          <div className="w-12 h-12 flex items-center justify-center">
+            <span className="text-xl font-bold">MA</span>
+          </div>
+        </button>
+      ) : (
+        <div ref={containerRef}>
+          {/* Simli widget will be inserted here programmatically */}
+        </div>
+      )}
     </div>
   );
 };

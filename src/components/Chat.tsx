@@ -67,15 +67,15 @@ export const Chat = () => {
         <ChatInput onSend={handleMessageSend} disabled={isLoading} />
       </div>
 
-      {/* Financial Analyst avatar */}
+      {/* Financial Analyst avatar - with updated token */}
       <SimliAvatar 
         onMessageReceived={handleFinancialAvatarMessage}
-        token="gAAAAABn0TbcF2qb2t6qsS4vvTzkZ7Cl608bt3qfiaAw1bp1VAJFstT88mQVftN3gwkTr0vtc6dQXaWB7-u8-uE9pPfL5EA1cQu5AUMk3OeOulhlmegNSOOLjxF0agoAYMwrzrqjg29d9uKuvztQPgLJqvVwUlCTRITnZ62AaHuE69O6-u9jObX2wp-4AI3ten2lmzRjeWFJZIJmxYAlmMp9bw4FQtjRN_dT_jE6jIe7Nysrx1MZCDaADMKdsUP2s3RFUROMYkIVVnSpjtt0qyzetf8KSQY9yYgRz6mGF4bxmDB2jf6QhT_ENkP67eIhLuj3NPIscHVJulUvclUWaEVqoSyh1Epg0d9YB4Qw6jySFxMePENVClzeDrUKUvQ7aZuDcZXTfMcU74dokJHThB0RM2pqzwQl_n_iIjhhDc9aHoeMzqNrR9Rkhvuwa3HaDaD0lvBinMd2M99VmQzXcL8Vp8iikJYHWnu0f6VRgoS-p9E7D0_c-CIxFGV-a1xlw0JgFnbkM-JT"
+        token="gAAAAABn0Tst5Mfzk1Q8yAihj1maQrzRbn5bIydW0-_rTiyXFQB2nZhYN-P5DQtwZUO4wDOfDU6l1m009COmB6Hl4Cx7iPLkowc7dBHb6byl0qcpUK9zDRss2iM5uOSdn2zpwHsRDtDN7j9NPOYYIHTOZ2z2WvwzdU1Kgx70DqkJLTOaeh6SR0y-puUYDTn3GGFDGC0OAAotQjj10-gVVGov_eRCxcX5SvgzD4fEbJT5XY8JjfnZNHlbj6_LFqovf6fq11TH9wU0zoXmZM2yJsza-9fWD-EG2xg5JP6OQVqEoPr-9aFgymVYBEuBYe5g4DBZLfqQ5pDNT_CcdtnzVzRPhwW9UTdSz-flLKSzzxNs5PzOoFIbg9Po9is8DpI_M-w-sLU5Jnt9gJAM8cDJasruJK6DT9JwbgYreUTlr0KoUURXGEIXG1IciUkgw2AYe5hUPNnc4d8S44cqtJUbX6Xcig-qzcawao0UnPNjfA00R965WPjijqzWZvohMhmhsBeXk5N7n2hS"
         agentId="b36e9ae6-5a88-4235-9e7a-eab88fd52d7b"
         customText="Financial Analyst"
       />
 
-      {/* Market Analyst avatar - now positioned on the left side */}
+      {/* Market Analyst avatar - positioned on the left side */}
       <MarketAnalystAvatar 
         onMessageReceived={handleMarketAvatarMessage}
         token="gAAAAABn0TcMqd4UKDdYzx8H7ApwZ4GVn-1kN1sTkzjoSPwvhBH-iHc8tcPJWXQ-ochA-dAX6tUMfhHxxuHcVZkuHkFvFPoNmGfoi8HEI7Nj0JXUUeT0ONH4ng2H23UFe4RFvURmefQh-N8jd997YIORJGnhrAVeJPm0F1WrBtN4-CKGc0LJ6v2sc-mg3KytY_F_dbBfhYYAc7FeLuWjB4CU0w-HGG1Eq1aOgVOBGICmeNK61hBXDIx9fTS6mH-_2ibb0x8wi98ZitWz48RGEfJfTUIff8z_EuulXfQvYP_Wiw7zrCXbp4uMp2QO9EKJ2AnCtMzvGKOzTfJwdysMvgc28hQyZeTrVRirdFxUNOZX9d0cyGdbB-Fsm03CiQ9A_-0mR9f0s5Ag3FesfxbzGM6Co2RqsjNizQEY548iPkw31lVrX_XB4a0e0XvsHa3r1gDApUk7ZOL3nFJ7KFE4YwbekHTuaa4qnG_OKWrlCLJ4KiQs6LMYbnde4d_XzjTxXPLvcBcC1f6V"
