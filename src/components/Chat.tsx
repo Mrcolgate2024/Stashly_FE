@@ -70,7 +70,7 @@ export const Chat = () => {
       {/* Financial Analyst avatar - hardcoded token directly */}
       <SimliAvatar 
         onMessageReceived={handleFinancialAvatarMessage}
-        token="gAAAAABn0Tst5Mfzk1Q8yAihj1maQrzRbn5bIydW0-_rTiyXFQB2nZhYN-P5DQtwZUO4wDOfDU6l1m009COmB6Hl4Cx7iPLkowc7dBHb6byl0qcpUK9zDRss2iM5uOSdn2zpwHsRDtDN7j9NPOYYIHTOZ2z2WvwzdU1Kgx70DqkJLTOaeh6SR0y-puUYDTn3GGFDGC0OAAotQjj10-gVVGov_eRCxcX5SvgzD4fEbJT5XY8JjfnZNHlbj6_LFqovf6fq11TH9wU0zoXmZM2yJsza-9fWD-EG2xg5JP6OQVqEoPr-9aFgymVYBEuBYe5g4DBZLfqQ5pDNT_CcdtnzVzRPhwW9UTdSz-flLKSzzxNs5PzOoFIbg9Po9is8DpI_M-w-sLU5Jnt9gJAM8cDJasruJK6DT9JwbgYreUTlr0KoUURXGEIXG1IciUkgw2AYe5hUPNnc4d8S44cqtJUbX6Xcig-qzcawao0UnPNjfA00R965WPjijqzWZvohMhmhsBeXk5N7n2hS"
+        token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRiMzk4YjkwLTVmOTYtNGJiNS1hOWVhLWE3ZjZiOTdkYTAxZSIsImlhdCI6MTcxMDIzMDA1MywiZXhwIjoxNzQxNzg3NjUzfQ.QkiRiILPLx5SEUP7SKOhJcKTVLFm_Cqz46JqFOZG2eo"
         agentId="b36e9ae6-5a88-4235-9e7a-eab88fd52d7b"
         customText="Financial Analyst"
       />
@@ -78,7 +78,7 @@ export const Chat = () => {
       {/* Market Analyst avatar - hardcoded token directly */}
       <MarketAnalystAvatar 
         onMessageReceived={handleMarketAvatarMessage}
-        token="gAAAAABn0TcMqd4UKDdYzx8H7ApwZ4GVn-1kN1sTkzjoSPwvhBH-iHc8tcPJWXQ-ochA-dAX6tUMfhHxxuHcVZkuHkFvFPoNmGfoi8HEI7Nj0JXUUeT0ONH4ng2H23UFe4RFvURmefQh-N8jd997YIORJGnhrAVeJPm0F1WrBtN4-CKGc0LJ6v2sc-mg3KytY_F_dbBfhYYAc7FeLuWjB4CU0w-HGG1Eq1aOgVOBGICmeNK61hBXDIx9fTS6mH-_2ibb0x8wi98ZitWz48RGEfJfTUIff8z_EuulXfQvYP_Wiw7zrCXbp4uMp2QO9EKJ2AnCtMzvGKOzTfJwdysMvgc28hQyZeTrVRirdFxUNOZX9d0cyGdbB-Fsm03CiQ9A_-0mR9f0s5Ag3FesfxbzGM6Co2RqsjNizQEY548iPkw31lVrX_XB4a0e0XvsHa3r1gDApUk7ZOL3nFJ7KFE4YwbekHTuaa4qnG_OKWrlCLJ4KiQs6LMYbnde4d_XzjTxXPLvcBcC1f6V"
+        token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRiMzk4YjkwLTVmOTYtNGJiNS1hOWVhLWE3ZjZiOTdkYTAxZSIsImlhdCI6MTcxMDIzMDA1MywiZXhwIjoxNzQxNzg3NjUzfQ.QkiRiILPLx5SEUP7SKOhJcKTVLFm_Cqz46JqFOZG2eo"
         agentId="a730e183-fc16-48d2-9d25-42d64b1a238a"
         customText="Market Analyst"
       />
