@@ -11,6 +11,7 @@ declare namespace JSX {
       eventname?: string;
       customtext?: string;
       customimage?: string;
+      disabletts?: string;
     }, HTMLElement>;
   }
 }

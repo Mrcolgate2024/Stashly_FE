@@ -83,6 +83,11 @@ const Index = () => {
                 Market Analyst Avatar
               </Button>
             </Link>
+            <Link to="/rogue-trader">
+              <Button className="w-full sm:w-auto bg-red-500 hover:bg-red-600">
+                Rogue Trader Avatar
+              </Button>
+            </Link>
           </div>
           <Chat />
         </div>
