@@ -75,12 +75,12 @@ const Index = () => {
           <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 justify-center">
             <Link to="/financial-analyst">
               <Button className="w-full bg-blue-500 hover:bg-blue-600">
-                Financial Analyst
+                Investment Advisor
               </Button>
             </Link>
             <Link to="/financial-analyst-2">
               <Button className="w-full bg-purple-500 hover:bg-purple-600">
-                Financial Analyst 2
+                Portfolio Manager
               </Button>
             </Link>
             <Link to="/market-analyst">
