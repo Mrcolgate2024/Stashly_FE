@@ -1,4 +1,3 @@
-
 import { Chat } from "@/components/Chat";
 import { useEffect, useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
@@ -72,15 +71,10 @@ const Index = () => {
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" />
       <div className="min-h-screen w-full bg-[#1e2a38]">
         <div className="mx-auto max-w-4xl backdrop-blur-sm bg-white/40 min-h-screen p-6">
-          <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 justify-center">
-            <Link to="/financial-analyst">
-              <Button className="w-full bg-blue-500 hover:bg-blue-600">
-                Investment Advisor
-              </Button>
-            </Link>
-            <Link to="/financial-analyst-2">
-              <Button className="w-full bg-purple-500 hover:bg-purple-600">
-                Portfolio Manager
+          <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 justify-center">
+            <Link to="/risk-analyst">
+              <Button className="w-full bg-orange-500 hover:bg-orange-600">
+                Risk Analyst
               </Button>
             </Link>
             <Link to="/market-analyst">

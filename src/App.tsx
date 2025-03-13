@@ -1,36 +1,25 @@
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useState } from "react";
+import { Route, Routes } from "react-router-dom";
+import "./App.css";
 import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import FinancialAnalyst from "./pages/FinancialAnalyst";
-import FinancialAnalyst2 from "./pages/FinancialAnalyst2";
 import MarketAnalyst from "./pages/MarketAnalyst";
 import RogueTrader from "./pages/RogueTrader";
+import RiskAnalyst from "./pages/RiskAnalyst";
+import NotFound from "./pages/NotFound";
 
-const queryClient = new QueryClient();
+function App() {
+  const [count, setCount] = useState(0);
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/financial-analyst" element={<FinancialAnalyst />} />
-          <Route path="/financial-analyst-2" element={<FinancialAnalyst2 />} />
-          <Route path="/market-analyst" element={<MarketAnalyst />} />
-          <Route path="/rogue-trader" element={<RogueTrader />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+  return (
+    <Routes>
+      <Route path="/" element={<Index />} />
+      <Route path="/market-analyst" element={<MarketAnalyst />} />
+      <Route path="/rogue-trader" element={<RogueTrader />} />
+      <Route path="/risk-analyst" element={<RiskAnalyst />} />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+}
 
 export default App;
