@@ -15,7 +15,8 @@ export const MarketAnalystAvatar: React.FC<MarketAnalystAvatarProps> = ({
   agentId,
   customText = "Market Analyst",
 }) => {
-  const MARKET_ANALYST_TOKEN = "gAAAAABn0WhoVTdSnRpLy7op0O79gAka6U1SfH7GCpjx-dIc37msMAii2eFpvsrwKqANei9SvQOY1GDN1QiSqF-AkIwxRvnsw82_6chiyQ2YT1jiAQkZtmsJidt_Wq2aIwZFRcwtUpaqoKBExOGmwvv7Et2Av-AQV9VFMyjiph_X6QGcHraeVUgGIRc_cSIMCvKCv4apFOMgv8onii6wiWVcItyhXl0ebMhlRVOX7O1XU4S1kTXV27LkXuTrDmMAFK7MkxV9mwV6XEqylxl_N8qaVvh_578hVHIsk1PRDkQfJ14ZVONwmt45w3o8xOpvFithxj8C4eS3XywkVTG9JKG9EbbHIUpoll_xbR2kg0Qz2vgjGEdkS_npQHK9ayVXUNhQW3bMwBP2Tlnxg2iF3Wv7y5t7Q01jQgaa2cZVvMIiZ3BQmpjCZrCxbDaBagCpG1Zzn4EeHz_QCACKFax6AAzGB0YdW8uO0pq_2PvBon2pcLnE91Jng21Y3GJTL2bxmFaI9P-fnY9d";
+  // Update with the new token - using the same as Rogue Trader but with different agent ID
+  const MARKET_ANALYST_TOKEN = "gAAAAABn0nnD3-eQwdpKNWyMWFAOJHvQ_T2tfnRpQIlscOX3-NZ0ZOjQdSXfRa-rP1V7HK6lBhV4mz-JPZseP4TNSSXlLvtxamDDkbL313b9gLmUpvZsUVkTt8Bf80r3rFc8bgYTAAHH1lKVeixWPHI4cG5CVnFUEp7BkZdFqH6kB6YNOQye1scUcz9ZtWmfmfnHjQIvKYHprtcam7K5JMpNsDMZJorriguO5FCtmhcp7rXa3aFLuZR8RG7uQBxtZpBmYeI39BmZ88VWkxfbuYXghD2ri_fpj0MxR3ruu1GkZDzl9ssrx41AcWwiw2WdJmB486qasXPa9iZQ2YtOl_m4bjfSzkHUr12Z_aDXGo2scRP1UHYuwLKGXh8O-KqgmwJDEtPFhGBroQ5f_lYgr2JMp6eMrKYfGfMbzxj-pS-b-B0dMYmUGRREatxxjlgvMY5IgtiNmquPZVsPt769GQrw20Mluwn7Fngs52Cp50uYng730b-ArNMDljapADQlvtrd2jeqcjbc";
 
   return (
     <BaseAvatar
@@ -29,6 +30,8 @@ export const MarketAnalystAvatar: React.FC<MarketAnalystAvatarProps> = ({
       bgColor="bg-green-500"
       hoverColor="hover:bg-green-600"
       initials="MA"
+      // Set disableTTS to true since we're getting TTS API Key errors
+      disableTTS={true}
     />
   );
 };

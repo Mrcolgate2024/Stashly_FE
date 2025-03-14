@@ -1,13 +1,13 @@
 
 import { useState, useEffect } from "react";
-import { RogueTraderAvatar } from "@/components/RogueTraderAvatar";
+import { RiskAnalystAvatar } from "@/components/RiskAnalystAvatar";
 import { Toaster } from "@/components/ui/toaster";
 import { toast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle } from "lucide-react";
 
-const RogueTrader = () => {
+const RiskAnalyst = () => {
   const [messages, setMessages] = useState<string[]>([]);
   const [ttsError, setTtsError] = useState(false);
   const [scriptLoaded, setScriptLoaded] = useState(false);
@@ -35,12 +35,12 @@ const RogueTrader = () => {
     setMessages(prev => [...prev, message]);
     toast({
       title: "New message received",
-      description: "The Rogue Trader has sent you a message.",
+      description: "The Risk Analyst has sent you a message.",
     });
   };
 
   const handleError = (error: string) => {
-    console.error("Rogue Trader Avatar error:", error);
+    console.error("Risk Analyst Avatar error:", error);
     
     if (error.includes("TTS API Key") || error.includes("Invalid TTS")) {
       setTtsError(true);
@@ -62,7 +62,7 @@ const RogueTrader = () => {
     <div className="min-h-screen w-full bg-[#1e2a38] p-6">
       <div className="mx-auto max-w-4xl backdrop-blur-sm bg-white/40 min-h-screen p-6 rounded-lg">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-white">Rogue Trader</h1>
+          <h1 className="text-2xl font-bold text-white">Risk Analyst</h1>
           <Link to="/">
             <Button variant="outline">Back to Home</Button>
           </Link>
@@ -81,13 +81,13 @@ const RogueTrader = () => {
           {messages.length === 0 ? (
             <p className="text-gray-500 text-center my-10">
               {scriptLoaded ? 
-                "Activate the avatar to start a conversation with the Rogue Trader" : 
+                "Activate the avatar to start a conversation with the Risk Analyst" : 
                 "Loading avatar service..."}
             </p>
           ) : (
             <div className="space-y-4">
               {messages.map((msg, index) => (
-                <div key={index} className="p-3 bg-red-50 rounded-lg">
+                <div key={index} className="p-3 bg-blue-50 rounded-lg">
                   <p>{msg}</p>
                 </div>
               ))}
@@ -96,11 +96,11 @@ const RogueTrader = () => {
         </div>
         
         {scriptLoaded && (
-          <RogueTraderAvatar 
+          <RiskAnalystAvatar 
             onMessageReceived={handleAvatarMessage}
             onError={handleError}
-            agentId="470c3dc7-b79c-4df2-8258-e579bb1dfed1"
-            customText="Rogue Trader"
+            agentId="5fe2e9a1-1ea3-458d-9c23-22715ad2198c"
+            customText="Risk Analyst"
           />
         )}
       </div>
@@ -109,4 +109,4 @@ const RogueTrader = () => {
   );
 };
 
-export default RogueTrader;
+export default RiskAnalyst;

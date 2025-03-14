@@ -15,7 +15,8 @@ export const RogueTraderAvatar: React.FC<RogueTraderAvatarProps> = ({
   agentId,
   customText = "Rogue Trader",
 }) => {
-  const ROGUE_TRADER_TOKEN = "gAAAAABn0dQdmF79oMUVwfllwU1rwtv_JWPWSMfcHbCrkKOIvaxfAybLpw4QkxSx79-Yd_3-PMvzuBXcBi3wZkkZgqis_q7ZFF7POOeG3eS4qDeZQdOmaGUgrFkBeGtVKlNFM6EghyYqeIPtwUGT6iYear3xf7Ru1QGFgebG34KDN22HhyMM3x_J3njcx1njV_sz41l1TxDlET3HiyXLAPaS2aYChRIcd-QiCWD13jVzwu7qHHqgARAg9TcZu0-g87NeCCKUuVjg_6PKCnDIjphMUnn3XxRtlwBvZrz8RZAqYVoEqhzUZj-jYdzD3Mn-FBSywNOlb8fJSIt3Mg0WseiP5FlB_oaiaws5jOOZw2nreThji1ZDuRS7k1JFtpPv7ZnVz5uwNxHwq3SNraZl66zzUKm0zdhWZLg8VrsZvhYU63dR_D6ILG8AXTHX_npUdpmJazj4y7zg-224Pi2yhC6MwkKqz0TTw3SLkQi4jKb-jb047sqrJ1lM9DD7tAzo_t3bkQeL3fGR";
+  // Update the token to the new one
+  const ROGUE_TRADER_TOKEN = "gAAAAABn0nnD3-eQwdpKNWyMWFAOJHvQ_T2tfnRpQIlscOX3-NZ0ZOjQdSXfRa-rP1V7HK6lBhV4mz-JPZseP4TNSSXlLvtxamDDkbL313b9gLmUpvZsUVkTt8Bf80r3rFc8bgYTAAHH1lKVeixWPHI4cG5CVnFUEp7BkZdFqH6kB6YNOQye1scUcz9ZtWmfmfnHjQIvKYHprtcam7K5JMpNsDMZJorriguO5FCtmhcp7rXa3aFLuZR8RG7uQBxtZpBmYeI39BmZ88VWkxfbuYXghD2ri_fpj0MxR3ruu1GkZDzl9ssrx41AcWwiw2WdJmB486qasXPa9iZQ2YtOl_m4bjfSzkHUr12Z_aDXGo2scRP1UHYuwLKGXh8O-KqgmwJDEtPFhGBroQ5f_lYgr2JMp6eMrKYfGfMbzxj-pS-b-B0dMYmUGRREatxxjlgvMY5IgtiNmquPZVsPt769GQrw20Mluwn7Fngs52Cp50uYng730b-ArNMDljapADQlvtrd2jeqcjbc";
 
   // Create a wrapper for the onError callback
   const handleError = (error: string) => {
@@ -39,8 +40,8 @@ export const RogueTraderAvatar: React.FC<RogueTraderAvatarProps> = ({
       bgColor="bg-red-500"
       hoverColor="hover:bg-red-600"
       initials="RT"
-      // Set disableTTS to false since this token should have TTS capabilities
-      disableTTS={false}
+      // Set disableTTS to true since we're getting TTS API Key errors
+      disableTTS={true}
     />
   );
 };
