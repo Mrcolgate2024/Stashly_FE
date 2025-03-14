@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { RogueTraderAvatar } from "@/components/RogueTraderAvatar";
 import { Toaster } from "@/components/ui/toaster";
 import { toast } from "@/hooks/use-toast";
@@ -10,19 +10,56 @@ import { AlertTriangle } from "lucide-react";
 const RogueTrader = () => {
   const [messages, setMessages] = useState<string[]>([]);
   const [ttsError, setTtsError] = useState(false);
+  const [scriptLoaded, setScriptLoaded] = useState(false);
+
+  useEffect(() => {
+    // Check if we've already loaded the script in this session
+    if (window.simliScriptLoaded) {
+      setScriptLoaded(true);
+      return;
+    }
+
+    // Remove any existing Simli scripts to prevent duplicate issues
+    const existingScripts = document.querySelectorAll('script[src="https://app.simli.com/simli-widget/index.js"]');
+    existingScripts.forEach(script => script.remove());
+
+    // Load Simli widget script if it hasn't been loaded yet
+    const script = document.createElement('script');
+    script.src = "https://app.simli.com/simli-widget/index.js";
+    script.async = true;
+    script.type = "text/javascript";
+    
+    script.onload = () => {
+      console.log("Simli widget script loaded for Rogue Trader");
+      window.simliScriptLoaded = true;
+      setScriptLoaded(true);
+    };
+    
+    document.body.appendChild(script);
+  }, []);
 
   const handleAvatarMessage = (message: string) => {
     setMessages(prev => [...prev, message]);
+    toast({
+      title: "New message received",
+      description: "The Rogue Trader has sent you a message.",
+    });
   };
 
   const handleError = (error: string) => {
-    console.error("Avatar error:", error);
+    console.error("Rogue Trader Avatar error:", error);
     
     if (error.includes("TTS API Key") || error.includes("Invalid TTS")) {
       setTtsError(true);
       toast({
         title: "TTS API Key Error",
         description: "The text-to-speech service is currently unavailable. Messages will still work but without audio.",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Avatar Connection Error",
+        description: error || "Failed to connect to avatar service. Please try again.",
         variant: "destructive",
       });
     }
@@ -50,7 +87,9 @@ const RogueTrader = () => {
         <div className="bg-white/80 backdrop-blur-sm p-4 rounded-lg shadow-md mb-20 min-h-[400px]">
           {messages.length === 0 ? (
             <p className="text-gray-500 text-center my-10">
-              Activate the avatar to start a conversation with the Rogue Trader
+              {scriptLoaded ? 
+                "Activate the avatar to start a conversation with the Rogue Trader" : 
+                "Loading avatar service..."}
             </p>
           ) : (
             <div className="space-y-4">
@@ -63,12 +102,14 @@ const RogueTrader = () => {
           )}
         </div>
         
-        <RogueTraderAvatar 
-          onMessageReceived={handleAvatarMessage}
-          onError={handleError}
-          agentId="470c3dc7-b79c-4df2-8258-e579bb1dfed1"
-          customText="Rogue Trader"
-        />
+        {scriptLoaded && (
+          <RogueTraderAvatar 
+            onMessageReceived={handleAvatarMessage}
+            onError={handleError}
+            agentId="470c3dc7-b79c-4df2-8258-e579bb1dfed1"
+            customText="Rogue Trader"
+          />
+        )}
       </div>
       <Toaster />
     </div>

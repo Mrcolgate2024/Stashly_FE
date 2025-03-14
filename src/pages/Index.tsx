@@ -1,69 +1,29 @@
 
 import { Chat } from "@/components/Chat";
 import { useEffect, useState } from "react";
-import { Toaster } from "@/components/ui/toaster";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-
-// Global variable to track script loading state across component remounts
-declare global {
-  interface Window {
-    simliScriptLoaded?: boolean;
-    simliAvatarActive?: boolean;
-  }
-}
 
 const Index = () => {
   const [scriptLoaded, setScriptLoaded] = useState(false);
 
   useEffect(() => {
-    // Check if we've already loaded the script in this session
+    // Check if the Simli script is loaded
     if (window.simliScriptLoaded) {
       setScriptLoaded(true);
       return;
     }
 
-    // Remove any existing Simli scripts to prevent duplicate issues
-    const existingScripts = document.querySelectorAll('script[src="https://app.simli.com/simli-widget/index.js"]');
-    existingScripts.forEach(script => script.remove());
+    // If not already loaded, set up a check for when it does load
+    const checkScriptLoaded = setInterval(() => {
+      if (window.simliScriptLoaded) {
+        setScriptLoaded(true);
+        clearInterval(checkScriptLoaded);
+      }
+    }, 500);
 
-    // Load Simli widget script if it hasn't been loaded yet
-    const script = document.createElement('script');
-    script.src = "https://app.simli.com/simli-widget/index.js";
-    script.async = true;
-    script.type = "text/javascript";
-    
-    script.onload = () => {
-      console.log("Simli widget script loaded");
-      window.simliScriptLoaded = true;
-      setScriptLoaded(true);
-
-      // Add a global error handler for any DailyJS errors
-      window.addEventListener('error', (event) => {
-        if (event.message && (
-            event.message.includes('DailyIframe') || 
-            event.message.includes('daily-js') ||
-            event.message.includes('duplicate')
-          )) {
-          console.warn("Caught DailyIframe error:", event.message);
-          event.preventDefault();
-          
-          // Reset the avatar state if there's a duplicate instance error
-          if (event.message.includes('Duplicate DailyIframe')) {
-            window.simliAvatarActive = false;
-          }
-          
-          return true;
-        }
-        return false;
-      });
-    };
-    
-    document.body.appendChild(script);
-    
-    return () => {
-      // Don't remove the script on unmount to prevent reloading issues
-    };
+    // Cleanup
+    return () => clearInterval(checkScriptLoaded);
   }, []);
 
   return (
@@ -73,11 +33,6 @@ const Index = () => {
       <div className="min-h-screen w-full bg-[#1e2a38]">
         <div className="mx-auto max-w-4xl backdrop-blur-sm bg-white/40 min-h-screen p-6">
           <div className="mb-6 flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/financial-analyst">
-              <Button className="w-full sm:w-auto bg-blue-500 hover:bg-blue-600">
-                Financial Analyst Avatar
-              </Button>
-            </Link>
             <Link to="/market-analyst">
               <Button className="w-full sm:w-auto bg-green-500 hover:bg-green-600">
                 Market Analyst Avatar
@@ -89,10 +44,17 @@ const Index = () => {
               </Button>
             </Link>
           </div>
+          <div className="bg-white/80 p-4 rounded-lg shadow-md mb-6">
+            <h1 className="text-xl font-bold mb-3">Avatar Demo</h1>
+            <p className="mb-2">This demo shows how to use Simli avatars in your React application.</p>
+            <p className="mb-2">Select an avatar above to try it out.</p>
+            {!scriptLoaded && (
+              <p className="text-amber-700 bg-amber-100 p-2 rounded">Loading avatar service...</p>
+            )}
+          </div>
           <Chat />
         </div>
       </div>
-      <Toaster />
     </>
   );
 };
