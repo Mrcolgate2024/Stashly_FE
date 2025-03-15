@@ -2,8 +2,6 @@
 import { cn } from "@/lib/utils";
 import { Message } from "@/types/chat";
 import { format } from "date-fns";
-import { Copy } from "lucide-react";
-import { useToast } from "./ui/use-toast";
 
 interface ChatMessageProps {
   message: Message;
@@ -12,22 +10,6 @@ interface ChatMessageProps {
 
 export const ChatMessage = ({ message, onQuestionClick }: ChatMessageProps) => {
   const isBot = message.sender === "bot";
-  const { toast } = useToast();
-
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(message.content);
-      toast({
-        description: "Message copied to clipboard",
-        duration: 2000,
-      });
-    } catch (err) {
-      toast({
-        description: "Failed to copy message",
-        variant: "destructive",
-      });
-    }
-  };
 
   return (
     <div
@@ -38,20 +20,13 @@ export const ChatMessage = ({ message, onQuestionClick }: ChatMessageProps) => {
     >
       <div
         className={cn(
-          "max-w-[80%] rounded-2xl px-4 py-2 text-sm relative group",
+          "max-w-[80%] rounded-2xl px-4 py-2 text-sm",
           isBot
-            ? "bg-white text-[#1A1F2C]"
-            : "bg-[#1e2a38] text-white"
+            ? "bg-white text-[#1A1F2C]" // Changed to white background for bot messages
+            : "bg-[#1e2a38] text-white" // Changed to match website background for user messages
         )}
       >
-        <button
-          onClick={handleCopy}
-          className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-100"
-        >
-          <Copy className="h-4 w-4" />
-        </button>
-        
-        <p className="whitespace-pre-wrap pr-8">{message.content}</p>
+        <p className="whitespace-pre-wrap">{message.content}</p>
         
         {message.imageData && (
           <div className="message-image">
