@@ -1,54 +1,88 @@
-
 import { useState } from "react";
 import { useChat } from "@/hooks/useChat";
 import { ChatInput } from "./ChatInput";
 import { ChatControls } from "./ChatControls";
 import { ChatMessagesArea } from "./ChatMessagesArea";
 import { SimliAvatar } from "./SimliAvatar";
-import { Logo } from "./Logo";
 
-export const Chat = () => {
-  const [userName, setUserName] = useState("");
+interface ChatProps {
+  showControlsInHeader?: boolean;
+  userName?: string;
+  messages?: any[];
+  isLoading?: boolean;
+  handleSendMessage?: (content: string, userName: string) => void;
+  handleSuggestedQuestionClick?: (question: string, userName: string) => void;
+  handleRetryLastMessage?: (userName: string) => void;
+  clearMessages?: () => void;
+}
+
+export const Chat = ({ 
+  showControlsInHeader = false,
+  userName: externalUserName,
+  messages: externalMessages,
+  isLoading: externalIsLoading,
+  handleSendMessage: externalHandleSendMessage,
+  handleSuggestedQuestionClick: externalHandleSuggestedQuestionClick,
+  handleRetryLastMessage: externalHandleRetryLastMessage,
+  clearMessages: externalClearMessages
+}: ChatProps) => {
+  // Use internal state if external state is not provided
+  const [internalUserName, setInternalUserName] = useState("");
   
   const {
-    messages,
-    isLoading,
-    handleSendMessage,
-    handleSuggestedQuestionClick,
-    handleRetryLastMessage,
-    clearMessages
+    messages: internalMessages,
+    isLoading: internalIsLoading,
+    handleSendMessage: internalHandleSendMessage,
+    handleSuggestedQuestionClick: internalHandleSuggestedQuestionClick,
+    handleRetryLastMessage: internalHandleRetryLastMessage,
+    clearMessages: internalClearMessages
   } = useChat();
+
+  // Use external state if provided, otherwise use internal state
+  const userName = externalUserName || internalUserName;
+  const messages = externalMessages || internalMessages;
+  const isLoading = externalIsLoading !== undefined ? externalIsLoading : internalIsLoading;
+  const handleSendMessageFn = externalHandleSendMessage || internalHandleSendMessage;
+  const handleSuggestedQuestionClickFn = externalHandleSuggestedQuestionClick || internalHandleSuggestedQuestionClick;
+  const handleRetryLastMessageFn = externalHandleRetryLastMessage || internalHandleRetryLastMessage;
+  const clearMessagesFn = externalClearMessages || internalClearMessages;
 
   const handleAvatarMessage = (message: string) => {
     // When we receive a message from the avatar, send it to the chat
-    handleSendMessage(message, userName);
+    handleSendMessageFn(message, userName);
   };
 
   const handleMessageSend = (content: string) => {
-    handleSendMessage(content, userName);
+    handleSendMessageFn(content, userName);
   };
 
   const handleQuestionClick = (question: string) => {
-    handleSuggestedQuestionClick(question, userName);
+    handleSuggestedQuestionClickFn(question, userName);
   };
 
   const handleRetry = () => {
-    handleRetryLastMessage(userName);
+    handleRetryLastMessageFn(userName);
   };
 
+  // Render the chat controls
+  const renderChatControls = () => (
+    <ChatControls
+      userName={userName}
+      setUserName={setInternalUserName}
+      isLoading={isLoading}
+      messagesExist={messages.length > 0}
+      onRetry={handleRetry}
+      onClear={clearMessagesFn}
+    />
+  );
+
   return (
-    <div className="flex h-[calc(100vh-4rem)] flex-col gap-4 p-4 relative">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-        <Logo />
-        <ChatControls
-          userName={userName}
-          setUserName={setUserName}
-          isLoading={isLoading}
-          messagesExist={messages.length > 0}
-          onRetry={handleRetry}
-          onClear={clearMessages}
-        />
-      </div>
+    <div className="flex h-[calc(100vh-12rem)] flex-col gap-4 relative">
+      {!showControlsInHeader && (
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2 mb-2">
+          {renderChatControls()}
+        </div>
+      )}
       
       <div className="flex-1 space-y-4 overflow-y-auto rounded-lg bg-white/80 backdrop-blur-sm p-4 shadow-md mb-20 sm:mb-4">
         <ChatMessagesArea
