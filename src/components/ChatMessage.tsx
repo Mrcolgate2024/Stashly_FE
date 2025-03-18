@@ -1,7 +1,7 @@
-
 import { cn } from "@/lib/utils";
 import { Message } from "@/types/chat";
 import { format } from "date-fns";
+import { MarkdownRenderer } from "./MarkdownRenderer";
 
 interface ChatMessageProps {
   message: Message;
@@ -26,7 +26,9 @@ export const ChatMessage = ({ message, onQuestionClick }: ChatMessageProps) => {
             : "bg-[#1e2a38] text-white" // Changed to match website background for user messages
         )}
       >
-        <p className="whitespace-pre-wrap">{message.content}</p>
+        <div className="prose prose-sm max-w-none">
+          <MarkdownRenderer content={message.content} />
+        </div>
         
         {message.imageData && (
           <div className="message-image">

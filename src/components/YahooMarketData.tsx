@@ -27,6 +27,7 @@ export const YahooMarketData = () => {
     { name: "Emerging markets", value: 0, change: 0, ytdChange: 0, isPositive: false, isYtdPositive: false, symbol: "MME=F", currency: "USD", chartData: [] }, // MSCI Emerging Markets Index Futures
     { name: "Sweden", value: 0, change: 0, ytdChange: 0, isPositive: false, isYtdPositive: false, symbol: "EWD", currency: "USD", chartData: [] }, // MSCI Sweden ETF as proxy for MSCI Sweden
     { name: "USD/SEK", value: 0, change: 0, ytdChange: 0, isPositive: false, isYtdPositive: false, symbol: "SEK=X", currency: "SEK", chartData: [] }, // USD/SEK currency pair
+    { name: "EUR/SEK", value: 0, change: 0, ytdChange: 0, isPositive: false, isYtdPositive: false, symbol: "EURSEK=X", currency: "SEK", chartData: [] }, // EUR/SEK currency pair
     { name: "US 10Y", value: 0, change: 0, ytdChange: 0, isPositive: false, isYtdPositive: false, symbol: "^TNX", currency: "USD", chartData: [], isBond: true }, // US 10-Year Treasury Yield
   ]);
   const [loading, setLoading] = useState(true);
@@ -263,7 +264,7 @@ export const YahooMarketData = () => {
         <polyline
           points={points}
           fill="none"
-          stroke={isPositive ? "#16a34a" : "#dc2626"}
+          stroke={isPositive ? "#0078ff" : "#dc2626"}
           strokeWidth="1.5"
         />
       </svg>
@@ -338,7 +339,7 @@ export const YahooMarketData = () => {
                       {index.value > 0 && (
                         <span 
                           className={`text-xs font-medium ${
-                            index.isPositive ? "text-green-600" : "text-red-600"
+                            index.isPositive ? "text-[#0078ff]" : "text-red-600"
                           }`}
                         >
                           {index.isPositive ? "+" : ""}
@@ -351,7 +352,7 @@ export const YahooMarketData = () => {
                       {index.value > 0 && (
                         <span 
                           className={`text-xs font-medium ${
-                            index.isYtdPositive ? "text-green-600" : "text-red-600"
+                            index.isYtdPositive ? "text-[#0078ff]" : "text-red-600"
                           }`}
                         >
                           {index.isYtdPositive ? "+" : ""}
@@ -372,7 +373,7 @@ export const YahooMarketData = () => {
               <div className="flex space-x-1">
                 <button 
                   onClick={handleRefresh}
-                  className="text-[10px] bg-blue-500 hover:bg-blue-600 text-white px-1 py-0.5 rounded"
+                  className="text-[10px] bg-[#1e2a38] hover:bg-[#2a3a4d] text-white px-1 py-0.5 rounded"
                   disabled={loading}
                 >
                   {loading ? "..." : "Refresh"}

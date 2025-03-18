@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,21 +32,29 @@ export const ChatControls = ({
         {isLoading ? null : (
           <>
             <Button 
-              variant="outline" 
               size="sm"
               onClick={onRetry}
               disabled={!messagesExist}
               title="Retry last question"
+              className={`${
+                !messagesExist 
+                  ? "bg-gray-100 text-gray-400" 
+                  : "bg-[#1e2a38] text-white hover:bg-[#2a3a4d]"
+              }`}
             >
               <RefreshCcw className="h-4 w-4 mr-2" />
               Retry
             </Button>
             <Button 
-              variant="outline" 
               size="sm"
               onClick={onClear}
               disabled={!messagesExist}
               title="Clear chat history"
+              className={`${
+                !messagesExist 
+                  ? "bg-gray-100 text-gray-400" 
+                  : "bg-[#1e2a38] text-white hover:bg-[#2a3a4d]"
+              }`}
             >
               <Trash2 className="h-4 w-4 mr-2" />
               Clear
@@ -55,9 +62,9 @@ export const ChatControls = ({
           </>
         )}
         <Button
-          variant="outline"
           size="sm"
           onClick={toggleUserNameInput}
+          className="bg-[#1e2a38] text-white hover:bg-[#2a3a4d]"
         >
           <User className="mr-2 h-4 w-4" />
           {userName ? userName : "Set Name"}
@@ -71,9 +78,9 @@ export const ChatControls = ({
               className="h-9 w-40"
             />
             <Button 
-              size="sm" 
-              variant="secondary"
+              size="sm"
               onClick={() => setShowUserNameInput(false)}
+              className="bg-[#1e2a38] text-white hover:bg-[#2a3a4d]"
             >
               Save
             </Button>

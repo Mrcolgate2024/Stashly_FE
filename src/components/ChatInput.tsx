@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Send } from "lucide-react";
@@ -34,7 +33,7 @@ export const ChatInput = ({ onSend, disabled }: ChatInputProps) => {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Type your message..."
+          placeholder="Type your message... (Press Enter to send)"
           disabled={disabled}
           className="flex-1 min-h-[80px] resize-none pr-12"
           rows={2}
@@ -43,7 +42,11 @@ export const ChatInput = ({ onSend, disabled }: ChatInputProps) => {
           type="submit" 
           size="icon"
           disabled={disabled || !message.trim()}
-          className="absolute right-2 bottom-2 h-8 w-8"
+          className={`absolute right-2 bottom-2 h-8 w-8 ${
+            disabled || !message.trim()
+              ? "bg-gray-100 text-gray-400"
+              : "bg-[#1e2a38] hover:bg-[#2a3a4d]"
+          }`}
         >
           <Send className="h-4 w-4" />
         </Button>
