@@ -1,3 +1,4 @@
+
 import React from "react";
 import { cn } from "@/lib/utils";
 import { Message } from "@/types/chat";
@@ -28,7 +29,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
   };
 
   return (
-    <div className={`flex flex-col mb-3 ${isBot ? "items-start" : "items-end"}`}>
+    <div className={`flex flex-col mb-3 ${isBot ? "items-start" : "items-end"} max-w-full`}>
       <div className={`max-w-[85%] rounded-lg p-2 ${
         isBot 
           ? "bg-white/80 backdrop-blur-sm shadow-md relative" 
@@ -82,12 +83,12 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
         {isBot && message.suggestedQuestions && message.suggestedQuestions.length > 0 && (
           <div className="suggested-questions mt-1">
             <p className="text-[7px] font-semibold text-muted-foreground mb-1">Suggested questions:</p>
-            <div className="questions-container">
+            <div className="questions-container flex flex-wrap">
               {message.suggestedQuestions.map((question, index) => (
                 <button
                   key={index}
                   onClick={() => onQuestionClick?.(question)}
-                  className="bg-muted hover:bg-accent text-foreground text-[7px] rounded-full px-2 py-1 transition-colors"
+                  className="bg-muted hover:bg-accent text-foreground text-[7px] rounded-full px-2 py-1 transition-colors mr-1 mb-1"
                 >
                   {question}
                 </button>

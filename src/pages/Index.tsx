@@ -32,35 +32,14 @@ const Index = () => {
             backgroundRepeat: "no-repeat"
           }}
         >
-          <div className="mx-auto w-full max-w-4xl backdrop-blur-sm bg-white/40 h-full flex flex-col px-6">
+          <div className="mx-auto w-full max-w-4xl backdrop-blur-sm bg-white/40 h-full flex flex-col px-6 overflow-hidden">
             {/* Market data banner at the top */}
             <div className="flex-shrink-0 sticky top-0 z-30 -mx-6">
               <YahooMarketData />
             </div>
             
-            {/* Logo only shown if not on mobile */}
-            {!isMobile && <Logo />}
-            
-            {/* Mobile logo positioning */}
-            {isMobile && (
-              <div className="relative flex justify-center my-4">
-                <div className="rounded-full bg-[#1e2a38] p-1 shadow-md border-2 border-[#d4af37]">
-                  <picture>
-                    <source srcSet="/images/Stashlylogotype.webp" type="image/webp" />
-                    <img 
-                      src="/images/Stashlylogotype.png" 
-                      alt="$tashly Logo" 
-                      className="h-16 w-16 object-contain rounded-full"
-                    />
-                  </picture>
-                </div>
-                <div className="absolute -right-2 top-14">
-                  <div className="font-space-grotesk text-[#1e2a38] font-extrabold text-2xl tracking-wider drop-shadow-md">
-                    <span className="text-[#1e2a38] font-black">$</span>TASHLY
-                  </div>
-                </div>
-              </div>
-            )}
+            {/* Logo only shown if not on mobile AND messages exist */}
+            {!isMobile && messages.length > 0 && <Logo />}
             
             {/* Chat section */}
             <div className="flex-1 content-area relative overflow-hidden">
@@ -84,4 +63,3 @@ const Index = () => {
 };
 
 export default Index;
-
