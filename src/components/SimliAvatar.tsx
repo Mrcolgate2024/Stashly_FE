@@ -14,6 +14,7 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
   customText = "Financial Analyst",
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const widgetRef = useRef<any>(null);
   const customImageUrl = "/images/Stashlyavataricon.gif";
 
   useEffect(() => {
@@ -37,25 +38,38 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
     }
 
     // Create and append the Simli widget to our container
-    if (containerRef.current) {
-      // Clear any existing content
-      containerRef.current.innerHTML = '';
-      
-      // Create the widget element
-      const simliWidget = document.createElement('simli-widget');
-      simliWidget.setAttribute('token', token);
-      simliWidget.setAttribute('agentid', agentId);
-      simliWidget.setAttribute('position', 'relative');
-      simliWidget.setAttribute('customimage', customImageUrl);
-      simliWidget.setAttribute('customtext', customText);
-      
-      // Append the widget to the container
-      containerRef.current.appendChild(simliWidget);
-    }
+    const initWidget = () => {
+      if (containerRef.current && !widgetRef.current) {
+        // Clear any existing content
+        containerRef.current.innerHTML = '';
+        
+        // Create the widget element
+        const simliWidget = document.createElement('simli-widget');
+        simliWidget.setAttribute('token', token);
+        simliWidget.setAttribute('agentid', agentId);
+        simliWidget.setAttribute('position', 'relative');
+        simliWidget.setAttribute('customimage', customImageUrl);
+        simliWidget.setAttribute('customtext', customText);
+        
+        // Store reference to the widget
+        widgetRef.current = simliWidget;
+        
+        // Append the widget to the container
+        containerRef.current.appendChild(simliWidget);
+      }
+    };
+
+    // Initialize widget after a short delay to ensure proper cleanup
+    const timeoutId = setTimeout(initWidget, 100);
 
     // Cleanup function
     return () => {
       window.removeEventListener('simli:message' as any, handleSimliMessage as EventListener);
+      if (widgetRef.current && widgetRef.current.parentNode) {
+        widgetRef.current.parentNode.removeChild(widgetRef.current);
+      }
+      widgetRef.current = null;
+      clearTimeout(timeoutId);
     };
   }, [token, agentId, onMessageReceived, customText]);
 

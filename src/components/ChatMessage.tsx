@@ -28,23 +28,13 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
   };
 
   return (
-    <div className={`flex flex-col mb-4 ${isBot ? "items-start" : "items-end"}`}>
-      <div className={`max-w-[85%] rounded-lg p-4 ${
+    <div className={`flex flex-col mb-3 ${isBot ? "items-start" : "items-end"}`}>
+      <div className={`max-w-[85%] rounded-lg p-2 ${
         isBot 
           ? "bg-white/80 backdrop-blur-sm shadow-md relative" 
           : "bg-[#1e2a38] text-white"
       }`}>
-        {isBot && (
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleCopy}
-            className="absolute top-2 right-2 h-6 w-6 opacity-50 hover:opacity-100"
-          >
-            <Copy className="h-3 w-3" />
-          </Button>
-        )}
-        <div className="prose prose-[8px] max-w-none">
+        <div className="prose prose-[7px] max-w-none">
           <MarkdownRenderer content={message.content} />
         </div>
         
@@ -68,14 +58,14 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
         )}
 
         {message.metrics && (
-          <div className="metrics-container">
-            <p className="text-[8px] font-semibold mb-2">Performance Metrics:</p>
+          <div className="metrics-container mt-1">
+            <p className="text-[7px] font-semibold mb-1">Performance Metrics:</p>
             <div className="metrics-grid">
               {Object.entries(message.metrics).map(([key, value]) => (
                 <div key={key} className="metric-item">
-                  <div className="text-[8px] metric-label">{key}</div>
+                  <div className="text-[7px] metric-label">{key}</div>
                   <div className={cn(
-                    "text-[8px] metric-value",
+                    "text-[7px] metric-value",
                     typeof value === 'number' && value > 0 && "positive",
                     typeof value === 'number' && value < 0 && "negative"
                   )}>
@@ -90,14 +80,14 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
         )}
 
         {isBot && message.suggestedQuestions && message.suggestedQuestions.length > 0 && (
-          <div className="suggested-questions">
-            <p className="text-[8px] font-semibold text-muted-foreground mb-2">Suggested questions:</p>
+          <div className="suggested-questions mt-1">
+            <p className="text-[7px] font-semibold text-muted-foreground mb-1">Suggested questions:</p>
             <div className="questions-container">
               {message.suggestedQuestions.map((question, index) => (
                 <button
                   key={index}
                   onClick={() => onQuestionClick?.(question)}
-                  className="bg-muted hover:bg-accent text-foreground text-[8px] rounded-full px-3 py-1.5 transition-colors"
+                  className="bg-muted hover:bg-accent text-foreground text-[7px] rounded-full px-2 py-1 transition-colors"
                 >
                   {question}
                 </button>
@@ -106,9 +96,19 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
           </div>
         )}
         
-        <span className="mt-1 block text-[10px] opacity-50">
-          {format(message.timestamp, "HH:mm")}
-        </span>
+        <div className="mt-1 flex items-center justify-between text-[10px] opacity-50">
+          <span>{format(message.timestamp, "HH:mm")}</span>
+          {isBot && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleCopy}
+              className="h-3 w-3 opacity-50 hover:opacity-100 ml-2 p-0.5"
+            >
+              <Copy className="h-1.5 w-1.5" />
+            </Button>
+          )}
+        </div>
       </div>
       {isThinking && isBot && (
         <div className="flex items-center gap-2 mt-2 text-sm text-gray-500">
