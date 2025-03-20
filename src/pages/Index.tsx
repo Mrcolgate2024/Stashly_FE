@@ -22,7 +22,7 @@ const Index = () => {
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" />
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" />
       
-      <div className="h-full w-full flex flex-col overflow-x-hidden">
+      <div className="h-full w-full flex flex-col overflow-hidden">
         <div
           className="h-full w-full flex flex-col"
           style={{
@@ -63,7 +63,7 @@ const Index = () => {
             )}
             
             {/* Chat section */}
-            <div className="flex-1 content-area relative">
+            <div className="flex-1 content-area relative overflow-hidden">
               <div className="h-full pl-4 pr-4 sm:pr-12 pb-16">
                 <Chat 
                   showControlsInHeader={true}
@@ -84,3 +84,4 @@ const Index = () => {
 };
 
 export default Index;
+

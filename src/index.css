@@ -106,7 +106,24 @@
 
   body {
     @apply bg-background text-foreground;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
   }
+  
+  html {
+    overflow-x: hidden; /* Prevent horizontal scrolling at html level */
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+/* Fix for mobile layout - prevent overflow */
+#root {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  position: relative;
+  margin: 0;
+  padding: 0;
 }
 
 /* Financial chat styling */
@@ -293,6 +310,7 @@ html, body {
   height: 100%;
   overflow-y: auto;
   padding-bottom: 80px;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
 .fixed-bottom {
@@ -327,12 +345,20 @@ html, body {
 @media (max-width: 768px) {
   .content-area {
     padding-bottom: 120px;
+    width: 100%;
+    max-width: 100%;
   }
   
   .avatar-container {
     bottom: 70px;
     right: 10px;
     left: auto;
+  }
+  
+  /* Fix for mobile container width */
+  .mx-auto {
+    width: 100%;
+    max-width: 100%;
   }
 }
 
@@ -361,3 +387,4 @@ body {
   overflow-x: hidden;
   padding-right: 0;
 }
+

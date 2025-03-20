@@ -42,7 +42,7 @@ export const ChatInput = ({ onSend, disabled }: ChatInputProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className={`flex gap-2 ${isMobile ? 'w-full' : 'w-[75%]'} ml-0`}>
+    <form onSubmit={handleSubmit} className={`flex gap-2 ${isMobile ? 'w-full' : 'w-[75%]'} ml-0 max-w-full`}>
       <div className="w-full relative flex">
         <Textarea
           ref={textareaRef}
