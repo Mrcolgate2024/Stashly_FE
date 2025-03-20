@@ -24,7 +24,7 @@ const Index = () => {
       
       <div className="h-full w-full flex flex-col overflow-hidden">
         <div
-          className="h-full w-full flex flex-col"
+          className="h-full w-full flex flex-col overflow-hidden"
           style={{
             backgroundImage: "url('/images/Stashlylogobackgroundsmaller.webp'), url('/images/Stashlylogobackgroundsmaller.png')",
             backgroundSize: "cover",
