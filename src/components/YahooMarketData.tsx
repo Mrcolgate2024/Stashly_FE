@@ -45,7 +45,7 @@ const MarqueeContent = ({ data }: { data: MarketData[] }) => (
         <span className="mr-3">
           <span className="text-xs font-medium mr-1">TDY</span>
           <span 
-            className={`${item.isPositive ? 'text-blue-400' : 'text-red-400'}`}
+            className={`${item.changePercent > 0 ? 'text-blue-400' : 'text-red-400'}`}
           >
             {item.index.includes("^TNX") 
               ? `${formatBasisPoints(item.change)} bp` 
@@ -55,7 +55,7 @@ const MarqueeContent = ({ data }: { data: MarketData[] }) => (
         <span>
           <span className="text-xs font-medium mr-1">YTD</span>
           <span 
-            className={`${item.isYtdPositive ? 'text-blue-400' : 'text-red-400'}`}
+            className={`${item.ytdChangePercent > 0 ? 'text-blue-400' : 'text-red-400'}`}
           >
             {item.index.includes("^TNX") 
               ? `${formatBasisPoints(item.ytdChangePercent)} bp` 

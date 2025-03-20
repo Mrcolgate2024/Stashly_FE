@@ -15,7 +15,7 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetRef = useRef<any>(null);
-  const customImageUrl = "/images/Stashlyavataricon.gif";
+  const customImageUrl = "/images/Stashlyavataricon.webp";
 
   useEffect(() => {
     // Create a custom event listener for Simli messages

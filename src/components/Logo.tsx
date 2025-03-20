@@ -2,7 +2,7 @@ import React from "react";
 
 export const Logo = () => {
   return (
-    <div className="absolute right-[-75px] top-16 flex flex-col items-center z-40">
+    <div className="absolute right-[-75px] top-16 hidden sm:flex flex-col items-center z-40">
       <div className="rounded-full bg-[#1e2a38] p-1 shadow-md border-2 border-[#d4af37]">
         <picture>
           <source srcSet="/images/Stashlylogotype.webp" type="image/webp" />

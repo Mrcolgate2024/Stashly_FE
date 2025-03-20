@@ -25,13 +25,13 @@ export const ChatMessagesArea: React.FC<ChatMessagesAreaProps> = ({
   }, [messages]);
 
   return (
-    <div className="py-1">
+    <div className="py-1 w-full">
       {messages.length === 0 && (
-        <div className="flex items-center justify-center h-[calc(100vh-200px)]">
+        <div className="flex items-center justify-center min-h-[calc(100vh-200px)] w-full">
           <WelcomeMessage />
         </div>
       )}
-      <div className="space-y-4">
+      <div className="space-y-4 w-full">
         {messages.map((message, index) => (
           <ChatMessage
             key={index}

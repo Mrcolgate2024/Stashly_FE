@@ -28,9 +28,9 @@ const Index = () => {
             backgroundRepeat: "no-repeat"
           }}
         >
-          <div className="mx-auto w-full max-w-4xl backdrop-blur-sm bg-white/40 h-full flex flex-col px-6">
+          <div className="mx-auto w-full max-w-4xl backdrop-blur-sm bg-white/40 h-full flex flex-col px-0 sm:px-6">
             {/* Market data banner at the top */}
-            <div className="flex-shrink-0 sticky top-0 z-30 -mx-6">
+            <div className="flex-shrink-0 sticky top-0 z-30 -mx-0 sm:-mx-6">
               <YahooMarketData />
             </div>
             
@@ -39,7 +39,7 @@ const Index = () => {
             
             {/* Chat section */}
             <div className="flex-1 content-area relative">
-              <div className="h-full pl-4 pr-12 pb-16">
+              <div className="h-full px-[2px] sm:-ml-14 sm:pl-12 sm:pr-12 pb-16">  
                 <Chat 
                   showControlsInHeader={true}
                   messages={messages}
