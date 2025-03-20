@@ -1,13 +1,9 @@
 import { Chat } from "@/components/Chat";
 import { Logo } from "@/components/Logo";
 import { YahooMarketData } from "@/components/YahooMarketData";
-import { ChatControls } from "@/components/ChatControls";
-import { useState } from "react";
 import { useChat } from "@/hooks/useChat";
 
 const Index = () => {
-  const [userName, setUserName] = useState("");
-  
   const {
     messages,
     isLoading,
@@ -17,16 +13,13 @@ const Index = () => {
     clearMessages
   } = useChat();
 
-  const handleRetry = () => {
-    handleRetryLastMessage(userName);
-  };
-
   return (
     <>
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" />
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" />
-      <div 
-        className="min-h-screen w-full"
+      
+      <div
+        className="h-full w-full flex flex-col"
         style={{
           backgroundImage: "url('/images/Stashlylogobackground.png')",
           backgroundSize: "cover",
@@ -34,36 +27,28 @@ const Index = () => {
           backgroundRepeat: "no-repeat"
         }}
       >
-        <div className="mx-auto max-w-4xl backdrop-blur-sm bg-white/40 min-h-screen">
-          <div className="p-4">
-            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-2">
-              <div className="flex flex-col gap-2">
-                <Logo />
-                <div className="mt-2">
-                  <ChatControls
-                    userName={userName}
-                    setUserName={setUserName}
-                    isLoading={isLoading}
-                    messagesExist={messages.length > 0}
-                    onRetry={handleRetry}
-                    onClear={clearMessages}
-                  />
-                </div>
-              </div>
-              <div className="market-data-container">
-                <YahooMarketData />
-              </div>
+        <div className="mx-auto w-full max-w-4xl backdrop-blur-sm bg-white/40 h-full flex flex-col px-6">
+          {/* Market data banner at the top */}
+          <div className="flex-shrink-0 sticky top-0 z-30 -mx-6">
+            <YahooMarketData />
+          </div>
+          
+          {/* Logo on the right side */}
+          <Logo />
+          
+          {/* Chat section */}
+          <div className="flex-1 content-area relative">
+            <div className="h-full pl-4 pr-12 pb-16">
+              <Chat 
+                showControlsInHeader={true}
+                messages={messages}
+                isLoading={isLoading}
+                handleSendMessage={handleSendMessage}
+                handleSuggestedQuestionClick={handleSuggestedQuestionClick}
+                handleRetryLastMessage={handleRetryLastMessage}
+                clearMessages={clearMessages}
+              />
             </div>
-            <Chat 
-              showControlsInHeader={true}
-              userName={userName}
-              messages={messages}
-              isLoading={isLoading}
-              handleSendMessage={handleSendMessage}
-              handleSuggestedQuestionClick={handleSuggestedQuestionClick}
-              handleRetryLastMessage={handleRetryLastMessage}
-              clearMessages={clearMessages}
-            />
           </div>
         </div>
       </div>

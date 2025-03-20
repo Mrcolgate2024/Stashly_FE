@@ -1,11 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { RefreshCcw, User, Trash2 } from "lucide-react";
+import { RefreshCcw, Trash2 } from "lucide-react";
 
 interface ChatControlsProps {
-  userName: string;
-  setUserName: (name: string) => void;
   isLoading: boolean;
   messagesExist: boolean;
   onRetry: () => void;
@@ -13,80 +10,43 @@ interface ChatControlsProps {
 }
 
 export const ChatControls = ({
-  userName,
-  setUserName,
   isLoading,
   messagesExist,
   onRetry,
   onClear
 }: ChatControlsProps) => {
-  const [showUserNameInput, setShowUserNameInput] = useState(false);
-
-  const toggleUserNameInput = () => {
-    setShowUserNameInput(!showUserNameInput);
-  };
-
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      <div className="flex items-center gap-2">
-        {isLoading ? null : (
-          <>
-            <Button 
-              size="sm"
-              onClick={onRetry}
-              disabled={!messagesExist}
-              title="Retry last question"
-              className={`${
-                !messagesExist 
-                  ? "bg-gray-100 text-gray-400" 
-                  : "bg-[#1e2a38] text-white hover:bg-[#2a3a4d]"
-              }`}
-            >
-              <RefreshCcw className="h-4 w-4 mr-2" />
-              Retry
-            </Button>
-            <Button 
-              size="sm"
-              onClick={onClear}
-              disabled={!messagesExist}
-              title="Clear chat history"
-              className={`${
-                !messagesExist 
-                  ? "bg-gray-100 text-gray-400" 
-                  : "bg-[#1e2a38] text-white hover:bg-[#2a3a4d]"
-              }`}
-            >
-              <Trash2 className="h-4 w-4 mr-2" />
-              Clear
-            </Button>
-          </>
-        )}
-        <Button
-          size="sm"
-          onClick={toggleUserNameInput}
-          className="bg-[#1e2a38] text-white hover:bg-[#2a3a4d]"
-        >
-          <User className="mr-2 h-4 w-4" />
-          {userName ? userName : "Set Name"}
-        </Button>
-        {showUserNameInput && (
-          <div className="flex items-center gap-2">
-            <Input
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)}
-              placeholder="Enter your name"
-              className="h-9 w-40"
-            />
-            <Button 
-              size="sm"
-              onClick={() => setShowUserNameInput(false)}
-              className="bg-[#1e2a38] text-white hover:bg-[#2a3a4d]"
-            >
-              Save
-            </Button>
-          </div>
-        )}
-      </div>
+    <div className="flex items-center gap-2">
+      {isLoading ? null : (
+        <>
+          <Button 
+            size="icon"
+            onClick={onRetry}
+            disabled={!messagesExist}
+            title="Retry last question"
+            className={`h-8 w-8 ${
+              !messagesExist 
+                ? "bg-gray-100 text-gray-400" 
+                : "bg-[#1e2a38] text-white hover:bg-[#2a3a4d]"
+            }`}
+          >
+            <RefreshCcw className="h-4 w-4" />
+          </Button>
+          <Button 
+            size="icon"
+            onClick={onClear}
+            disabled={!messagesExist}
+            title="Clear chat history"
+            className={`h-8 w-8 ${
+              !messagesExist 
+                ? "bg-gray-100 text-gray-400" 
+                : "bg-[#1e2a38] text-white hover:bg-[#2a3a4d]"
+            }`}
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </>
+      )}
     </div>
   );
 };

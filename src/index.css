@@ -267,3 +267,78 @@
   color: #2c3e50;
   font-weight: 600;
 }
+
+/* Reset scrollbar positioning */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+#root {
+  height: 100%;
+  padding: 0;
+  position: relative;
+}
+
+.content-area {
+  height: 100%;
+  overflow-y: auto;
+  padding-bottom: 80px;
+}
+
+.fixed-bottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 30;
+  background: #1e2a38;
+}
+
+.avatar-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 20s linear infinite;
+  min-width: 100%;
+  display: inline-block;
+}
+
+/* Custom scrollbar styles */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Ensure scrollbar appears on the right side */
+body {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  padding-right: 8px; /* Add padding to prevent content from being hidden behind the scrollbar */
+}

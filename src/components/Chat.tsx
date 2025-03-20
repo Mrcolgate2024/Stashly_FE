@@ -4,6 +4,8 @@ import { ChatInput } from "./ChatInput";
 import { ChatControls } from "./ChatControls";
 import { ChatMessagesArea } from "./ChatMessagesArea";
 import { SimliAvatar } from "./SimliAvatar";
+import { Button } from "@/components/ui/button";
+import { RefreshCcw, Trash2 } from "lucide-react";
 
 interface ChatProps {
   showControlsInHeader?: boolean;
@@ -64,44 +66,76 @@ export const Chat = ({
     handleRetryLastMessageFn(userName);
   };
 
+  const handleClear = () => {
+    clearMessagesFn();
+  };
+
   // Render the chat controls
   const renderChatControls = () => (
     <ChatControls
-      userName={userName}
-      setUserName={setInternalUserName}
       isLoading={isLoading}
       messagesExist={messages.length > 0}
       onRetry={handleRetry}
-      onClear={clearMessagesFn}
+      onClear={handleClear}
     />
   );
 
   return (
-    <div className="flex h-[calc(100vh-12rem)] flex-col gap-4 relative">
+    <div className="flex flex-col h-full relative">
       {!showControlsInHeader && (
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2 mb-2">
           {renderChatControls()}
         </div>
       )}
       
-      <div className="flex-1 space-y-4 overflow-y-auto rounded-lg bg-white/80 backdrop-blur-sm p-4 shadow-md mb-20 sm:mb-4">
-        <ChatMessagesArea
-          messages={messages}
-          onQuestionClick={handleQuestionClick}
-        />
-      </div>
-      
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#1e2a38]/80 backdrop-blur-sm sm:static sm:bg-transparent sm:backdrop-blur-none">
-        <ChatInput onSend={handleMessageSend} disabled={isLoading} />
+      <div className="relative flex-1 flex flex-col">
+        <div className="absolute top-2 left-2 flex gap-2 z-10">
+          {messages.length > 0 && (
+            <>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleRetry}
+                disabled={isLoading}
+                className="h-8 w-8 bg-transparent hover:bg-transparent opacity-30 hover:opacity-50"
+              >
+                <RefreshCcw className="h-4 w-4 text-white" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleClear}
+                className="h-8 w-8 bg-transparent hover:bg-transparent opacity-30 hover:opacity-50"
+              >
+                <Trash2 className="h-4 w-4 text-white" />
+              </Button>
+            </>
+          )}
+        </div>
+        <div className="flex-1 overflow-y-auto px-4 mb-[110px]">
+          <ChatMessagesArea
+            messages={messages}
+            onQuestionClick={handleQuestionClick}
+            isThinking={isLoading}
+          />
+        </div>
       </div>
 
       {/* Simli avatar with adjusted positioning for mobile */}
-      <SimliAvatar 
-        onMessageReceived={handleAvatarMessage}
-        token="gAAAAABnzdaSAK9eo1dXkjVPB4_sVJG_nvq_ThvMivYcfoVrYJOusk52PhgOtaEvqhmFbXbkJp9W06_DP4NWnN7v_TWO7dGKmi92oeC1aMmIHky98JNaYF4fBMn-6JqaEy_act99q0g46P7C571b2Sa9oA9NuqS6qi0OhQx1zKG67JsKtGj0ECL5Xj_KksIeXjvnUMcDeiDQEE1mBQAA6yO_yRV1l--P4WJSrLMQffvMdwGS6i36EH184LHY-ZWo-spsrVhZaY-e2jQukFkS__Ydv2XPz5DnIdp6K92KC3qFVsIDUltHEeTVKwGklz67_AkQwkHClFDYHseeM301guXCvGxk0F7icSHFyAaryiKyfBsIirJ5UR8-rbBf-XSrgspGqwMG6ue6ZiLJYoCQ2qPNIzLKgMFyOQ=="
-        agentId="b36e9ae6-5a88-4235-9e7a-eab88fd52d7b"
-        customText="Financial Analyst"
-      />
+      <div className="avatar-container">
+        <SimliAvatar 
+          onMessageReceived={handleAvatarMessage}
+          token="gAAAAABnzdaSAK9eo1dXkjVPB4_sVJG_nvq_ThvMivYcfoVrYJOusk52PhgOtaEvqhmFbXbkJp9W06_DP4NWnN7v_TWO7dGKmi92oeC1aMmIHky98JNaYF4fBMn-6JqaEy_act99q0g46P7C571b2Sa9oA9NuqS6qi0OhQx1zKG67JsKtGj0ECL5Xj_KksIeXjvnUMcDeiDQEE1mBQAA6yO_yRV1l--P4WJSrLMQffvMdwGS6i36EH184LHY-ZWo-spsrVhZaY-e2jQukFkS__Ydv2XPz5DnIdp6K92KC3qFVsIDUltHEeTVKwGklz67_AkQwkHClFDYHseeM301guXCvGxk0F7icSHFyAaryiKyfBsIirJ5UR8-rbBf-XSrgspGqwMG6ue6ZiLJYoCQ2qPNIzLKgMFyOQ=="
+          agentId="b36e9ae6-5a88-4235-9e7a-eab88fd52d7b"
+          customText="Financial Analyst"
+        />
+      </div>
+      
+      <div className="fixed-bottom p-3 pt-4 bg-[#1e2a38]/80 backdrop-blur-sm border-t border-white/10">
+        <div className="max-w-3xl mx-auto">
+          <ChatInput onSend={handleMessageSend} disabled={isLoading} />
+        </div>
+      </div>
     </div>
   );
 };
