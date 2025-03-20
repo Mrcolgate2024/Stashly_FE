@@ -32,7 +32,7 @@ const Index = () => {
             backgroundRepeat: "no-repeat"
           }}
         >
-          <div className="mx-auto w-full max-w-4xl backdrop-blur-sm bg-white/40 h-full flex flex-col px-6 overflow-hidden">
+          <div className="mx-auto w-full max-w-4xl backdrop-blur-sm bg-white/40 h-full flex flex-col px-6 overflow-hidden relative">
             {/* Market data banner at the top */}
             <div className="flex-shrink-0 sticky top-0 z-30 -mx-6">
               <YahooMarketData />
