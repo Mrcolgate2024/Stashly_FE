@@ -48,8 +48,8 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
         simliWidget.setAttribute('token', token);
         simliWidget.setAttribute('agentid', agentId);
         simliWidget.setAttribute('position', 'relative');
-        simliWidget.setAttribute('customimage', customImageUrl);
         simliWidget.setAttribute('customtext', customText);
+        simliWidget.setAttribute('customimage', customImageUrl);
         
         // Store reference to the widget
         widgetRef.current = simliWidget;
