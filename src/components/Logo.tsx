@@ -1,13 +1,6 @@
-
 import React from "react";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 export const Logo = () => {
-  const isMobile = useIsMobile();
-  
-  // If on mobile, don't render this component as we handle it in Index.tsx
-  if (isMobile) return null;
-  
   return (
     <div className="absolute right-[-75px] top-16 flex flex-col items-center z-40">
       <div className="rounded-full bg-[#1e2a38] p-1 shadow-md border-2 border-[#d4af37]">

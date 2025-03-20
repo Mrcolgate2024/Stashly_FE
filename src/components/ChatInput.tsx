@@ -1,9 +1,7 @@
-
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Send } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ChatInputProps {
   onSend: (message: string) => void;
@@ -13,14 +11,13 @@ interface ChatInputProps {
 export const ChatInput = ({ onSend, disabled }: ChatInputProps) => {
   const [message, setMessage] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const isMobile = useIsMobile();
 
   // Auto-focus the textarea when component mounts or disabled state changes
   useEffect(() => {
-    if (!disabled && textareaRef.current && !isMobile) {
+    if (!disabled && textareaRef.current) {
       textareaRef.current.focus();
     }
-  }, [disabled, isMobile]);
+  }, [disabled]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,7 +25,7 @@ export const ChatInput = ({ onSend, disabled }: ChatInputProps) => {
       onSend(message.trim());
       setMessage("");
       // Re-focus the textarea after sending
-      if (textareaRef.current && !isMobile) {
+      if (textareaRef.current) {
         textareaRef.current.focus();
       }
     }
@@ -42,7 +39,7 @@ export const ChatInput = ({ onSend, disabled }: ChatInputProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className={`flex gap-2 ${isMobile ? 'w-full' : 'w-[75%]'} ml-0 max-w-full`}>
+    <form onSubmit={handleSubmit} className="flex gap-2 w-[75%] ml-0">
       <div className="w-full relative flex">
         <Textarea
           ref={textareaRef}
@@ -51,8 +48,8 @@ export const ChatInput = ({ onSend, disabled }: ChatInputProps) => {
           onKeyDown={handleKeyDown}
           placeholder="Type your message... (Press Enter to send)"
           disabled={disabled}
-          className="flex-1 min-h-[60px] sm:min-h-[80px] resize-none pr-12"
-          rows={isMobile ? 1 : 2}
+          className="flex-1 min-h-[80px] resize-none pr-12"
+          rows={2}
         />
         <Button 
           type="submit" 
