@@ -77,7 +77,12 @@ export const sendMessage = async (request: ChatApiRequest): Promise<ChatApiRespo
     if (import.meta.env.DEV) {
       console.log('Sending message to Azure backend:', request);
     }
-    const response = await api.post<ChatApiResponse>("/chat", request);
+    const response = await api.post<ChatApiResponse>("/chat", {
+      message: request.message,
+      thread_id: request.thread_id,
+      user_name: request.user_name,
+      message_history: request.message_history,
+    });
     if (import.meta.env.DEV) {
       console.log('Received response from Azure backend:', response.data);
     }

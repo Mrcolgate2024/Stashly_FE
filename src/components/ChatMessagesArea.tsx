@@ -4,7 +4,7 @@ import { ChatMessage } from "./ChatMessage";
 import { WelcomeMessage } from "./WelcomeMessage";
 
 interface ChatMessagesAreaProps {
-  messages: any[];
+  messages: Message[];
   onQuestionClick?: (question: string) => void;
   isThinking?: boolean;
 }

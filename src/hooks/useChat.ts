@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { nanoid } from "nanoid";
-import { Message } from "@/types/chat";
+import { Message, MessageForApi } from "@/types/chat";
 import { sendMessage } from "@/lib/api";
 
 export function useChat() {
@@ -9,6 +9,12 @@ export function useChat() {
   const [isLoading, setIsLoading] = useState(false);
   const [threadId, setThreadId] = useState("default");
   const { toast } = useToast();
+
+  // Reset threadId and messages on page load
+  useEffect(() => {
+    setThreadId("default");
+    setMessages([]);
+  }, []);
 
   const handleSendMessage = async (content: string, userName?: string) => {
     const userMessage: Message = {
@@ -24,10 +30,17 @@ export function useChat() {
     try {
       const isGreeting = content.toLowerCase().match(/^(hi|hello|hey|greetings|sup|yo)(\s|$)/);
 
+      // Format recent messages for the API
+      const recentMessages: MessageForApi[] = messages.slice(-10).map(msg => ({
+        content: msg.content,
+        sender: msg.sender
+      }));
+
       const response = await sendMessage({
         message: isGreeting ? "initial_greeting" : content,
         thread_id: threadId,
         user_name: userName || undefined,
+        message_history: recentMessages
       });
 
       const isErrorResponse = 
@@ -43,15 +56,30 @@ export function useChat() {
         });
       }
 
+      // Simply use the response text as is - it should already be properly formatted
+      const messageContent = response.response;
+
+      // Check if the response includes a Vega-Lite spec
+      let vegaLiteSpec = response.vega_lite_spec;
+      if (typeof vegaLiteSpec === 'string') {
+        try {
+          vegaLiteSpec = JSON.parse(vegaLiteSpec);
+        } catch (e) {
+          console.error('Failed to parse Vega-Lite spec:', e);
+          vegaLiteSpec = undefined;
+        }
+      }
+
       const botMessage: Message = {
         id: nanoid(),
-        content: response.response,
+        content: messageContent,
         sender: "bot",
         timestamp: new Date(),
         imageData: response.has_image ? response.image_data : undefined,
         metrics: response.metrics,
         suggestedQuestions: response.suggested_questions,
         tableHtml: response.has_table ? response.table_html : undefined,
+        vegaLiteSpec: vegaLiteSpec,
       };
 
       setMessages((prev) => [...prev, botMessage]);

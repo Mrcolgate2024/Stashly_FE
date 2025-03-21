@@ -1,4 +1,3 @@
-
 export interface Message {
   id: string;
   content: string;
@@ -8,6 +7,13 @@ export interface Message {
   metrics?: Record<string, number | string>;
   suggestedQuestions?: string[];
   tableHtml?: string;
+  vegaLiteSpec?: any; // Vega-Lite specification for charts
+}
+
+// Simplified message type for API requests
+export interface MessageForApi {
+  content: string;
+  sender: "user" | "bot";
 }
 
 export interface ChatState {
@@ -25,10 +31,12 @@ export interface ChatApiResponse {
   suggested_questions?: string[];
   has_table: boolean;
   table_html?: string;
+  vega_lite_spec?: any; // Vega-Lite specification for charts
 }
 
 export interface ChatApiRequest {
   message: string;
-  thread_id?: string;
+  thread_id: string;
   user_name?: string;
+  message_history?: MessageForApi[];
 }

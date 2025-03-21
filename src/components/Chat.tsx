@@ -6,11 +6,12 @@ import { ChatMessagesArea } from "./ChatMessagesArea";
 import { SimliAvatar } from "./SimliAvatar";
 import { Button } from "@/components/ui/button";
 import { RefreshCcw, Trash2 } from "lucide-react";
+import { Message } from "@/types/chat";
 
 interface ChatProps {
   showControlsInHeader?: boolean;
   userName?: string;
-  messages?: any[];
+  messages?: Message[];
   isLoading?: boolean;
   handleSendMessage?: (content: string, userName: string) => void;
   handleSuggestedQuestionClick?: (question: string, userName: string) => void;
@@ -125,9 +126,9 @@ export const Chat = ({
       <div className="avatar-container">
         <SimliAvatar 
           onMessageReceived={handleAvatarMessage}
-          token="gAAAAABnzdaSAK9eo1dXkjVPB4_sVJG_nvq_ThvMivYcfoVrYJOusk52PhgOtaEvqhmFbXbkJp9W06_DP4NWnN7v_TWO7dGKmi92oeC1aMmIHky98JNaYF4fBMn-6JqaEy_act99q0g46P7C571b2Sa9oA9NuqS6qi0OhQx1zKG67JsKtGj0ECL5Xj_KksIeXjvnUMcDeiDQEE1mBQAA6yO_yRV1l--P4WJSrLMQffvMdwGS6i36EH184LHY-ZWo-spsrVhZaY-e2jQukFkS__Ydv2XPz5DnIdp6K92KC3qFVsIDUltHEeTVKwGklz67_AkQwkHClFDYHseeM301guXCvGxk0F7icSHFyAaryiKyfBsIirJ5UR8-rbBf-XSrgspGqwMG6ue6ZiLJYoCQ2qPNIzLKgMFyOQ=="
+          token="gAAAAABn3SyJC8IrytTdBCQbpuVveasIouPONT9lCNqISoS-8oQe8-6emm7wXRnx6hs--ouBmsYfn0_mXUqAbKVIv5Q4phujPj5WznyUrVqFIJnwzaGi_nSf2oX5WAs_qlLGiQ7f-K5KQWpHd69yuP_vk_F6P_vJeINu9nFuVgAIQC1hvhNL23vDFTLpMcqdwJeFkrqo6gCNznOMLC5Mibp5DDyUlh6kAWpwuu2X_kcBIXf6KiWUvGnFnFaMqd1JaGq4KFBEGrwuPmmmY3BLn6TaJNULdiahqbMf9f9Slvc7fzfusJW22hGF4NxWjmvC1fCTOg8plx4jdKJaz3uFbSkCH7tN6vvGbAUIXNAexowgUFGcHYStOF_bLWE2NFhJOWcZXm5oS9QZvaENcxM73WTPFUzH3caJV0kpEFeoTHyWMIALdHkM3rvTmM2WfcpjyEyTx-OhZDQprFRj2sGP2oXq6nrzQED38cq8TSogCfg1JFfwj2M66n_7qWz4nrykOT_t6CQkCNS5"
           agentId="b36e9ae6-5a88-4235-9e7a-eab88fd52d7b"
-          customText="Financial Analyst"
+          customText="Financial Assistant"
         />
       </div>
       

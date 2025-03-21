@@ -6,6 +6,7 @@ import { MarkdownRenderer } from "./MarkdownRenderer";
 import { Button } from "@/components/ui/button";
 import { Copy, Loader2 } from "lucide-react";
 
+
 interface ChatMessageProps {
   message: Message;
   onQuestionClick?: (question: string) => void;
