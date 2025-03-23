@@ -1,8 +1,10 @@
+
 import React, { useEffect, useRef } from "react";
+import { env } from "@/config/env";
 
 interface SimliAvatarProps {
   onMessageReceived: (message: string) => void;
-  token: string;
+  token?: string;
   agentId: string;
   customText?: string;
 }
@@ -16,6 +18,7 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetRef = useRef<any>(null);
   const customImageUrl = "/images/Stashlyavataricon.webp";
+  const simliToken = token || env.SIMLI_AVATAR_TOKEN || "";
 
   useEffect(() => {
     // Create a custom event listener for Simli messages
@@ -45,7 +48,7 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
         
         // Create the widget element
         const simliWidget = document.createElement('simli-widget');
-        simliWidget.setAttribute('token', token);
+        simliWidget.setAttribute('token', simliToken);
         simliWidget.setAttribute('agentid', agentId);
         simliWidget.setAttribute('position', 'relative');
         simliWidget.setAttribute('customtext', customText);
@@ -71,7 +74,7 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
       widgetRef.current = null;
       clearTimeout(timeoutId);
     };
-  }, [token, agentId, onMessageReceived, customText]);
+  }, [simliToken, agentId, onMessageReceived, customText]);
 
   return (
     <div className="fixed bottom-[80px] right-4 sm:bottom-10 sm:right-10 z-10" ref={containerRef}>

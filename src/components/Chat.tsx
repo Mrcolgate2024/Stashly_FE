@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useChat } from "@/hooks/useChat";
 import { ChatInput } from "./ChatInput";
@@ -126,7 +127,6 @@ export const Chat = ({
       <div className="avatar-container">
         <SimliAvatar
           onMessageReceived={handleAvatarMessage}
-          token="gAAAAABn3_aR3dIfUkwqncDpCDgMAu95bLnIBOmC4E02wT_YDMQE2ENXUz12gr0VNYPDwkR7a52QSXKPHs9d342xxDjF1Xc1Q9vNnUz12WqxJT9WbRxSiaW0U3BnIKb-s_Gsd_glBVcwL1FmSquQ-GkVrTTooaFzeMi-jDbyUAQ-i3D9t5MpirUv6JL8thn8-8IFFuEGIs0plKmG3qhUuv8E_x9JJ25joSKtY_z66s5gDP8qI1NguGA1hFzlQf51aXowVuMCh7yDoIdnEhl6STUn4B7cTKzAh4iqo7igacVOtwz2t0dD5in02Pb_xpFHOwa2qGeDfAFZfqM6GVqq2JTxHuluM5W210cN41POdW8jAx9SA6RyX1EViJ4ZsGx28Fe7WvihPXyvU7ic7-aqvDRKcBGX2jogSw=="
           agentId="b36e9ae6-5a88-4235-9e7a-eab88fd52d7b"
           customText="Financial Assistant"
         />
