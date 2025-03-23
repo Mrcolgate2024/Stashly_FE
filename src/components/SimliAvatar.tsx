@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { env } from "@/config/env";
 
 interface SimliAvatarProps {
@@ -17,6 +17,7 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetRef = useRef<any>(null);
+  const [error, setError] = useState<string | null>(null);
   const customImageUrl = "/images/Stashlyavataricon.webp";
   const simliToken = token || env.SIMLI_AVATAR_TOKEN || "";
 
@@ -30,6 +31,16 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
 
     // Add custom event listener for Simli messages
     window.addEventListener('simli:message' as any, handleSimliMessage as EventListener);
+
+    // Also listen for error events from Simli
+    const handleSimliError = (event: CustomEvent) => {
+      if (event.detail && event.detail.error) {
+        console.error('Simli error:', event.detail.error);
+        setError(`Simli error: ${event.detail.error}`);
+      }
+    };
+    
+    window.addEventListener('simli:error' as any, handleSimliError as EventListener);
 
     // Add the Simli script if it's not already present
     if (!document.querySelector('script[src="https://app.simli.com/simli-widget/index.js"]')) {
@@ -45,6 +56,11 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
       if (containerRef.current && !widgetRef.current) {
         // Clear any existing content
         containerRef.current.innerHTML = '';
+        
+        if (!simliToken) {
+          setError("Simli token is missing. Please set the VITE_SIMLI_AVATAR_TOKEN environment variable.");
+          return;
+        }
         
         // Create the widget element
         const simliWidget = document.createElement('simli-widget');
@@ -68,17 +84,26 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
     // Cleanup function
     return () => {
       window.removeEventListener('simli:message' as any, handleSimliMessage as EventListener);
+      window.removeEventListener('simli:error' as any, handleSimliError as EventListener);
       if (widgetRef.current && widgetRef.current.parentNode) {
         widgetRef.current.parentNode.removeChild(widgetRef.current);
       }
       widgetRef.current = null;
       clearTimeout(timeoutId);
+      setError(null);
     };
   }, [simliToken, agentId, onMessageReceived, customText]);
 
   return (
-    <div className="fixed bottom-[80px] right-4 sm:bottom-10 sm:right-10 z-10" ref={containerRef}>
-      {/* Simli widget will be inserted here programmatically */}
+    <div className="fixed bottom-[80px] right-4 sm:bottom-10 sm:right-10 z-10">
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-2 max-w-[300px] text-sm">
+          {error}
+        </div>
+      )}
+      <div ref={containerRef}>
+        {/* Simli widget will be inserted here programmatically */}
+      </div>
     </div>
   );
 };
