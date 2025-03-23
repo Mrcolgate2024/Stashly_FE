@@ -124,9 +124,9 @@ export const Chat = ({
 
       {/* Simli avatar with adjusted positioning for mobile */}
       <div className="avatar-container">
-        <SimliAvatar 
+        <SimliAvatar
           onMessageReceived={handleAvatarMessage}
-          token="gAAAAABn3SyJC8IrytTdBCQbpuVveasIouPONT9lCNqISoS-8oQe8-6emm7wXRnx6hs--ouBmsYfn0_mXUqAbKVIv5Q4phujPj5WznyUrVqFIJnwzaGi_nSf2oX5WAs_qlLGiQ7f-K5KQWpHd69yuP_vk_F6P_vJeINu9nFuVgAIQC1hvhNL23vDFTLpMcqdwJeFkrqo6gCNznOMLC5Mibp5DDyUlh6kAWpwuu2X_kcBIXf6KiWUvGnFnFaMqd1JaGq4KFBEGrwuPmmmY3BLn6TaJNULdiahqbMf9f9Slvc7fzfusJW22hGF4NxWjmvC1fCTOg8plx4jdKJaz3uFbSkCH7tN6vvGbAUIXNAexowgUFGcHYStOF_bLWE2NFhJOWcZXm5oS9QZvaENcxM73WTPFUzH3caJV0kpEFeoTHyWMIALdHkM3rvTmM2WfcpjyEyTx-OhZDQprFRj2sGP2oXq6nrzQED38cq8TSogCfg1JFfwj2M66n_7qWz4nrykOT_t6CQkCNS5"
+          token="gAAAAABn3_aR3dIfUkwqncDpCDgMAu95bLnIBOmC4E02wT_YDMQE2ENXUz12gr0VNYPDwkR7a52QSXKPHs9d342xxDjF1Xc1Q9vNnUz12WqxJT9WbRxSiaW0U3BnIKb-s_Gsd_glBVcwL1FmSquQ-GkVrTTooaFzeMi-jDbyUAQ-i3D9t5MpirUv6JL8thn8-8IFFuEGIs0plKmG3qhUuv8E_x9JJ25joSKtY_z66s5gDP8qI1NguGA1hFzlQf51aXowVuMCh7yDoIdnEhl6STUn4B7cTKzAh4iqo7igacVOtwz2t0dD5in02Pb_xpFHOwa2qGeDfAFZfqM6GVqq2JTxHuluM5W210cN41POdW8jAx9SA6RyX1EViJ4ZsGx28Fe7WvihPXyvU7ic7-aqvDRKcBGX2jogSw=="
           agentId="b36e9ae6-5a88-4235-9e7a-eab88fd52d7b"
           customText="Financial Assistant"
         />
