@@ -32,6 +32,11 @@ export interface ChatApiResponse {
   has_table: boolean;
   table_html?: string;
   vega_lite_spec?: any; // Vega-Lite specification for charts
+  tools?: Array<{
+    name?: string;
+    description?: string;
+    toString: () => string;
+  }>;
 }
 
 export interface ChatApiRequest {

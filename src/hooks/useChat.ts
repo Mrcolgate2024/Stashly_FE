@@ -56,8 +56,52 @@ export function useChat() {
         });
       }
 
-      // Simply use the response text as is - it should already be properly formatted
-      const messageContent = response.response;
+      // Format the response content to handle any JSON objects
+      let messageContent = response.response;
+      try {
+        // Try to parse any JSON objects in the response
+        messageContent = messageContent.replace(/\[object Object\]/g, (match) => {
+          try {
+            // Find the corresponding object in the response
+            const obj = response.tools?.find(tool => tool.toString() === match);
+            if (obj && typeof obj === 'object') {
+              return obj.description || obj.name || match;
+            }
+            return match;
+          } catch (e) {
+            return match;
+          }
+        });
+
+        // Format the response as bullet points if it contains a list of capabilities
+        if (messageContent.includes("Here's a list of things I can do") || 
+            messageContent.includes("Here's what I can do") ||
+            messageContent.includes("I can help you with")) {
+          
+          // Split the message into introduction and capabilities
+          const parts = messageContent.split(/(?=Would you like me to:|Or is there anything else)/);
+          if (parts.length > 1) {
+            const intro = parts[0];
+            const capabilities = parts[1];
+            
+            // Format capabilities as numbered list
+            const formattedCapabilities = capabilities
+              .replace(/(Would you like me to:|Or is there anything else)/, '\n\n$1')
+              .replace(/(\d+\.\s*)([A-Za-z\s]+):\s*([^:]+?)(?=\n|$)/g, '\n$1**$2:** $3')
+              .replace(/(\d+\.\s*)([A-Za-z\s]+):\s*([^:]+?)(?=\n|$)/g, '\n$1**$2:** $3')
+              .replace(/(\d+\.\s*)([A-Za-z\s]+):\s*([^:]+?)(?=\n|$)/g, '\n$1**$2:** $3')
+              .replace(/(\d+\.\s*)([A-Za-z\s]+):\s*([^:]+?)(?=\n|$)/g, '\n$1**$2:** $3')
+              .replace(/(\d+\.\s*)([A-Za-z\s]+):\s*([^:]+?)(?=\n|$)/g, '\n$1**$2:** $3')
+              .replace(/(\d+\.\s*)([A-Za-z\s]+):\s*([^:]+?)(?=\n|$)/g, '\n$1**$2:** $3')
+              .replace(/(\d+\.\s*)([A-Za-z\s]+):\s*([^:]+?)(?=\n|$)/g, '\n$1**$2:** $3')
+              .replace(/(\d+\.\s*)([A-Za-z\s]+):\s*([^:]+?)(?=\n|$)/g, '\n$1**$2:** $3');
+            
+            messageContent = intro + formattedCapabilities;
+          }
+        }
+      } catch (e) {
+        console.error('Error formatting message content:', e);
+      }
 
       // Check if the response includes a Vega-Lite spec
       let vegaLiteSpec = response.vega_lite_spec;

@@ -75,7 +75,7 @@ api.interceptors.response.use(
 export const sendMessage = async (request: ChatApiRequest): Promise<ChatApiResponse> => {
   try {
     if (import.meta.env.DEV) {
-      console.log('Sending message to Azure backend:', request);
+      console.log('Sending message to backend:', request);
     }
     const response = await api.post<ChatApiResponse>("/chat", {
       message: request.message,
@@ -84,7 +84,7 @@ export const sendMessage = async (request: ChatApiRequest): Promise<ChatApiRespo
       message_history: request.message_history,
     });
     if (import.meta.env.DEV) {
-      console.log('Received response from Azure backend:', response.data);
+      console.log('Received response from backend:', response.data);
     }
     return response.data;
   } catch (error) {
