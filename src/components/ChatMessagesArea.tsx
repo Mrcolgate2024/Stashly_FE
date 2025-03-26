@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { Message } from "@/types/chat";
 import { ChatMessage } from "./ChatMessage";
 import { WelcomeMessage } from "./WelcomeMessage";
+import { ThinkingIndicator } from "./ThinkingIndicator";
 
 interface ChatMessagesAreaProps {
   messages: Message[];
@@ -37,9 +38,9 @@ export const ChatMessagesArea: React.FC<ChatMessagesAreaProps> = ({
             key={index}
             message={message}
             onQuestionClick={onQuestionClick}
-            isThinking={isThinking && index === messages.length - 1}
           />
         ))}
+        {isThinking && <ThinkingIndicator />}
       </div>
       <div ref={messagesEndRef} />
     </div>

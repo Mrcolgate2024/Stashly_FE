@@ -96,7 +96,7 @@ export const YahooMarketData = () => {
   }
 
   return (
-    <div className="w-full bg-[#1e2a38]/90 backdrop-blur-sm shadow-md p-2">
+    <div className="fixed-top w-full bg-[#1e2a38] text-white text-[13px] font-medium py-1.5 px-4 border-b border-white/10 z-30">
       <div className="flex items-center justify-between">
         <div className="overflow-hidden whitespace-nowrap flex-1">
           <div ref={marqueeRef} className="animate-marquee inline-block text-white">

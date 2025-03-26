@@ -48,7 +48,7 @@ export const ChatInput = ({ onSend, disabled }: ChatInputProps) => {
           onKeyDown={handleKeyDown}
           placeholder="Type your message... (Press Enter to send)"
           disabled={disabled}
-          className="flex-1 min-h-[80px] resize-none pr-12"
+          className="flex-1 min-h-[80px] resize-none pr-12 text-[13px]"
           rows={2}
         />
         <Button 
