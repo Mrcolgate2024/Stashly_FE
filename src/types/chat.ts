@@ -1,19 +1,25 @@
+import { VisualizationSpec } from 'vega-embed';
+
 export interface Message {
   id: string;
   content: string;
-  sender: "user" | "bot";
+  sender: "user" | "bot" | "assistant";
   timestamp: Date;
   imageData?: string;
   metrics?: Record<string, number | string>;
   suggestedQuestions?: string[];
   tableHtml?: string;
   vegaLiteSpec?: any; // Vega-Lite specification for charts
+  chartData?: {
+    description: string;
+    vega_lite_spec: VisualizationSpec;
+  };
 }
 
 // Simplified message type for API requests
 export interface MessageForApi {
   content: string;
-  sender: "user" | "bot";
+  sender: "user" | "bot" | "assistant";
 }
 
 export interface ChatState {
@@ -37,6 +43,10 @@ export interface ChatApiResponse {
     description?: string;
     toString: () => string;
   }>;
+  chart_data?: {
+    description: string;
+    vega_lite_spec: VisualizationSpec;
+  };
 }
 
 export interface ChatApiRequest {
