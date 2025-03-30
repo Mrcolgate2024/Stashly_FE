@@ -163,21 +163,21 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
           <style>
             {tableStyles}
           </style>
-          <div className="prose prose-xs max-w-none dark:prose-invert prose-ol:list-decimal prose-li:my-0 prose-p:my-0">
+          <div className="prose prose-xs max-w-none dark:prose-invert prose-ol:list-decimal prose-li:my-1 prose-p:my-2">
             <ReactMarkdown 
               remarkPlugins={[remarkGfm]}
               components={{
                 ol: ({ node, ...props }) => (
-                  <ol className="list-decimal pl-4 my-0 text-[13px]" {...props} />
+                  <ol className="list-decimal pl-4 my-2 text-[13px]" {...props} />
                 ),
                 ul: ({ node, ...props }) => (
-                  <ul className="list-disc pl-4 my-0 text-[13px]" {...props} />
+                  <ul className="list-disc pl-4 my-2 text-[13px]" {...props} />
                 ),
                 li: ({ node, ...props }) => (
-                  <li className="my-0 text-[13px]" {...props} />
+                  <li className="my-1 text-[13px]" {...props} />
                 ),
                 p: ({ node, ...props }) => (
-                  <p className="my-0 text-[13px]" {...props} />
+                  <p className="my-2 text-[13px]" {...props} />
                 ),
                 h1: ({ node, ...props }) => (
                   <h1 className="text-lg font-bold mb-1 mt-1" {...props} />

@@ -59,6 +59,12 @@ export function useChat() {
       let messageContent = response.response;
       let chartData = null;
 
+      // Handle line breaks in the message content
+      messageContent = messageContent
+        .replace(/\\n/g, '\n')  // Replace escaped newlines
+        .replace(/\n{3,}/g, '\n\n')  // Replace multiple newlines with double newlines
+        .trim();
+
       // Check if the response contains chart data from the API
       if (response.chart_data) {
         chartData = response.chart_data;
