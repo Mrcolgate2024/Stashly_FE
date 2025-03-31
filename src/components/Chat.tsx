@@ -138,14 +138,16 @@ export const Chat = ({
         </div>
       </div>
 
-      <style jsx>{`
-        .simli-avatar-container {
-          position: fixed;
-          bottom: 100px;
-          right: 20px;
-          z-index: 50;
-        }
-      `}</style>
+      <style>
+        {`
+          .simli-avatar-container {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            z-index: 50;
+          }
+        `}
+      </style>
     </div>
   );
 };

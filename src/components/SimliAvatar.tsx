@@ -46,31 +46,7 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
     
     window.addEventListener('simli:error' as any, handleSimliError as EventListener);
 
-    // Check if the Simli script is already in the document
-    const existingScript = document.querySelector('script[src="https://app.simli.com/simli-widget/index.js"]');
-    
-    if (!existingScript) {
-      console.log("Adding Simli script to document");
-      const script = document.createElement('script');
-      script.src = "https://app.simli.com/simli-widget/index.js";
-      script.async = true;
-      script.type = "text/javascript";
-      script.onload = () => {
-        console.log("Simli script loaded successfully");
-        initWidget();
-      };
-      script.onerror = (e) => {
-        console.error("Error loading Simli script:", e);
-        setError("Failed to load Simli script. Please check your internet connection.");
-      };
-      document.body.appendChild(script);
-    } else {
-      console.log("Simli script already exists in document");
-      // Small delay to ensure script is fully initialized
-      setTimeout(initWidget, 100);
-    }
-
-    // Create and append the Simli widget to our container
+    // Define the initWidget function first before using it
     const initWidget = () => {
       if (containerRef.current) {
         // Clear any existing content
@@ -104,6 +80,30 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
         }
       }
     };
+
+    // Check if the Simli script is already in the document
+    const existingScript = document.querySelector('script[src="https://app.simli.com/simli-widget/index.js"]');
+    
+    if (!existingScript) {
+      console.log("Adding Simli script to document");
+      const script = document.createElement('script');
+      script.src = "https://app.simli.com/simli-widget/index.js";
+      script.async = true;
+      script.type = "text/javascript";
+      script.onload = () => {
+        console.log("Simli script loaded successfully");
+        initWidget();
+      };
+      script.onerror = (e) => {
+        console.error("Error loading Simli script:", e);
+        setError("Failed to load Simli script. Please check your internet connection.");
+      };
+      document.body.appendChild(script);
+    } else {
+      console.log("Simli script already exists in document");
+      // Small delay to ensure script is fully initialized
+      setTimeout(initWidget, 100);
+    }
 
     // Cleanup function
     return () => {
