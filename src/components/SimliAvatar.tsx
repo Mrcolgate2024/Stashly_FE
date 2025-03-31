@@ -19,7 +19,8 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
   const widgetRef = useRef<any>(null);
   const [error, setError] = useState<string | null>(null);
   const customImageUrl = "/images/Stashlyavataricon.webp";
-  const simliToken = token || env.SIMLI_AVATAR_TOKEN || "gAAAAABn5E9hHziT9vgZlPMivuBTlaQKc7gxZJ-Ge5HLzWsMkOQaH8rAUEmJD41IO9QG3PBPYvDY8DyilcqqmYnyjhySad8oBrPwW4PCcfPBlat68XrAZfNH0_b8XjILGDCNXwbuj0l0JJ_PO6xqoQgNUzcUyASSf6KxxgLtzlCwCxUWag6Wgy02PYF76v-DN69mzltVpR3S0nSqcszvwRaQKehXT79EVyQB3qiXANpVsgiFfMuCUSFS86vGXRh649oBxxJ2a5pzKlen1-2Kwv8isQ4WVDfiBPXFcz3WV6-QeHGoYoTtxYcYKjBl3BIUmrIv4bQ83_snn2rz2cbqydnIOHsc0-1jCiyIWFXISRQknDmbHvBmj6HvVBsARkXgu1KiN4a1wKRHeCe2g5Q7n-0W4D8u9Gn5Hg==";
+  // Use provided token first, then environment variable as fallback
+  const simliToken = token || env.SIMLI_AVATAR_TOKEN || "";
 
   useEffect(() => {
     console.log("SimliAvatar component mounted");
@@ -55,7 +56,7 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
         console.log("Initializing Simli widget with token:", simliToken ? "Token exists" : "No token");
         
         if (!simliToken) {
-          setError("Simli token is missing. Please set the VITE_SIMLI_AVATAR_TOKEN environment variable.");
+          setError("Simli token is missing. Please check if it's properly provided.");
           return;
         }
         

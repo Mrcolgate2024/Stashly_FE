@@ -82,6 +82,9 @@ export const Chat = ({
     />
   );
 
+  // Hard-code the Simli token provided by the user
+  const simliToken = "gAAAAABn6jONT4yTT2C6rCGuWKzhN0gQJ-Vr3N2VK1h8aOy_G0bZ3s2GDJUyVhydj8IC-EdZRue60dniKe85s7scjscShsfwVbEvXMFVXDbPUSKjRw11lHs7BJfb4TXHWfgGnW6snFOmKqjp_h394hPoMgC9K2ZXtMqO5wT9ZWdnRkEmbnJOUU518z5sgRF83MRmsntMQqGRGFleXsBI9oXUQut6gtdDy879L0Mbrf9fSeDydZQQQ3e2BqQL0Djs_42wf24yWgEMo3ntuoVyHpHE9oZ0PdPmWCsyvdkfXkG2OJF0KI7KaS7B54vFQeBGYnGfe7KrMZle9wjbRjJOrSFHvLlwQs9FYF9rfgZxo809lNNFL5WT1G1MMaJsmWKXhbGHCI6trkPF9fpQrsmmR3k5JZseLprWyA==";
+
   return (
     <div className="flex flex-col h-full relative">
       {!showControlsInHeader && (
@@ -128,6 +131,7 @@ export const Chat = ({
         <SimliAvatar
           onMessageReceived={handleAvatarMessage}
           agentId="b36e9ae6-5a88-4235-9e7a-eab88fd52d7b"
+          token={simliToken}
           customText="Financial Assistant"
         />
       </div>
