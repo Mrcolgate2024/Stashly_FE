@@ -7,6 +7,7 @@ interface SimliAvatarProps {
   token?: string;
   agentId: string;
   customText?: string;
+  apiKey?: string;
 }
 
 export const SimliAvatar: React.FC<SimliAvatarProps> = ({
@@ -14,16 +15,60 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
   token,
   agentId,
   customText = "Financial Analyst",
+  apiKey,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetRef = useRef<any>(null);
   const [error, setError] = useState<string | null>(null);
   const customImageUrl = "/images/Stashlyavataricon.webp";
-  // Use provided token first, then environment variable as fallback
+  
+  // Use provided token/apiKey first, then environment variable as fallback
   const simliToken = token || env.SIMLI_AVATAR_TOKEN || "";
+  const simliApiKey = apiKey || env.SIMLI_API_KEY || "";
 
   useEffect(() => {
     console.log("SimliAvatar component mounted");
+    
+    // Define the initWidget function first before using it
+    const initWidget = () => {
+      if (containerRef.current) {
+        // Clear any existing content
+        containerRef.current.innerHTML = '';
+        
+        console.log("Initializing Simli widget with token:", simliToken ? "Token exists" : "No token");
+        console.log("API key status:", simliApiKey ? "API key exists" : "No API key");
+        
+        if (!simliToken) {
+          setError("Simli token is missing. Please check if it's properly provided.");
+          return;
+        }
+        
+        try {
+          // Create the widget element
+          const simliWidget = document.createElement('simli-widget');
+          simliWidget.setAttribute('token', simliToken);
+          simliWidget.setAttribute('agentid', agentId);
+          simliWidget.setAttribute('position', 'relative');
+          simliWidget.setAttribute('customtext', customText);
+          simliWidget.setAttribute('customimage', customImageUrl);
+          
+          // Add API key if available
+          if (simliApiKey) {
+            simliWidget.setAttribute('apikey', simliApiKey);
+          }
+          
+          // Store reference to the widget
+          widgetRef.current = simliWidget;
+          
+          // Append the widget to the container
+          containerRef.current.appendChild(simliWidget);
+          console.log("Simli widget appended to container");
+        } catch (err) {
+          console.error("Error creating Simli widget:", err);
+          setError(`Error creating Simli widget: ${err instanceof Error ? err.message : String(err)}`);
+        }
+      }
+    };
     
     // Create a custom event listener for Simli messages
     const handleSimliMessage = (event: CustomEvent) => {
@@ -46,41 +91,6 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
     };
     
     window.addEventListener('simli:error' as any, handleSimliError as EventListener);
-
-    // Define the initWidget function first before using it
-    const initWidget = () => {
-      if (containerRef.current) {
-        // Clear any existing content
-        containerRef.current.innerHTML = '';
-        
-        console.log("Initializing Simli widget with token:", simliToken ? "Token exists" : "No token");
-        
-        if (!simliToken) {
-          setError("Simli token is missing. Please check if it's properly provided.");
-          return;
-        }
-        
-        try {
-          // Create the widget element
-          const simliWidget = document.createElement('simli-widget');
-          simliWidget.setAttribute('token', simliToken);
-          simliWidget.setAttribute('agentid', agentId);
-          simliWidget.setAttribute('position', 'relative');
-          simliWidget.setAttribute('customtext', customText);
-          simliWidget.setAttribute('customimage', customImageUrl);
-          
-          // Store reference to the widget
-          widgetRef.current = simliWidget;
-          
-          // Append the widget to the container
-          containerRef.current.appendChild(simliWidget);
-          console.log("Simli widget appended to container");
-        } catch (err) {
-          console.error("Error creating Simli widget:", err);
-          setError(`Error creating Simli widget: ${err instanceof Error ? err.message : String(err)}`);
-        }
-      }
-    };
 
     // Check if the Simli script is already in the document
     const existingScript = document.querySelector('script[src="https://app.simli.com/simli-widget/index.js"]');
@@ -116,7 +126,7 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
       widgetRef.current = null;
       setError(null);
     };
-  }, [simliToken, agentId, onMessageReceived, customText]);
+  }, [simliToken, simliApiKey, agentId, onMessageReceived, customText]);
 
   return (
     <div className="relative">
