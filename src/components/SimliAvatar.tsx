@@ -17,20 +17,17 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
   const widgetRef = useRef<any>(null);
   const [error, setError] = useState<string | null>(null);
   const customImageUrl = "/images/Stashlyavataricon.webp";
-  const simliToken = token || "gAAAAABn5E9hHziT9vgZlPMivuBTlaQKc7gxZJ-Ge5HLzWsMkOQaH8rAUEmJD41IO9QG3PBPYvDY8DyilcqqmYnyjhySad8oBrPwW4PCcfPBlat68XrAZfNH0_b8XjILGDCNXwbuj0l0JJ_PO6xqoQgNUzcUyASSf6KxxgLtzlCwCxUWag6Wgy02PYF76v-DN69mzltVpR3S0nSqcszvwRaQKehXT79EVyQB3qiXANpVsgiFfMuCUSFS86vGXRh649oBxxJ2a5pzKlen1-2Kwv8isQ4WVDfiBPXFcz3WV6-QeHGoYoTtxYcYKjBl3BIUmrIv4bQ83_snn2rz2cbqydnIOHsc0-1jCiyIWFXISRQknDmbHvBmj6HvVBsARkXgu1KiN4a1wKRHeCe2g5Q7n-0W4D8u9Gn5Hg==";
+  const simliToken = token || "gAAAAABn6nTH61P_cvu7wglJNwcWUbxO48ploMF_C_684qyTtpuyTeloFakAguJ9jcKE6MKSRHX2fn195B177-5U_xdg7egkW0ybDTHLeQ_nX4p8_97zlEim8IfgQi43ZaXhUuD9e2diIOctVj5fcYxO0kapA2Gj0ORCquPiE7d_33md4N-_XD1ucUARCWm4URO5cbNdNPXXBdCw03D0iKyw-XjMoKqDxn5tUBeoCmvI_DaLRFz_4nE3-3XOOaOILXB7Jw3xoe0ucXU84SH6X58jO-3a888RiS1qBEXAl1VmY5efPtVAXyZaAkAx2fBPhdqC31zagaAx0P5aEqTFcfUu7rW5YuLq-jIdSCHww6m2Oxw7Gl54SZ7_9Mf1tD6MfNqB1amNCsco1qWHLfYUt2QGtFQtlHiVAQ==";
 
   useEffect(() => {
-    // Create a custom event listener for Simli messages
     const handleSimliMessage = (event: CustomEvent) => {
       if (event.detail && event.detail.message) {
         onMessageReceived(event.detail.message);
       }
     };
 
-    // Add custom event listener for Simli messages
     window.addEventListener('simli:message' as any, handleSimliMessage as EventListener);
 
-    // Also listen for error events from Simli
     const handleSimliError = (event: CustomEvent) => {
       if (event.detail && event.detail.error) {
         console.error('Simli error:', event.detail.error);
@@ -40,7 +37,6 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
     
     window.addEventListener('simli:error' as any, handleSimliError as EventListener);
 
-    // Add the Simli script if it's not already present
     if (!document.querySelector('script[src="https://app.simli.com/simli-widget/index.js"]')) {
       const script = document.createElement('script');
       script.src = "https://app.simli.com/simli-widget/index.js";
@@ -49,10 +45,8 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
       document.body.appendChild(script);
     }
 
-    // Create and append the Simli widget to our container
     const initWidget = () => {
       if (containerRef.current && !widgetRef.current) {
-        // Clear any existing content
         containerRef.current.innerHTML = '';
         
         if (!simliToken) {
@@ -60,7 +54,6 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
           return;
         }
         
-        // Create the widget element
         const simliWidget = document.createElement('simli-widget');
         simliWidget.setAttribute('token', simliToken);
         simliWidget.setAttribute('agentid', agentId);
@@ -68,18 +61,14 @@ export const SimliAvatar: React.FC<SimliAvatarProps> = ({
         simliWidget.setAttribute('customtext', customText);
         simliWidget.setAttribute('customimage', customImageUrl);
         
-        // Store reference to the widget
         widgetRef.current = simliWidget;
         
-        // Append the widget to the container
         containerRef.current.appendChild(simliWidget);
       }
     };
 
-    // Initialize widget after a short delay to ensure proper cleanup
     const timeoutId = setTimeout(initWidget, 100);
 
-    // Cleanup function
     return () => {
       window.removeEventListener('simli:message' as any, handleSimliMessage as EventListener);
       window.removeEventListener('simli:error' as any, handleSimliError as EventListener);
