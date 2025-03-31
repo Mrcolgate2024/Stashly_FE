@@ -8,7 +8,6 @@ import { SimliAvatar } from "./SimliAvatar";
 import { Button } from "@/components/ui/button";
 import { RefreshCcw, Trash2 } from "lucide-react";
 import { Message } from "@/types/chat";
-import { env } from "@/config/env";
 
 interface ChatProps {
   showControlsInHeader?: boolean;
@@ -83,10 +82,6 @@ export const Chat = ({
     />
   );
 
-  // Hard-code the Simli token provided by the user
-  const simliToken = "gAAAAABn6jONT4yTT2C6rCGuWKzhN0gQJ-Vr3N2VK1h8aOy_G0bZ3s2GDJUyVhydj8IC-EdZRue60dniKe85s7scjscShsfwVbEvXMFVXDbPUSKjRw11lHs7BJfb4TXHWfgGnW6snFOmKqjp_h394hPoMgC9K2ZXtMqO5wT9ZWdnRkEmbnJOUU518z5sgRF83MRmsntMQqGRGFleXsBI9oXUQut6gtdDy879L0Mbrf9fSeDydZQQQ3e2BqQL0Djs_42wf24yWgEMo3ntuoVyHpHE9oZ0PdPmWCsyvdkfXkG2OJF0KI7KaS7B54vFQeBGYnGfe7KrMZle9wjbRjJOrSFHvLlwQs9FYF9rfgZxo809lNNFL5WT1G1MMaJsmWKXhbGHCI6trkPF9fpQrsmmR3k5JZseLprWyA==";
-  const simliApiKey = "sy105wgoenddakbuzsr97";
-
   return (
     <div className="flex flex-col h-full relative">
       {!showControlsInHeader && (
@@ -128,13 +123,11 @@ export const Chat = ({
         </div>
       </div>
 
-      {/* SimliAvatar component positioned at the bottom right */}
-      <div className="simli-avatar-container">
+      {/* Simli avatar with adjusted positioning for mobile */}
+      <div className="avatar-container">
         <SimliAvatar
           onMessageReceived={handleAvatarMessage}
           agentId="b36e9ae6-5a88-4235-9e7a-eab88fd52d7b"
-          token={simliToken}
-          apiKey={simliApiKey}
           customText="Financial Assistant"
         />
       </div>
@@ -144,17 +137,6 @@ export const Chat = ({
           <ChatInput onSend={handleMessageSend} disabled={isLoading} />
         </div>
       </div>
-
-      <style>
-        {`
-          .simli-avatar-container {
-            position: fixed;
-            bottom: 100px;
-            right: 20px;
-            z-index: 50;
-          }
-        `}
-      </style>
     </div>
   );
 };
