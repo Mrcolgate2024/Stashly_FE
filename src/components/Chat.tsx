@@ -123,8 +123,8 @@ export const Chat = ({
         </div>
       </div>
 
-      {/* Simli avatar with adjusted positioning for mobile */}
-      <div className="avatar-container">
+      {/* SimliAvatar component positioned at the bottom right */}
+      <div className="simli-avatar-container">
         <SimliAvatar
           onMessageReceived={handleAvatarMessage}
           agentId="b36e9ae6-5a88-4235-9e7a-eab88fd52d7b"
@@ -137,6 +137,15 @@ export const Chat = ({
           <ChatInput onSend={handleMessageSend} disabled={isLoading} />
         </div>
       </div>
+
+      <style jsx>{`
+        .simli-avatar-container {
+          position: fixed;
+          bottom: 100px;
+          right: 20px;
+          z-index: 50;
+        }
+      `}</style>
     </div>
   );
 };
