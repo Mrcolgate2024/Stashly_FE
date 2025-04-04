@@ -1,12 +1,6 @@
 import React from "react";
-import { Button } from "@/components/ui/button";
-import { RefreshCcw } from "lucide-react";
 
-interface WelcomeMessageProps {
-  onRefresh?: () => void;
-}
-
-export const WelcomeMessage: React.FC<WelcomeMessageProps> = ({ onRefresh }) => {
+export const WelcomeMessage = () => {
   return (
     <div className="text-center w-full max-w-3xl mx-auto px-4">
       <div className="sm:hidden mb-8">
@@ -23,22 +17,9 @@ export const WelcomeMessage: React.FC<WelcomeMessageProps> = ({ onRefresh }) => 
           </div>
         </div>
       </div>
-      <div className="flex justify-center items-center gap-2 mb-4">
-        <p className="text-2xl sm:text-3xl font-semibold">
-          Welcome to <span className="font-space-grotesk font-bold">$TASHLY</span>, your financial assistant!
-        </p>
-        {onRefresh && (
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onRefresh}
-            className="hover:bg-gray-200/50"
-            title="Refresh chat"
-          >
-            <RefreshCcw className="h-5 w-5" />
-          </Button>
-        )}
-      </div>
+      <p className="mb-4 text-2xl sm:text-3xl font-semibold">
+        Welcome to <span className="font-space-grotesk font-bold">$TASHLY</span>, your financial assistant!
+      </p>
       <div className="text-center">
         <p className="text-lg sm:text-xl text-gray-700 mb-4">Ask me anything about:</p>
         <div className="inline-block text-lg sm:text-xl text-gray-700 space-y-3">
