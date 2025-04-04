@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useChat } from "@/hooks/useChat";
 import { ChatInput } from "./ChatInput";
@@ -114,7 +113,7 @@ export const Chat = ({
             </>
           )}
         </div>
-        <div className="flex-1 overflow-y-auto px-4 mb-[110px]">
+        <div className="flex-1 content-area px-4 mb-[110px]">
           <ChatMessagesArea
             messages={messages}
             onQuestionClick={handleQuestionClick}
@@ -123,19 +122,19 @@ export const Chat = ({
         </div>
       </div>
 
-      {/* Simli avatar with adjusted positioning for mobile */}
-      <div className="avatar-container">
+      <div className="fixed-bottom p-3 pt-4 bg-[#1e2a38]/80 backdrop-blur-sm border-t border-white/10">
+        <div className="max-w-3xl mx-auto">
+          <ChatInput onSend={handleMessageSend} disabled={isLoading} />
+        </div>
+      </div>
+
+      {/* Simli avatar positioned on top of other elements */}
+      <div className="z-50">
         <SimliAvatar
           onMessageReceived={handleAvatarMessage}
           agentId="b36e9ae6-5a88-4235-9e7a-eab88fd52d7b"
           customText="Financial Assistant"
         />
-      </div>
-      
-      <div className="fixed-bottom p-3 pt-4 bg-[#1e2a38]/80 backdrop-blur-sm border-t border-white/10">
-        <div className="max-w-3xl mx-auto">
-          <ChatInput onSend={handleMessageSend} disabled={isLoading} />
-        </div>
       </div>
     </div>
   );
