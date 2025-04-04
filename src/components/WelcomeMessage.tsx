@@ -18,15 +18,20 @@ export const WelcomeMessage = () => {
         </div>
       </div>
       <p className="mb-4 text-2xl sm:text-3xl font-semibold">
-        Welcome to <span className="font-space-grotesk font-bold">$TASHLY</span>, your Financial Assistant!
+        Welcome to <span className="font-space-grotesk font-bold">$TASHLY</span>, your financial assistant!
       </p>
-      <p className="text-lg sm:text-xl text-gray-600 mb-4">Ask me anything about:</p>
-      <ul className="list-disc inline-block text-left text-lg sm:text-xl text-gray-600 space-y-3">
-        <li>Investment strategies</li>
-        <li>Market analysis</li>
-        <li>Portfolio performance</li>
-        <li>Financial planning</li>
-      </ul>
+      <div className="text-center">
+        <p className="text-lg sm:text-xl text-gray-700 mb-4">Ask me anything about:</p>
+        <div className="inline-block text-lg sm:text-xl text-gray-700 space-y-3">
+          <p className="italic">Investment strategies</p>
+          <p className="italic">Market insights and news</p>
+          <p className="italic">Portfolio performance and risk</p>
+          <p className="italic">Financial planning and fund analysis</p>
+        </div>
+        <p className="mt-4 text-lg sm:text-xl text-gray-700">
+          I'm here to help you make smarter financial decisions — just start typing!
+        </p>
+      </div>
     </div>
   );
 };

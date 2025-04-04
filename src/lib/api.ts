@@ -1,8 +1,12 @@
 import axios from "axios";
 import { ChatApiRequest, ChatApiResponse } from "@/types/chat";
 
-// Get the API URL from environment variables, with a clear fallback
-const BASE_URL = import.meta.env.VITE_API_URL || "https://stashlybackendapp.azurewebsites.net";
+// Get the API URL from environment variables
+const BASE_URL = import.meta.env.VITE_API_URL;
+
+if (!BASE_URL) {
+  console.error('VITE_API_URL environment variable is not set');
+}
 
 // Log the API URL being used (only in development)
 if (import.meta.env.DEV) {

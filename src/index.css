@@ -287,6 +287,8 @@ html, body {
   height: 100%;
   overflow-y: auto;
   padding-bottom: 80px;
+  margin-right: -8px;
+  padding-right: 8px;
 }
 
 .fixed-bottom {
@@ -338,7 +340,5 @@ html, body {
 
 /* Ensure scrollbar appears on the right side */
 body {
-  overflow-y: scroll;
   overflow-x: hidden;
-  padding-right: 8px; /* Add padding to prevent content from being hidden behind the scrollbar */
 }
