@@ -8,12 +8,14 @@ interface ChatMessagesAreaProps {
   messages: Message[];
   onQuestionClick?: (question: string) => void;
   isThinking?: boolean;
+  clearMessages?: () => void;
 }
 
 export const ChatMessagesArea: React.FC<ChatMessagesAreaProps> = ({
   messages,
   onQuestionClick,
   isThinking = false,
+  clearMessages,
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -29,7 +31,7 @@ export const ChatMessagesArea: React.FC<ChatMessagesAreaProps> = ({
     <div className="py-1 w-full">
       {messages.length === 0 && (
         <div className="flex items-center justify-center min-h-[calc(100vh-200px)] w-full">
-          <WelcomeMessage />
+          <WelcomeMessage onRefresh={clearMessages} />
         </div>
       )}
       <div className="space-y-4 w-full">

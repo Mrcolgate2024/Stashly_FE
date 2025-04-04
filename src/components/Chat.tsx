@@ -118,6 +118,7 @@ export const Chat = ({
             messages={messages}
             onQuestionClick={handleQuestionClick}
             isThinking={isLoading}
+            clearMessages={clearMessagesFn}
           />
         </div>
       </div>
