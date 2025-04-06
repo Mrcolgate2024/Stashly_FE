@@ -2,21 +2,24 @@
 import axios from "axios";
 import { ChatApiRequest, ChatApiResponse } from "@/types/chat";
 
-// Get the API URL from environment variables
-const BASE_URL = import.meta.env.VITE_API_URL;
+// Default API URL to use if environment variable is not set
+const DEFAULT_API_URL = 'https://stashlybackendapp.azurewebsites.net/';
 
-// Check if the API URL is defined
-if (!BASE_URL) {
-  console.error('VITE_API_URL environment variable is not set. Please create a .env file in the project root with VITE_API_URL=https://stashlybackendapp.azurewebsites.net/');
-}
+// Get the API URL from environment variables with fallback
+const BASE_URL = import.meta.env.VITE_API_URL || DEFAULT_API_URL;
 
 // Log the API URL being used (only in development)
 if (import.meta.env.DEV) {
-  console.log('API is configured to use:', BASE_URL || 'No API URL configured');
+  console.log('API is configured to use:', BASE_URL);
+  
+  if (!import.meta.env.VITE_API_URL) {
+    console.warn('VITE_API_URL environment variable is not set. Using default URL:', DEFAULT_API_URL);
+    console.warn('To set your own API URL, create a .env file in the project root with VITE_API_URL=your_api_url');
+  }
 }
 
 const api = axios.create({
-  baseURL: BASE_URL || 'https://stashlybackendapp.azurewebsites.net/', // Fallback URL if env is missing
+  baseURL: BASE_URL,
   headers: {
     "Content-Type": "application/json",
     "Accept": "application/json"
@@ -82,7 +85,7 @@ export const sendMessage = async (request: ChatApiRequest): Promise<ChatApiRespo
   try {
     if (import.meta.env.DEV) {
       console.log('Sending message to backend:', request);
-      console.log('Using API URL:', BASE_URL || 'https://stashlybackendapp.azurewebsites.net/');
+      console.log('Using API URL:', BASE_URL);
     }
     const response = await api.post<ChatApiResponse>("/chat", {
       message: request.message,
