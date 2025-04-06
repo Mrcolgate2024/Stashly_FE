@@ -24,7 +24,7 @@ const api = axios.create({
     "Content-Type": "application/json",
     "Accept": "application/json"
   },
-  withCredentials: false // Set this to false to avoid CORS preflight issues with credentials
+  withCredentials: false
 });
 
 // Add a request interceptor
@@ -73,17 +73,7 @@ api.interceptors.response.use(
           console.error(`Error ${error.response.status}: ${error.response.statusText}`);
       }
     } else if (error.request) {
-      // The request was made but no response was received
-      if (error.message && error.message.includes('CORS')) {
-        console.error('CORS error detected. This typically means the API server is not configured to allow requests from this origin.');
-        console.error(`Your current origin is: ${window.location.origin}`);
-        console.error('Possible solutions:');
-        console.error('1. Confirm the API URL is correct');
-        console.error('2. Ensure the backend has CORS configured for this frontend domain');
-        console.error('3. Try using a CORS proxy for development purposes');
-      } else {
-        console.error('Network error - Check your connection and the API URL');
-      }
+      console.error('Network error - Check your connection and the API URL');
     } else {
       console.error('Error setting up the request:', error.message);
     }
