@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef } from "react";
 import { Message } from "@/types/chat";
 import { ChatMessage } from "./ChatMessage";
@@ -8,12 +9,14 @@ interface ChatMessagesAreaProps {
   messages: Message[];
   onQuestionClick?: (question: string) => void;
   isThinking?: boolean;
+  clearMessages?: () => void;
 }
 
 export const ChatMessagesArea: React.FC<ChatMessagesAreaProps> = ({
   messages,
   onQuestionClick,
   isThinking = false,
+  clearMessages,
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
